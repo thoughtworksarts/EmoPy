@@ -47,8 +47,8 @@ def getNeuralNet():
 
 def train(net, x_train=None, y_train=None):
     temp = list()
-    temp.append(extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000001.png'))
-    temp.append(extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000002.png'))
+    temp.append(extractFeatureVector('images/S502_001_00000001.png'))
+    temp.append(extractFeatureVector('images/S502_001_00000002.png'))
     x_train = np.array(temp)
     print 'x_train shape: ' + str(x_train.shape)
     y_train = np.array([1,0])
