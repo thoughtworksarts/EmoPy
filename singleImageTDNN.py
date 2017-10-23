@@ -10,8 +10,9 @@ import numpy as np
 
 
 def extractFeatureVector(imageFile, verbose=False):
-    image = color.rgb2gray(io.imread(imageFile))
-    featureVector, hog_image = hog(image, orientations=8, pixels_per_cell=(16, 16), cells_per_block=(1, 1), visualise=True)
+    image = io.imread(imageFile)
+    image = color.rgb2gray(image)
+    featureVector, hog_image = hog(image, orientations=8, pixels_per_cell=(16, 16), cells_per_block=(1, 1), visualise=True) #, transform_sqrt=True, feature_vector=False)
 
     if (verbose):
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4), sharex=True, sharey=True)
@@ -34,36 +35,24 @@ def extractFeatureVector(imageFile, verbose=False):
 
 
 def getNeuralNet():
-    hiddenLayer = Convolution('Sigmoid', channels=10, kernel_shape=(1,10800), kernel_stride=(1,10800))
-    #outputLayer = Layer('Softmax')
-    outputLayer = Convolution('Sigmoid', channels=1, kernel_shape=(1,10800), kernel_stride=(1,10800))
+    hiddenLayer = Layer('Sigmoid', units=10) # channels=10, kernel_shape=(1,10800), kernel_stride=(1,10800))
+    outputLayer = Layer('Linear')
+    #outputLayer = Convolution('Sigmoid', channels=1, kernel_shape=(1,10800), kernel_stride=(1,10800))
     net = Regressor(layers=[hiddenLayer, outputLayer], learning_rate=0.01, n_iter=20)
     return net
 
 
 def train(net, x_train=None, y_train=None):
-    x_train = np.ndarray(shape=(1,5*10800))
-    np.append(x_train, extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000001.png'))
-    np.append(x_train, extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000002.png'))
-    np.append(x_train, extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000003.png'))
-    np.append(x_train, extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000004.png'))
-    np.append(x_train, extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000005.png'))
-    print "x_train: " + str(x_train.shape)
-    y_train = np.ndarray(shape=(1,5))
-    np.append(y_train, 1)
-    np.append(y_train, 1)
-    np.append(y_train, 1)
-    np.append(y_train, 1)
-    np.append(y_train, 1)
-    print "y_train: " + str(y_train.shape)
+    x_train = np.array([extractFeatureVector('/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000001.png')])
+    y_train = np.ndarray([1])
     net.fit(x_train, y_train)
 
 def main():
-    imageFile = '/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000001.png'
-    featureVector = extractFeatureVector(imageFile, verbose=False)
+    imageFile = '/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000010.png'
+    featureVector = np.array([extractFeatureVector(imageFile, verbose=False)])
     net = getNeuralNet()
     train(net)
-    #print('%s' % len(featureVector))
+    print "Prediction: " + str(net.predict(featureVector))
 
 
 
