@@ -55,7 +55,7 @@ def train():
     node_count = 10
     inputLayer = InputLayer((1, 1, 2, 400, 400), input_var=input_var)
     hiddenLayer = Conv3DLayer(inputLayer, node_count, (2, 400, 400), pad=0, untie_biases=True)
-    net = DenseLayer(hiddenLayer, num_units=1, nonlinearity=nl.softmax)
+    net = DenseLayer(hiddenLayer, num_units=1, nonlinearity=nl.linear)
 
     predictor = lasagne.layers.get_output(net)
     loss = lasagne.objectives.squared_error(predictor, target_var)
@@ -73,7 +73,7 @@ def train():
     print "Starting training..."
 
     # We iterate over epochs:
-    num_epochs = 100
+    num_epochs = 5
     for epoch in range(num_epochs):
         # In each epoch, we do a full pass over the training data:
         start_time = time.time()
@@ -93,6 +93,26 @@ def train():
     plt.ylabel('Training loss')
     plt.tight_layout()
     plt.show()
+
+    test_prediction = lasagne.layers.get_output(net, deterministic=True)
+    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
+                                                            target_var)
+    test_loss = test_loss.mean()
+
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
+                      dtype=theano.config.floatX)
+
+    val_fn = theano.function([input_var, target_var], [test_loss, test_acc])
+
+    X_test = np.array([[[extractFeatureVector('images/S502_001_00000001.png'), extractFeatureVector('images/S502_001_00000002.png')]]])
+    y_test = np.array([1])
+    y_test = np.reshape(y_test, y_test.shape + (1,))
+
+    err, acc = val_fn(X_test, y_test)
+
+    print "err: " + str(err)
+    print "acc: " + str(acc)
+
 
 
 def main():
