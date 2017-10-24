@@ -1,14 +1,18 @@
 import matplotlib.pyplot as plt
 import pdb
+import time
 
 from skimage.feature import hog
 from skimage import data, color, exposure, io
 
-from sknn.mlp import Regressor, Convolution, Layer, Native
 from lasagne.layers import Conv3DLayer, Conv2DLayer, DenseLayer, InputLayer
 from lasagne import nonlinearities as nl
 
 import numpy as np
+
+import lasagne
+import theano
+import theano.tensor as T
 
 
 
@@ -38,39 +42,61 @@ def extractFeatureVector(imageFile, verbose=False):
 
     return hog_image
 
-
-def getNeuralNet():
-    incoming = (1, 1, 2, 400, 400)  # batch size, input channels, input rows, input cols, input.. time
-    node_count = 10
-    inputLayer = Native(InputLayer, (2, 400, 400))
-    hiddenLayer = Native(Conv3DLayer, incoming, node_count, (2, 400, 400), pad=0, untie_biases=True)
-    hiddenLayer2 = Native(Conv2DLayer, (None, 1, 400, 400), 16, 3)
-    # lasagne.layers.Conv3DLayer(incoming, num_filters, filter_size, stride=(1, 1, 1), pad=0, untie_biases=False, W=lasagne.init.GlorotUniform(), b=lasagne.init.Constant(0.), nonlinearity=lasagne.nonlinearities.rectify, flip_filters=True, convolution=theano.tensor.nnet.conv3d, **kwargs)
-    outputLayer = Layer('Linear')
-    net = Regressor(layers=[hiddenLayer, outputLayer], learning_rate=0.01, n_iter=20)
-    return net
-
-
-def train(net, x_train=None, y_train=None):
-    x_train = np.array([[[extractFeatureVector('images/S502_001_00000001.png'), extractFeatureVector('images/S502_001_00000002.png')]]])
-    # temp.append(extractFeatureVector('images/S502_001_00000001.png'))
-    # temp.append(extractFeatureVector('images/S502_001_00000002.png'))
-    # x_train = np.array(temp)
-    print 'x_train shape: ' + str(x_train.shape)
+def train():
+    X_train = np.array([[[extractFeatureVector('images/S502_001_00000001.png'), extractFeatureVector('images/S502_001_00000002.png')]]])
+    print 'x_train shape: ' + str(X_train.shape)
     y_train = np.array([1])
     y_train = np.reshape(y_train, y_train.shape + (1,))
     print 'y_train shape: ' + str(y_train.shape)
 
-    pdb.set_trace()
+    input_var = T.tensor5('inputs')
+    target_var = T.matrix('targets')
 
-    net.fit(x_train, y_train)
+    node_count = 10
+    inputLayer = InputLayer((1, 1, 2, 400, 400), input_var=input_var)
+    hiddenLayer = Conv3DLayer(inputLayer, node_count, (2, 400, 400), pad=0, untie_biases=True)
+    net = DenseLayer(hiddenLayer, num_units=1, nonlinearity=nl.softmax)
+
+    predictor = lasagne.layers.get_output(net)
+    loss = lasagne.objectives.squared_error(predictor, target_var)
+    loss = loss.mean()
+
+    params = lasagne.layers.get_all_params(net, trainable=True)
+    updates = lasagne.updates.nesterov_momentum(loss, params, learning_rate=0.01, momentum=0.9)
+
+    train_fn = theano.function([input_var, target_var], loss, updates=updates)
+
+    # Collect points for final plot
+    train_err_plot = []
+
+    # Finally, launch the training loop.
+    print "Starting training..."
+
+    # We iterate over epochs:
+    num_epochs = 100
+    for epoch in range(num_epochs):
+        # In each epoch, we do a full pass over the training data:
+        start_time = time.time()
+        train_err = train_fn(X_train, y_train)
+
+        # Then we print the results for this epoch:
+        print "Epoch %s of %s took %.3fs" % (epoch+1, num_epochs, time.time()-start_time)
+        print "  training loss:\t\t%s" % train_err
+
+        # Save accuracy to show later
+        train_err_plot.append(train_err)
+
+    # Show plot
+    plt.plot(train_err_plot)
+    plt.title('Graph')
+    plt.xlabel('Epochs')
+    plt.ylabel('Training loss')
+    plt.tight_layout()
+    plt.show()
+
 
 def main():
-    imageFile = '/Users/aperez/Documents/TW/RIOT/Riot_python/images/S502_001_00000010.png'
-    featureVector = np.array([extractFeatureVector(imageFile, verbose=False)])
-    net = getNeuralNet()
-    train(net)
-    #print "Prediction: " + str(net.predict(featureVector))
+    train()
 
 
 

@@ -18,7 +18,6 @@ setup(name='Riot-python',
           'scipy>=0.19.1'
       ],
       dependency_links=[
-          'https://github.com/Lasagne/Lasagne/archive/master.zip'
-
+          'https://github.com/Lasagne/Lasagne/archive/master.zip#egg=lasagne-0.2_dev'
       ],
       zip_safe=False)
