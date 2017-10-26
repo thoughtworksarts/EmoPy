@@ -1,9 +1,10 @@
-FROM python:2.7.14-jessie
+FROM python:3.6.3-jessie
 
-ADD singleImageTDNN.py .
-ADD setup.py .
+ADD riot_neuralnet riot_neuralnet
+ADD images images
+ADD requirements.txt .
 
-RUN pip install numpy
+RUN apt-get update && apt-get install -y gfortran libopenblas-dev liblapack-dev
 
-CMD python setup.py install
-#CMD pip install -U setuptools && pip list
+RUN pip install -r requirements.txt
+CMD python riot_neuralnet/main.py
