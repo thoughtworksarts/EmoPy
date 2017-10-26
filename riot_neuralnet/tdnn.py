@@ -10,8 +10,7 @@ class TDNN:
         net.add(Conv2D(filters = 10, kernel_size=(2,4), activation='linear', input_shape=(1,2,4), padding='same'))
         net.add(Flatten())
         net.add(Dense(units=4, activation='linear'))
-        net.compile(optimizer='RMSProp',
-                      loss='cosine_proximity',
+        net.compile(optimizer='RMSProp', loss='cosine_proximity',
                       metrics=['accuracy'])
         if verbose:
             net.summary()

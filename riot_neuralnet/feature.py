@@ -4,7 +4,7 @@ from skimage.feature import hog
 
 class Feature:
 
-    def extractFeatureVector(self, imageFile):
+    def extract_hog_feature_vector(self, imageFile):
         image = io.imread(imageFile)
         image.resize((28,28))
         image = color.rgb2gray(image)
