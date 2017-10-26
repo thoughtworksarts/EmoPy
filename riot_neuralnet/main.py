@@ -1,26 +1,52 @@
 import numpy as np
-import random
 from feature import Feature
 from tdnn import TDNN
 import os
 
-def prepare_training_data():
-    feature = Feature()
+def get_time_delay_training_data(time_delay=2):
+    features = get_feature_vectors()
 
+    X_train = list()
+    for timeSeriesIdx in features:
+        vec = features[timeSeriesIdx]
+        for dataIdx in range(time_delay, len(vec)):
+            X_train.append([[vec[j] for j in range(dataIdx-time_delay, dataIdx+1)]])
+
+    return np.array(X_train)
+
+def get_feature_vectors():
+    feature = Feature()
     # iterate in directory
     rootdir = '../images'
-    X_train = list()
+    features = dict()
+    idx = 1
     for subfile in os.listdir(rootdir):
+        subfeatures = list()
         if "DS_Store" in subfile:   continue
         for file in os.listdir(rootdir + '/' + subfile):
             if "DS_Store" not in file:
                 imageFile = rootdir + '/' + subfile + '/' + file
-                X_train.append([[feature.extractFeatureVector(imageFile)]])
+                subfeatures.append(feature.extractFeatureVector(imageFile))
+        features[idx] = subfeatures
+        idx += 1
 
-    return np.array(X_train)
+    return features
 
 
-def prepare_training_labels():
+def get_shifted_training_labels(time_delay=2):
+    raw_training_labels = get_training_labels()
+    shifted_training_labels = list()
+    for batch_index in raw_training_labels:
+        labels_in_batch = raw_training_labels[batch_index]
+        shifted_training_labels.append(labels_in_batch[time_delay:len(labels_in_batch)])
+
+    finalLabels = list()
+    for shifted_label in shifted_training_labels:
+        finalLabels += shifted_label
+
+    return np.array(finalLabels)
+
+def get_training_labels():
     # Uses 10 photo series from the Cohn-Kanade dataset
     # arousal(least, most), valence(negative, positive), power, anticipation
     prelabels = {1: [10, [.6, .4, .7, .6], [.9, .1, .8, .9]],
@@ -51,21 +77,17 @@ def prepare_training_labels():
             for labelIdx in range(4):
                 newLabel.append(increment[labelIdx]*k+(row[1][labelIdx]))
             rowLabels.append(newLabel)
-        labels[i] = rowLabels
+        labels[key] = rowLabels
 
-    finalLabels = list()
-    for key in labels:
-        finalLabels += labels[key]
-
-    return np.array(finalLabels)
+    return labels
 
 def main():
     feature = Feature()
-    X_train = prepare_training_data()
+    X_train = get_time_delay_training_data()
     print ('X_train: ' + str(X_train.shape))
-    y_train = prepare_training_labels()
+    y_train = get_shifted_training_labels()
     print ('y_train: ' + str(y_train.shape))
-    X_test = np.array([[[feature.extractFeatureVector('../images/001/S502_001_00000001.png')]]])
+    X_test = np.array([X_train[0]])
     print('X_test: ' + str(X_test.shape))
     y_test = np.array([[.6, .4, .7, .6]])
     print ('y_test: ' + str(y_test.shape))

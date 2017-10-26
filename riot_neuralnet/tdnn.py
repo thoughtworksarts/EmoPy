@@ -7,11 +7,11 @@ class TDNN:
 
     def __init__(self, verbose=False):
         net = Sequential()
-        net.add(Conv3D(filters = 10, kernel_size=(1,64,64), activation='sigmoid', input_shape=(1,1,64,64), padding='same'))
+        net.add(Conv3D(filters = 10, kernel_size=(3,28,28), activation='sigmoid', input_shape=(1,3,28,28), padding='same'))
         net.add(Flatten())
         net.add(Dense(units=4, activation='sigmoid'))
         net.compile(optimizer='sgd',
-                      loss='mean_squared_error',
+                      loss='cosine_proximity',
                       metrics=['accuracy'])
         if verbose:
             net.summary()
@@ -22,7 +22,7 @@ class TDNN:
         self.net.fit(X_train,
                             y_train,
                             batch_size=10,
-                            epochs=5,
+                            epochs=20,
                             validation_data=(X_test, y_test),
                             callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)]
                             )
