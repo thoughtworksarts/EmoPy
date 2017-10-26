@@ -9,7 +9,7 @@ class TDNN:
         net = Sequential()
         net.add(Conv3D(filters = 10, kernel_size=(1,64,64), activation='sigmoid', input_shape=(1,1,64,64), padding='same'))
         net.add(Flatten())
-        net.add(Dense(units=1, activation='sigmoid'))
+        net.add(Dense(units=4, activation='sigmoid'))
         net.compile(optimizer='sgd',
                       loss='mean_squared_error',
                       metrics=['accuracy'])
