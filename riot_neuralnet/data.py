@@ -2,10 +2,12 @@ from feature import Feature
 import os
 import numpy as np
 
+EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
+
 def get_delayed_emotion_training_data(time_delay=2):
     raw_training_labels = get_raw_training_labels()
-    X_train, y_train = get_delayed_training_data(time_delay, range(1,9), raw_training_labels)
-    X_test, y_test = get_delayed_training_data(time_delay, range(9,11), raw_training_labels)
+    X_train, y_train = get_delayed_training_data(time_delay, range(1,18), raw_training_labels)
+    X_test, y_test = get_delayed_training_data(time_delay, range(18,21), raw_training_labels)
 
     return (X_train, y_train, X_test, y_test)
 
@@ -35,13 +37,23 @@ def get_raw_training_labels():
                            7: [10, [.7, .4, .5, .6], [.8, .2, .8, .7]],
                            8: [9, [.5, .5, .4, .5], [.6, .4, .5, .3]],
                            9: [10, [.6, .4, .4, .7], [.9, .1, .1, .9]],
-                           10: [10, [.1, .5, .2, .1], [.7, .2, .2, .5]]}
+                           10: [10, [.1, .5, .2, .1], [.7, .2, .2, .5]],
+                           11: [10, [.2, .4, .5, .2], [.3, .5, .4, .2]],
+                           12: [10, [.6, .2, .2, .4], [.8, .1, .1, .4]],
+                           13: [10, [.6, .4, .7, .5], [.8, .2, .8, .5]],
+                           14: [9, [.1, .5, .5, .5], [.1, .4, .5, .4]],
+                           15: [10, [.1, .4, .5, .5], [.8, .3, .4, .9]],
+                           16: [10, [.6, .4, .7, .6], [.7, .2, .2, .5]],
+                           17: [10, [.5, .4, .6, .5], [.7, .2, .7, .6]],
+                           18: [10, [.7, .4, .2, .7], [.9, .1, .1, .9]],
+                           19: [10, [.7, .3, .3, .5], [.8, .1, .1, .6]],
+                           20: [10, [.6, .3, .2, .5], [.9, .1, .1, .6]]}
     labels = dict()
     for time_series_key in raw_training_labels:
         time_series = raw_training_labels[time_series_key]
         num_images = time_series[0]
-        increment = [(time_series[2][emotion_dimension_idx] - time_series[1][emotion_dimension_idx]) / num_images for emotion_dimension_idx in range(4)]
-        labels[time_series_key] = [[increment[label_idx]*image_idx + (time_series[1][label_idx]) for label_idx in range(4)] for image_idx in range(num_images)]
+        increment = [(time_series[2][emotion_dimension_idx] - time_series[1][emotion_dimension_idx]) / num_images for emotion_dimension_idx in range(EMOTION_DIMENSION_COUNT)]
+        labels[time_series_key] = [[increment[label_idx]*image_idx + (time_series[1][label_idx]) for label_idx in range(EMOTION_DIMENSION_COUNT)] for image_idx in range(num_images)]
 
     return labels
 
