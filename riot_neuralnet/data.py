@@ -57,11 +57,18 @@ def get_raw_training_labels():
 
     return labels
 
+def get_training_label_array():
+    raw_training_labels = get_raw_training_labels()
+    training_label_array = list()
+    for time_series_key in raw_training_labels:
+        time_series = raw_training_labels[time_series_key]
+        training_label_array += time_series
 
+    return np.array(training_label_array)
 # -------------------------------- UNUSED -------------------------------------- #
 
 def get_time_delay_training_data(time_delay=2):
-    features = get_image_feature_vectors()
+    features = get_image_feature_vector_batches()
 
     X_train = list()
     for time_series_idx in features:
@@ -71,7 +78,7 @@ def get_time_delay_training_data(time_delay=2):
 
     return np.array(X_train)
 
-def get_image_feature_vectors():
+def get_image_feature_vector_batches():
     feature = Feature()
     root_directory = '../images'
     features = dict()
@@ -82,11 +89,25 @@ def get_image_feature_vectors():
         for file in os.listdir(root_directory + '/' + subfile):
             if "DS_Store" not in file:
                 image_file = root_directory + '/' + subfile + '/' + file
-                subfeatures.append(feature.extract_hog_feature_vector(image_file))
+                subfeatures.append(feature.extract_hog_feature_vector(image_file)[1])
         features[idx] = subfeatures
         idx += 1
 
     return features
+
+
+def get_image_feature_vector_array():
+    feature = Feature()
+    root_directory = '../images'
+    features = list()
+    for subfile in os.listdir(root_directory):
+        if "DS_Store" in subfile:   continue
+        for file in os.listdir(root_directory + '/' + subfile):
+            if "DS_Store" not in file:
+                image_file = root_directory + '/' + subfile + '/' + file
+                features.append(feature.extract_hog_feature_vector(image_file)[0])
+
+    return np.array(features)
 
 
 def get_shifted_training_labels(time_delay=2):

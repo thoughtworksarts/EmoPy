@@ -7,9 +7,9 @@ class TDNN:
 
     def __init__(self, verbose=False):
         net = Sequential()
-        net.add(Conv2D(filters = 10, kernel_size=(2,4), activation='linear', input_shape=(1,2,4), padding='same'))
+        net.add(Conv2D(filters = 10, kernel_size=(2,4), activation='sigmoid', input_shape=(1,2,4), padding='same'))
         net.add(Flatten())
-        net.add(Dense(units=4, activation='linear'))
+        net.add(Dense(units=4, activation='sigmoid'))
         net.compile(optimizer='RMSProp', loss='cosine_proximity',
                       metrics=['accuracy'])
         if verbose:
