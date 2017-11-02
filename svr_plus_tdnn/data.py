@@ -8,13 +8,13 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 def get_image_feature_vector_array():
     feature = Feature()
-    root_directory = '../images'
+    root_directory = "../images"
     features = list()
     for subfile in os.listdir(root_directory):
         if "DS_Store" in subfile:   continue
-        for file in os.listdir(root_directory + '/' + subfile):
+        for file in os.listdir(root_directory + "/" + subfile):
             if "DS_Store" not in file:
-                image_file = root_directory + '/' + subfile + '/' + file
+                image_file = root_directory + "/" + subfile + "/" + file
                 features.append(feature.extract_hog_feature_vector(image_file)[0])
 
     return np.array(features)
@@ -93,15 +93,15 @@ def get_time_delay_image_training_data(time_delay=2):
 
 def get_image_feature_vector_batches():
     feature = Feature()
-    root_directory = '../images'
+    root_directory = "../images"
     features = dict()
     idx = 1
     for subfile in os.listdir(root_directory):
         if "DS_Store" in subfile:   continue
         subfeatures = list()
-        for file in os.listdir(root_directory + '/' + subfile):
+        for file in os.listdir(root_directory + "/" + subfile):
             if "DS_Store" not in file:
-                image_file = root_directory + '/' + subfile + '/' + file
+                image_file = root_directory + "/" + subfile + "/" + file
                 subfeatures.append(feature.extract_hog_feature_vector(image_file)[1])
         features[idx] = subfeatures
         idx += 1

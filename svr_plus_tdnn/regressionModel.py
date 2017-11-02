@@ -12,10 +12,10 @@ class RegressionModel:
         self.feature_vector_length = len(features[0])
 
         self.model = Sequential()
-        self.model.add(Dense(num_output_values, input_shape=(self.feature_vector_length,), activation='sigmoid'))
+        self.model.add(Dense(num_output_values, input_shape=(self.feature_vector_length,), activation="sigmoid"))
 
     def fit(self):
-        self.model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
 
         self.model.fit(self.features, self.labels,
                   batch_size=1, epochs=2,
