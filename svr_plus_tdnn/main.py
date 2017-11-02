@@ -5,16 +5,16 @@ from regressionModel import RegressionModel
 
 def main(verbose=False):
 
-    print "Extracting features..."
+    print("Extracting features...")
     features = get_image_feature_vector_array()
     labels = get_training_label_array()
 
-    print "Training regression model..."
+    print("Training regression model...")
     model = RegressionModel(features, labels)
     model.fit()
     predictions = model.predict()
 
-    print "Applying time-delay to regression output..."
+    print("Applying time-delay to regression output...")
     X_train, y_train, X_test, y_test = get_time_delay_training_data(predictions, predictions)
 
     if verbose:
@@ -23,7 +23,7 @@ def main(verbose=False):
         print("X_test: " + str(X_test.shape))
         print ("y_test: " + str(y_test.shape))
 
-    print "Training TDNN..."
+    print("Training TDNN...")
     tdnn = TDNN(verbose=True)
     tdnn.train(X_train, y_train, X_test, y_test)
 
