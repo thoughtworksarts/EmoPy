@@ -5,28 +5,22 @@ import math
 
 EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
-def get_delayed_emotion_training_data(time_delay=2):
-    raw_training_labels = get_raw_training_labels()
-    X_train, y_train = get_delayed_training_data(time_delay, range(1,18), raw_training_labels)
-    X_test, y_test = get_delayed_training_data(time_delay, range(18,21), raw_training_labels)
 
-    return (X_train, y_train, X_test, y_test)
+def get_image_feature_vector_array():
+    feature = Feature()
+    root_directory = '../images'
+    features = list()
+    for subfile in os.listdir(root_directory):
+        if "DS_Store" in subfile:   continue
+        for file in os.listdir(root_directory + '/' + subfile):
+            if "DS_Store" not in file:
+                image_file = root_directory + '/' + subfile + '/' + file
+                features.append(feature.extract_hog_feature_vector(image_file)[0])
 
-def get_delayed_training_data(time_delay, time_series_keys, raw_training_data):
-    X = list()
-    y = list()
-    for time_series_idx in time_series_keys:
-        time_series = raw_training_data[time_series_idx]
-        for image_idx in range(time_delay, len(time_series)):
-            data_point = [time_series[time_delay_idx] for time_delay_idx in range(image_idx-time_delay, image_idx)]
-            label = time_series[image_idx]
-            X.append([data_point])
-            y.append(label)
-
-    return (np.array(X), np.array(y))
+    return np.array(features)
 
 def get_raw_training_labels():
-    # Uses 10 photo series from the Cohn-Kanade dataset
+    # Uses 20 photo series from the Cohn-Kanade dataset
     # hand labeled by AP
     # arousal(least, most), valence(negative, positive), power, anticipation
     raw_training_labels = {1: [10, [.6, .4, .7, .6], [.9, .1, .8, .9]],
@@ -115,20 +109,6 @@ def get_image_feature_vector_batches():
     return features
 
 
-def get_image_feature_vector_array():
-    feature = Feature()
-    root_directory = '../images'
-    features = list()
-    for subfile in os.listdir(root_directory):
-        if "DS_Store" in subfile:   continue
-        for file in os.listdir(root_directory + '/' + subfile):
-            if "DS_Store" not in file:
-                image_file = root_directory + '/' + subfile + '/' + file
-                features.append(feature.extract_hog_feature_vector(image_file)[0])
-
-    return np.array(features)
-
-
 def get_shifted_training_labels(time_delay=2):
     raw_training_labels = get_raw_training_labels()
     shifted_training_labels = list()
@@ -142,3 +122,22 @@ def get_shifted_training_labels(time_delay=2):
 
     return np.array(final_labels)
 
+def get_delayed_emotion_training_data(time_delay=2):
+    raw_training_labels = get_raw_training_labels()
+    X_train, y_train = get_delayed_training_data(time_delay, range(1,18), raw_training_labels)
+    X_test, y_test = get_delayed_training_data(time_delay, range(18,21), raw_training_labels)
+
+    return (X_train, y_train, X_test, y_test)
+
+def get_delayed_training_data(time_delay, time_series_keys, raw_training_data):
+    X = list()
+    y = list()
+    for time_series_idx in time_series_keys:
+        time_series = raw_training_data[time_series_idx]
+        for image_idx in range(time_delay, len(time_series)):
+            data_point = [time_series[time_delay_idx] for time_delay_idx in range(image_idx-time_delay, image_idx)]
+            label = time_series[image_idx]
+            X.append([data_point])
+            y.append(label)
+
+    return (np.array(X), np.array(y))
