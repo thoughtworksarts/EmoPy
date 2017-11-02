@@ -1,6 +1,7 @@
 from feature import Feature
 import os
 import numpy as np
+import math
 
 EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
@@ -65,9 +66,27 @@ def get_training_label_array():
         training_label_array += time_series
 
     return np.array(training_label_array)
+
+def get_time_delay_training_data(features, labels, time_delay=2, testing_percentage=0.25):
+    X_train = list()
+    for data_point_idx in range(time_delay, len(features)):
+        data_point = [features[data_point_idx-offset] for offset in range(time_delay+1)]
+        X_train.append([data_point])
+
+    y_train = labels[time_delay:len(labels)]
+
+    X_test = np.array(X_train[int(math.ceil(len(X_train)*(1-testing_percentage))):len(X_train)])
+    X_train = np.array(X_train[0:int(math.ceil(len(X_train)*(1-testing_percentage)))])
+    y_test = np.array(y_train[int(math.ceil(len(y_train)*(1-testing_percentage))):len(y_train)])
+    y_train = np.array(y_train[0:int(math.ceil(len(y_train)*(1-testing_percentage)))])
+
+    return (X_train, y_train, X_test, y_test)
+
+
+
 # -------------------------------- UNUSED -------------------------------------- #
 
-def get_time_delay_training_data(time_delay=2):
+def get_time_delay_image_training_data(time_delay=2):
     features = get_image_feature_vector_batches()
 
     X_train = list()
