@@ -1,0 +1,9 @@
+.*
+bin/
+include/
+lib/
+pip-selfcheck.json
+share/
+dist/
+Riot_python.egg-info
+*.pyc
