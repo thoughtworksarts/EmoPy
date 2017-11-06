@@ -2,6 +2,7 @@ import os
 import itertools
 import shutil
 import math
+from PIL import Image
 
 def prepare_buckets(buckets_root_path, emotions):
     # start with a clean slate
@@ -40,6 +41,12 @@ def get_emotion(emotions, label_path):
     label_value = int(float(f.read().strip()))
     return emotions[label_value]
 
+
+def png_to_jpg(source, target):
+    target = target.replace('.png', '.jpg')
+    image = Image.open(source)
+    image.save(target)
+
 def bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_path):
     emotions = {0: 'neutral', 1: 'anger', 2: 'contempt', 3: 'disgust', 4: 'fear', 5: 'happy', 6: 'sad', 7: 'surprise'}
     prepare_buckets(buckets_root_path, emotions)
@@ -57,7 +64,7 @@ def bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_pat
             source = corresponding_images_dir(cohn_kanade_image_path, label_file) + "/" + image_file
             target = bucket_dir + "/" + image_file
             print("Putting " + source + " to " + target)
-            shutil.copy(source, target)
+            png_to_jpg(source, target)
 
     print("Done!")
 
