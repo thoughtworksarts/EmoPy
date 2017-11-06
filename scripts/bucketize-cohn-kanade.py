@@ -75,7 +75,12 @@ def bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_pat
     print("Done!")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="""Turns Cohn-Kanade dataset into a form ready to be used to 
+                                                    retrain Inception-V3 on TensorFlow 
+                                                    (details: https://www.tensorflow.org/tutorials/image_retraining)
+
+                                                    Assumes you've downloaded and extracted cohn-kanade-images.zip 
+                                                    and Emotion_labels.zip to a directory on this machine.""")
     parser.add_argument("-images",
                         "--cohn_kanade_image_path",
                         type=str,

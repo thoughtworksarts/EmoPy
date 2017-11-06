@@ -2,6 +2,7 @@ import csv
 import os
 import shutil
 from PIL import Image
+import argparse
 
 class Label:
     __emotions = {2: 'neutral',
@@ -36,7 +37,6 @@ def prepare_buckets(buckets_root_path, emotions):
 
     print("Created emotion buckets in " + buckets_root_path)
 
-
 def get_bucket_dir(buckets_root_path, emotion):
     return buckets_root_path + "/" + emotion
 
@@ -46,8 +46,7 @@ def png_to_jpg(source, target):
     image = Image.open(source)
     image.save(target)
 
-
-def main(buckets_root_path, training_path):
+def bucketize(buckets_root_path, training_path):
     emotions = {2: 'neutral',  # dupe
                 3: 'happiness',
                 4: 'surprise',
@@ -69,10 +68,28 @@ def main(buckets_root_path, training_path):
             target = '{}/{}/{}'.format(buckets_root_path, label.dominant, label.image)
             print('.', end='', flush=True)
             png_to_jpg(source, target)
-            # break
 
     print("Done!")
 
-buckets_root_path = '/Users/stania/Work/TWNY/karen-palmer/data/ferplus/tensorflow-training'
-training_path = '/Users/stania/Work/TWNY/karen-palmer/data/ferplus/FERPlus/data/FER2013Train'
-main(buckets_root_path, training_path)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="""Turns FERPlus data to a form ready to be used to train
+                                                    retrain Inception-V3 on TensorFlow 
+                                                    (details: https://www.tensorflow.org/tutorials/image_retraining). 
+
+                                                    ***NOTE***: This assumes you've run generate_training_data.py prior 
+                                                    to this to extract *.png files out of the original FER data from Kaggle.
+                                                    For more info, follow this: https://github.com/Microsoft/FERPlus#training-data""")
+    parser.add_argument("-training",
+                        "--training_path",
+                        type=str,
+                        help="""full path to directory containing FERPlus training data 
+                        (a bunch of *.png files and label.csv), e.g. <full_path>/FERPlus/data/FER2013Train""",
+                        required=True)
+    parser.add_argument("-buckets",
+                        "--buckets_root_path",
+                        type=str,
+                        help="where you'd like the destination buckets to be",
+                        required=True)
+
+    args = parser.parse_args()
+    bucketize(args.buckets_root_path, args.training_path)
