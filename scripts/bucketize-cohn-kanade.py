@@ -3,6 +3,7 @@ import itertools
 import shutil
 import math
 from PIL import Image
+import argparse
 
 class LabelMetadata:
     def __init__(self, label_filename):
@@ -11,7 +12,7 @@ class LabelMetadata:
         self.sequence = components[1]
 
 def prepare_buckets(buckets_root_path, emotions):
-    # start with a clean slate
+    print("Clearing out any existing contents in buckets")
     if os.path.exists(buckets_root_path):
         shutil.rmtree(buckets_root_path)
 
@@ -62,23 +63,39 @@ def bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_pat
         training_set = image_files[math.floor(len(image_files)/2):]
         # TODO create separate validation set out of these
 
-        bucket_dir = get_bucket_dir(buckets_root_path, get_emotion(emotions, label_path))
+        emotion = get_emotion(emotions, label_path)
+        bucket_dir = get_bucket_dir(buckets_root_path, emotion)
+        print("Moving subject {} sequence {} to '{}' bucket".format(label_metadata.subject, label_metadata.sequence, emotion))
 
         for image_file in training_set:
             source = corresponding_images_dir(cohn_kanade_image_path, label_metadata) + "/" + image_file
             target = bucket_dir + "/" + image_file
-            print("Putting " + source + " to " + target)
+            # print("Putting " + source + " to " + target)
             png_to_jpg(source, target)
 
     print("Done!")
 
-# where you extracted cohn-kanade-images.zip to
-cohn_kanade_image_path = '/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/cohn-kanade-images'
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-images",
+                        "--cohn_kanade_image_path",
+                        type=str,
+                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/cohn-kanade-images",
+                        help="Where you extracted cohn-kanade-images.zip to",
+                        required=True)
+    parser.add_argument("-labels",
+                        "--cohn_kanade_emotion_path",
+                        type=str,
+                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/Emotion",
+                        help="where you extracted Emotion_labels.zip to",
+                        required=True)
 
-# where you extracted Emotion_labels.zip to
-cohn_kanade_emotion_path = '/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/Emotion'
+    parser.add_argument("-buckets",
+                        "--buckets_root_path",
+                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/tensorflow-training-buckets",
+                        type=str,
+                        help="where you'd like the destination buckets to be",
+                        required=True)
 
-# where you'd like the destination buckets to be
-buckets_root_path = '/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/tensorflow-training-buckets'
-
-bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_path)
+    args = parser.parse_args()
+    bucketize(args.cohn_kanade_image_path, args.cohn_kanade_emotion_path, args.buckets_root_path)
