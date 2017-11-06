@@ -70,7 +70,6 @@ def bucketize(cohn_kanade_image_path, cohn_kanade_emotion_path, buckets_root_pat
         for image_file in training_set:
             source = corresponding_images_dir(cohn_kanade_image_path, label_metadata) + "/" + image_file
             target = bucket_dir + "/" + image_file
-            # print("Putting " + source + " to " + target)
             png_to_jpg(source, target)
 
     print("Done!")
@@ -80,19 +79,16 @@ if __name__ == "__main__":
     parser.add_argument("-images",
                         "--cohn_kanade_image_path",
                         type=str,
-                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/cohn-kanade-images",
                         help="Where you extracted cohn-kanade-images.zip to",
                         required=True)
     parser.add_argument("-labels",
                         "--cohn_kanade_emotion_path",
                         type=str,
-                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/Emotion",
                         help="where you extracted Emotion_labels.zip to",
                         required=True)
 
     parser.add_argument("-buckets",
                         "--buckets_root_path",
-                        default="/Users/stania/Work/TWNY/karen-palmer/data/cohn-kanade/tensorflow-training-buckets",
                         type=str,
                         help="where you'd like the destination buckets to be",
                         required=True)
