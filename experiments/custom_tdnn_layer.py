@@ -10,12 +10,21 @@ class TimeDelayLayer(Dense):
         self.time_delay = time_delay
         super(TimeDelayLayer, self).__init__(output_dim, **kwargs)
 
+
     def build(self, input_shape):
+        # input_shape traditionally is (batch_size, steps, input_dim)
+        input_dim = input_shape[2:]
+        print ('In build method...')
+        print ('input_shape: ' + str(input_shape))
+        print ('input_dim: ' + str(input_dim))
+
         # Create a trainable weight variable for this layer.
-        self.kernel = self.add_weight(name='kernel',
-                                      shape=(input_shape[1], self.output_dim),
-                                      initializer='uniform',
-                                      trainable=True)
+        self.kernel = self.add_weight(shape=(self.units, self.time_delay+1)+input_dim,
+                                      initializer=self.kernel_initializer,
+                                      name='kernel',
+                                      regularizer=self.kernel_regularizer,
+                                      constraint=self.kernel_constraint)
+
         super(TimeDelayLayer, self).build(input_shape)  # Be sure to call this somewhere!
 
     def call(self, x):
