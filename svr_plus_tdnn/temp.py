@@ -1,3 +1,0 @@
-from data import get_delayed_emotion_training_data
-
-get_delayed_emotion_training_data()

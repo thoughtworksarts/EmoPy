@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../feature')
 from tdnn import TDNN
 from data import get_image_feature_vector_array, get_training_label_array, get_time_delay_training_data
 from regressionModel import RegressionModel

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../feature')
 from keras.layers import ConvLSTM2D, Dense, Flatten
 from keras.models import Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping

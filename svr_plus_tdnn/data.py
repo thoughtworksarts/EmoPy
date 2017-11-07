@@ -8,7 +8,7 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 def get_image_feature_vector_array():
     feature = Feature()
-    root_directory = "../images"
+    root_directory = "../data/cohn_kanade_images"
     features = list()
     for subfile in os.listdir(root_directory):
         if "DS_Store" in subfile:   continue
@@ -93,7 +93,7 @@ def get_time_delay_image_training_data(time_delay=2):
 
 def get_image_feature_vector_batches():
     feature = Feature()
-    root_directory = "../images"
+    root_directory = "../data/cohn_kanade_images"
     features = dict()
     idx = 1
     for subfile in os.listdir(root_directory):
