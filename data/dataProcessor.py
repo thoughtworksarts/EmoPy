@@ -24,7 +24,7 @@ class DataProcessor:
                 for image_file in os.listdir(sub_directory_path):
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
-                        features.append([[feature.extract_hog_feature_vector(image_file_path)[feature_index]]])
+                        features.append(feature.extract_hog_feature_vector(image_file_path)[feature_index])
 
         return np.array(features)
 
@@ -43,11 +43,12 @@ class DataProcessor:
         for sub_directory in os.listdir(root_directory):
             if not sub_directory.startswith('.'):
                 sub_directory_path = root_directory + '/' + sub_directory
+                feature_batch = list()
                 for image_file in os.listdir(sub_directory_path):
-                    feature_batch = list()
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
                         feature_batch.append(feature.extract_hog_feature_vector(image_file_path)[feature_index])
                 features.append(feature_batch)
 
         return np.array(features)
+

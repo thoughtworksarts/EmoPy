@@ -1,11 +1,13 @@
 import sys
 sys.path.append('../feature')
+sys.path.append('../data')
 from keras.layers import ConvLSTM2D, Dense, Flatten
 from keras.models import Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from data import get_image_feature_image_array, get_training_label_array, get_time_delay_training_data
 import numpy as np
 import math
+from dataProcessor import DataProcessor
 
 samples = None
 time = 1
@@ -15,7 +17,10 @@ channels = 1
 verbose = True
 
 print("Extracting features...")
-features = get_image_feature_image_array()
+d = DataProcessor()
+root_directory = "../data/cohn_kanade_images"
+raw_features = d.get_image_feature_array(root_directory, vector=False)
+features = np.array([[[feature]] for feature in raw_features])
 labels = get_training_label_array()
 if verbose:
     print('feature shape: ' + str(features.shape))

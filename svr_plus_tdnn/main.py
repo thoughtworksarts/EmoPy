@@ -1,14 +1,17 @@
 import sys
 sys.path.append('../feature')
+sys.path.append('../data')
 from tdnn import TDNN
 from data import get_image_feature_vector_array, get_training_label_array, get_time_delay_training_data
 from regressionModel import RegressionModel
-
+from dataProcessor import DataProcessor
 
 def main(verbose=False):
 
     print("Extracting features...")
-    features = get_image_feature_vector_array()
+    d = DataProcessor()
+    root_directory = "../data/cohn_kanade_images"
+    features = d.get_image_feature_array(root_directory, vector=True)
     labels = get_training_label_array()
 
     print("Training regression model...")
