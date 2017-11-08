@@ -11,7 +11,7 @@ def main(verbose=False):
     print("Extracting features...")
     d = DataProcessor()
     root_directory = "../data/cohn_kanade_images"
-    features = d.get_image_feature_array(root_directory, vector=True)
+    features = d.get_image_feature_array_from_directory(root_directory, vector=True)
     labels = get_training_label_array()
 
     print("Training regression model...")
