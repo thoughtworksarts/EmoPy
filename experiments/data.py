@@ -15,7 +15,7 @@ def get_image_feature_vector_array():
         for file in os.listdir(root_directory + "/" + subfile):
             if "DS_Store" not in file:
                 image_file = root_directory + "/" + subfile + "/" + file
-                features.append(feature.extract_hog_feature_vector(image_file)[0])
+                features.append(feature.extract_hog_feature(image_file)[0])
 
     return np.array(features)
 
@@ -28,7 +28,7 @@ def get_image_feature_image_array():
         for file in os.listdir(root_directory + "/" + subfile):
             if "DS_Store" not in file:
                 image_file = root_directory + "/" + subfile + "/" + file
-                features.append([[feature.extract_hog_feature_vector(image_file)[1]]])
+                features.append([[feature.extract_hog_feature(image_file)[1]]])
 
     return np.array(features)
 
@@ -117,7 +117,7 @@ def get_image_feature_vector_batches():
         for file in os.listdir(root_directory + "/" + subfile):
             if "DS_Store" not in file:
                 image_file = root_directory + "/" + subfile + "/" + file
-                subfeatures.append(feature.extract_hog_feature_vector(image_file)[1])
+                subfeatures.append(feature.extract_hog_feature(image_file)[1])
         features[idx] = subfeatures
         idx += 1
 

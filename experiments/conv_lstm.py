@@ -19,7 +19,7 @@ verbose = True
 print("Extracting features...")
 d = DataProcessor()
 root_directory = "../data/cohn_kanade_images"
-raw_features = d.get_image_feature_array_from_directory(root_directory, vector=False)
+raw_features = d.get_image_features(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64,64), feature_set=['hog'], vector=False, time_series=False)
 features = np.array([[[feature]] for feature in raw_features])
 
 # labels =
