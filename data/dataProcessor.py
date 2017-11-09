@@ -5,34 +5,39 @@ import csv
 from skimage import io
 from matplotlib import pyplot as plt
 import cv2
-from PIL import Image
 
 class DataProcessor:
     """
     Class containing all necessary data preprocessing methods.
     """
 
-    def get_image_features(self, from_csv, dataset_location, initial_image_dims, target_image_dims, feature_set, label_index=None, image_index=None, vector=True, time_series=True):
+    def __init__(self):
+        self.feature_parameters = dict()
+        self.possible_features = ['hog', 'lbp']
+        self.required_hog_parameters = ['orientations', 'pixels_per_cell', 'cells_per_block']
 
-        orientations = 8
-        pixels_per_cell = (16,16)
-        cells_per_block=(1,1)
-        hog_params = dict()
-        hog_params['image_size'] = target_image_dims
-        hog_params['orientations'] = orientations
-        hog_params['pixels_per_cell'] = pixels_per_cell
-        hog_params['cells_per_block'] = cells_per_block
+    def add_feature(self, feature_type, params):
+        if feature_type not in self.possible_features:
+            raise ValueError('Cannot extract specified feature. Use one of: ' + ', '.join(self.possible_features))
+
+        if feature_type is 'hog':
+            if set(params.keys()) != set(self.required_hog_parameters):
+                raise ValueError('Expected hog parameters: ' + ', '.join(self.required_hog_parameters))
+
+        self.feature_parameters[feature_type] = params
+
+    def get_image_features(self, from_csv, dataset_location, target_image_dims, initial_image_dims=None, label_index=None, image_index=None, vector=True, time_series=True):
 
         if from_csv:
-            return self.get_image_feature_array_from_csv(dataset_location, feature_set, label_index, image_index, initial_image_dims, vector, hog_params=hog_params)
+            return self.get_image_feature_array_from_csv(dataset_location, initial_image_dims, target_image_dims, label_index, image_index, vector)
         else:
             if time_series:
-                return self.get_time_series_image_feature_array_from_directory(dataset_location, feature_set, vector, hog_params=hog_params)
+                return self.get_time_series_image_feature_array_from_directory(dataset_location, target_image_dims, vector)
             else:
-                return self.get_image_feature_array_from_directory(dataset_location, feature_set, vector, hog_params=hog_params)
+                return self.get_image_feature_array_from_directory(dataset_location, target_image_dims, vector)
 
 
-    def get_image_feature_array_from_directory(self, root_directory, feature_set, vector=True, hog_params=None):
+    def get_image_feature_array_from_directory(self, root_directory, target_image_dims, vector=True):
         """
         Extracts features vectors of all images found in root_directory.
         :param root_directory: location of image data
@@ -48,11 +53,12 @@ class DataProcessor:
                 for image_file in os.listdir(sub_directory_path):
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
-                        features.append(feature.extract_hog_feature(image_file=image_file_path, hog_params=hog_params)[feature_type_index])
+                        features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_file=image_file_path))
+
 
         return np.array(features)
 
-    def get_time_series_image_feature_array_from_directory(self, root_directory, feature_set, vector=True, hog_params=None):
+    def get_time_series_image_feature_array_from_directory(self, root_directory, target_image_dims, vector=True):
         """
         Extracts features vectors of images found in root_directory and groups them
         by time_series batch. Subdirectories of root_directory must contain a single
@@ -71,13 +77,14 @@ class DataProcessor:
                 for image_file in os.listdir(sub_directory_path):
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
-                        feature_batch.append(feature.extract_features(feature_type_index=feature_type_index, image_file=image_file_path, hog_params=hog_params))
+                        feature_batch.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_file=image_file_path))
+
 
                 features.append(feature_batch)
 
         return np.array(features)
 
-    def get_image_feature_array_from_csv(self, csv_file_path, feature_set,  label_index=0, image_index=1, image_dims=(48, 48), target_image_dims=(64,64), vector=True, hog_params=None):
+    def get_image_feature_array_from_csv(self, csv_file_path, image_dims, target_image_dims, label_index=0, image_index=1, vector=True):
         """
         Extracts features vectors of all images found in specified csv file.
         :param csv_file_path: location of dataset csv file
@@ -99,12 +106,11 @@ class DataProcessor:
             for row in reader:
                 if row[label_index] == 'emotion': continue
                 image = np.asarray([int(pixel) for pixel in row[image_index].split(' ')], dtype=np.uint8).reshape(image_dims)
-                image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_LINEAR)
-                # io.imshow(image)
-                # plt.show()
+                image = cv2.resize(image, target_image_dims, interpolation=cv2.INTER_LINEAR)
+                io.imshow(image)
+                plt.show()
 
-                # features.append(feature.extract_hog_feature(image_array=image)[feature_type_index])
-                features.append(feature.extract_features(feature_type_index=feature_type_index, image_array=image, hog_params=hog_params))
+                features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
 
                 # break
                 if tempCount == 4:  break
