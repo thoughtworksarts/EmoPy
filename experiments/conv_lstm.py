@@ -23,7 +23,7 @@ root_directory = "../data/cohn_kanade_images"
 d.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
 # d.add_feature('lbp', {'n_points': 24, 'radius': 3})
 
-raw_features = d.get_image_features(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64,64), vector=False, time_series=False)
+raw_features = d.get_training_data(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64, 64), vector=False, time_series=False)
 features = np.array([[[feature]] for feature in raw_features])
 
 # labels =

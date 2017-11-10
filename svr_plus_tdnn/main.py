@@ -15,7 +15,7 @@ def main(verbose=False):
     d.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
     # d.add_feature('lbp', {'n_points': 24, 'radius': 3})
 
-    features = d.get_image_features(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64,64), vector=True, time_series=False)
+    features = d.get_training_data(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64, 64), vector=True, time_series=False)
 
     labels = get_training_label_array()
 
