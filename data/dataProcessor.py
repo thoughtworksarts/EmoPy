@@ -15,6 +15,7 @@ class DataProcessor:
         self.feature_parameters = dict()
         self.possible_features = ['hog', 'lbp']
         self.required_hog_parameters = ['orientations', 'pixels_per_cell', 'cells_per_block']
+        self.required_lbp_parameters = ['radius', 'n_points']
 
     def add_feature(self, feature_type, params):
         if feature_type not in self.possible_features:
@@ -23,6 +24,10 @@ class DataProcessor:
         if feature_type is 'hog':
             if set(params.keys()) != set(self.required_hog_parameters):
                 raise ValueError('Expected hog parameters: ' + ', '.join(self.required_hog_parameters))
+
+        if feature_type is 'lbp':
+            if set(params.keys()) != set(self.required_lbp_parameters):
+                raise ValueError('Expected lbp parameters: ' + ', '.join(self.required_lbp_parameters))
 
         self.feature_parameters[feature_type] = params
 
@@ -112,7 +117,6 @@ class DataProcessor:
 
                 features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
 
-                # break
                 if tempCount == 4:  break
                 tempCount += 1
 
