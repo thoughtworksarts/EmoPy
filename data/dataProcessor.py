@@ -116,17 +116,26 @@ class DataProcessor:
             for row in reader:
                 if row[label_index] == 'emotion': continue
 
-                labels.append(row[label_index])
+                label = [0]*7
+                label[int(row[label_index])] = 1.0
+                labels.append(np.array(label))
+                # labels.append(row[label_index])
 
                 image = np.asarray([int(pixel) for pixel in row[image_index].split(' ')], dtype=np.uint8).reshape(image_dims)
                 image = cv2.resize(image, target_image_dims, interpolation=cv2.INTER_LINEAR)
-                # io.imshow(image)
+                # image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+
+                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+                # print(temp[:,:,0]==temp[:,:,1])
+                # io.imshow(temp)
                 # plt.show()
 
-                features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+                features.append(image)
+                # features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
 
-                # if tempCount == 99:  break
-                # tempCount += 1
+                if tempCount == 9:  break
+                tempCount += 1
 
 
         X_test = np.array(features[int(math.ceil(len(features)*(1-test_data_percentage))):len(features)])

@@ -15,6 +15,7 @@ rows = 64
 cols = 64
 channels = 1
 verbose = True
+target_image_dimensions = (128,128)
 
 print("Extracting features...")
 d = DataProcessor()
