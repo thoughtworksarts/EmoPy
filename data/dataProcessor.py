@@ -2,9 +2,9 @@ import os
 from feature import Feature
 import numpy as np
 import csv
+import cv2, math, datetime
 from skimage import io
 from matplotlib import pyplot as plt
-import cv2, math, datetime
 
 class DataProcessor:
     """
@@ -119,22 +119,18 @@ class DataProcessor:
                 label = [0]*7
                 label[int(row[label_index])] = 1.0
                 labels.append(np.array(label))
-                # labels.append(row[label_index])
 
                 image = np.asarray([int(pixel) for pixel in row[image_index].split(' ')], dtype=np.uint8).reshape(image_dims)
                 image = cv2.resize(image, target_image_dims, interpolation=cv2.INTER_LINEAR)
-                # image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+                image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
 
-                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-
-                # print(temp[:,:,0]==temp[:,:,1])
-                # io.imshow(temp)
+                # io.imshow(image)
                 # plt.show()
 
-                features.append(image)
-                # features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+                image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
+                features.append(image_3d)
 
-                if tempCount == 9:  break
+                if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
                 tempCount += 1
 
 
