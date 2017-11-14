@@ -19,7 +19,7 @@ class ImageWrapper:
         new_name = self.root_directory + '_'.join(name_list[:2]) + '.' + name_list[2]
         return new_name
 
-    def crop_image(self):
+    def crop(self):
         print("Cropping image to 480x480...")
         cropped_image = self.image[0:480, 120:600]
         return cropped_image
@@ -34,14 +34,14 @@ class ImageWrapper:
         print("Did not activate...")
         return False
 
-    def flip_image(self):
+    def flip(self):
         print("Flipping...")
         if self.should_activate():
             flipped_image = cv2.flip(self.image, 1)
             image_name = self.get_name_path('flip')
             cv2.imwrite(image_name, flipped_image)
 
-    def rotate_image(self):
+    def rotate(self):
         print("Rotating...")
         rows, cols, channels = self.image.shape
         if self.should_activate():
