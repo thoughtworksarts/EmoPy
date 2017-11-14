@@ -4,6 +4,7 @@ import random
 
 import numpy as np
 
+from PIL import Image, ImageEnhance
 
 class ImageWrapper:
 
@@ -64,6 +65,16 @@ class ImageWrapper:
             noisy_image = cv2.add(self.image, jitter)
             combined = np.vstack((self.image[:math.ceil(height/2),:,:], noisy_image[math.ceil(height/2):,:,:]))
             cv2.imwrite(image_name,combined)
+
+    def brighten(self):
+        print("Brightening...")
+        image_for_brightening = Image.fromarray(self.image)
+        enhancer = ImageEnhance.Brightness(image_for_brightening)
+        factor = random.randint(0, 13)/4.0
+        brightened = enhancer.enhance(factor)
+        image_name = self.get_name_path(self, 'brighten')
+        cv2.imwrite(image_name,brightened)
+
 
 
 
