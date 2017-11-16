@@ -3,9 +3,7 @@ sys.path.append('../feature')
 sys.path.append('../data')
 from dataProcessor import DataProcessor
 from transferModel import TransferModel
-import cv2
-from datetime import datetime
-import numpy as np
+
 
 
 print('Creating NN with InceptionV3 base model...')
@@ -33,34 +31,7 @@ print ('Training model...')
 print('numLayers: ' + str(len(model.model.layers)))
 model.fit(X_train, y_train, X_test, y_test)
 
+trained_model_output_filepath = '../trained_models/inception_v3_model_1.h5'
+model.model.save(trained_model_output_filepath)
 
-### ------------ Test ---------------- ###
 
-cap = cv2.VideoCapture(0)
-
-while(True):
-    # Capture frame-by-frame
-
-    start = datetime.now()
-
-    ret, frame = cap.read()
-
-    # Our operations on the frame come here
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    image = cv2.resize(gray, target_image_dims, interpolation=cv2.INTER_LINEAR)
-    image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
-
-    prediction = model.model.predict(np.array([image_3d]))
-    print('Prediction: ' + str(prediction))
-
-    # Display the resulting frame
-    cv2.imshow('frame',image)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-    end = datetime.now()
-    print('Singe prediction time: ' + str(end-start))
-
-# When everything done, release the capture
-cap.release()
-cv2.destroyAllWindows()
