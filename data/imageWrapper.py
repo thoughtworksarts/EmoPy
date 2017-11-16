@@ -71,7 +71,6 @@ class ImageWrapper:
         rotation_matrix = cv2.getRotationMatrix2D((cols/2, rows/2), degrees_rotation, 1)
         rotated_image = cv2.warpAffine(self.image, rotation_matrix, (cols, rows))
         image_name = self.get_name_path('rotate')
-        print(image_name)
         cv2.imwrite(image_name, rotated_image)
 
     def add_noise(self):
@@ -84,7 +83,6 @@ class ImageWrapper:
         image_name = self.get_name_path('noisy')
         noisy_image = cv2.add(self.image, jitter)
         combined = np.vstack((self.image[:math.ceil(height/2),:,:], noisy_image[math.ceil(height/2):,:,:]))
-        print(image_name)
         cv2.imwrite(image_name,combined)
 
     def brighten(self, max_brighten=13):
@@ -94,9 +92,4 @@ class ImageWrapper:
         factor = random.randint(0, max_brighten)/4.0
         brightened = enhancer.enhance(factor)
         image_name = self.get_name_path('brighten')
-        print(type(brightened))
-        cv2.imwrite(image_name,brightened)
-
-
-
-
+        cv2.imwrite(image_name,np.asarray(brightened))
