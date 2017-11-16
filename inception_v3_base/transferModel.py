@@ -41,3 +41,12 @@ class TransferModel:
 
     def fit(self, X_train, y_train, X_test, y_test):
         self.model.fit(x=X_train, y=y_train, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_data=(X_test, y_test), shuffle=True)
+
+        for layer in self.model.layers[:249]:
+            layer.trainable = False
+        for layer in self.model.layers[249:]:
+            layer.trainable = True
+
+        self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.fit(x=X_train, y=y_train, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_data=(X_test, y_test), shuffle=True)
+

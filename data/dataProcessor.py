@@ -122,12 +122,14 @@ class DataProcessor:
 
                 image = np.asarray([int(pixel) for pixel in row[image_index].split(' ')], dtype=np.uint8).reshape(image_dims)
                 image = cv2.resize(image, target_image_dims, interpolation=cv2.INTER_LINEAR)
-                image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+                image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
+
+                # image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
 
                 # io.imshow(image)
                 # plt.show()
 
-                image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
+                # image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
                 features.append(image_3d)
 
                 if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
