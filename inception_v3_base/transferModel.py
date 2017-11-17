@@ -4,6 +4,7 @@ from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
 
 
+
 class TransferModel:
 
     def __init__(self, model_name='inception_v3'):
