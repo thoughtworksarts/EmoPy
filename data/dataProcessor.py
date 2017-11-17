@@ -1,10 +1,13 @@
-import os
-from feature import Feature
+import os, csv, cv2, math, datetime
+
 import numpy as np
-import csv
-import cv2, math, datetime
 from skimage import io
 from matplotlib import pyplot as plt
+from keras.preprocessing.image import ImageDataGenerator
+
+from feature import Feature
+
+
 
 class DataProcessor:
     """
@@ -140,6 +143,10 @@ class DataProcessor:
         X_train = np.array(features[0:int(math.ceil(len(features)*(1-test_data_percentage)))])
         y_test = np.array(labels[int(math.ceil(len(labels)*(1-test_data_percentage))):len(labels)])
         y_train = np.array(labels[0:int(math.ceil(len(labels)*(1-test_data_percentage)))])
+
+        data_gen = ImageDataGenerator(rotation_range=180)
+
+        data_gen.fit(X_train)
 
         end = datetime.datetime.now()
         print('Training data extraction runtime - ' + str(end-start))
