@@ -11,6 +11,8 @@ runInceptionV3 = False
 runRegressionPlusTDNN = True
 runConvLSTM = False
 
+verbose = True
+
 if runInceptionV3:
     print('--------------- Inception-V3 Model -------------------')
     print('Creating NN with InceptionV3 base model...')
@@ -52,7 +54,6 @@ if runRegressionPlusTDNN:
     d.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
     # d.add_feature('lbp', {'n_points': 24, 'radius': 3})
 
-if False:
     features = d.get_training_data(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64, 64), vector=True, time_series=False)
 
     # TODO: Add label processing to DataProcessor class
@@ -64,7 +65,7 @@ if False:
     predictions = model.predict()
 
     print('Applying time-delay to regression output...')
-    X_train, y_train, X_test, y_test = get_time_delay_training_data(predictions, predictions)
+    X_train, y_train, X_test, y_test = d.get_time_delay_training_data(predictions, predictions)
 
     if verbose:
         print ('X_train: ' + str(X_train.shape))

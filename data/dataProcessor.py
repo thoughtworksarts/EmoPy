@@ -7,7 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from feature import Feature
 
-
+EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
 class DataProcessor:
     """
@@ -27,10 +27,6 @@ class DataProcessor:
 
         if set(params.keys()) != set(self.required_feature_parameters[feature_type]):
             raise ValueError(('Expected %s parameters: ' + ', '.join(self.required_feature_parameters[feature_type])) % feature_type)
-
-        # if feature_type is 'lbp':
-        #     if set(params.keys()) != set(self.required_lbp_parameters):
-        #         raise ValueError('Expected lbp parameters: ' + ', '.join(self.required_lbp_parameters))
 
         self.feature_parameters[feature_type] = params
 
@@ -194,3 +190,18 @@ class DataProcessor:
             labels[time_series_key] = [[increment[label_idx]*image_idx + (time_series[1][label_idx]) for label_idx in range(EMOTION_DIMENSION_COUNT)] for image_idx in range(num_images)]
 
         return labels
+
+    def get_time_delay_training_data(self, features, labels, time_delay=2, testing_percentage=0.25):
+        X_train = list()
+        for data_point_idx in range(time_delay, len(features)):
+            data_point = [features[data_point_idx-offset] for offset in range(time_delay+1)]
+            X_train.append([data_point])
+
+        y_train = labels[time_delay:len(labels)]
+
+        X_test = np.array(X_train[int(math.ceil(len(X_train)*(1-testing_percentage))):len(X_train)])
+        X_train = np.array(X_train[0:int(math.ceil(len(X_train)*(1-testing_percentage)))])
+        y_test = np.array(y_train[int(math.ceil(len(y_train)*(1-testing_percentage))):len(y_train)])
+        y_train = np.array(y_train[0:int(math.ceil(len(y_train)*(1-testing_percentage)))])
+
+        return (X_train, y_train, X_test, y_test)
