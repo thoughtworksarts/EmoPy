@@ -56,6 +56,9 @@ if runRegressionPlusTDNN:
 
     features = d.get_training_data(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64, 64), vector=True, time_series=False)
 
+
+# if False:
+
     # TODO: Add label processing to DataProcessor class
     labels = d.get_training_label_array()
 

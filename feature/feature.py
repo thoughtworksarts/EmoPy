@@ -7,8 +7,9 @@ class Feature:
 
     def extract_features(self, target_image_dims, feature_params, feature_type_index=0, image_file=None, image_array=None, image_size=None):
         features = list()
-        if 'hog' in feature_params.keys(): features += list(self.extract_hog_feature(feature_params['hog'], target_image_dims, image_file, image_array)[feature_type_index])
-        if 'lbp' in feature_params.keys(): features += list(self.extract_lbp_feature(feature_params['lbp'], target_image_dims, image_file, image_array)[feature_type_index])
+        for feature_type in feature_params.keys():
+            feature = list(getattr(self, 'extract_%s_feature' % feature_type)(feature_params[feature_type], target_image_dims, image_file, image_array)[feature_type_index])
+            features += feature
         return features
 
     def extract_hog_feature(self, hog_params, target_image_dims, image_file=None, image_array=None):
