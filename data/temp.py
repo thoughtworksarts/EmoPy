@@ -1,10 +1,10 @@
 import sys
 sys.path.append('../feature')
-from dataProcessor import DataProcessor
+from imageprocessor import ImageProcessor
 
 target_image_dims = (64,64)
 
-d = DataProcessor()
+d = ImageProcessor()
 root_directory = "../data/cohn_kanade_images"
 csv_file_path = "../data/fer2013/fer2013.csv"
 

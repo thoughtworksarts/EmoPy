@@ -2,16 +2,19 @@ import sys
 sys.path.append('../feature')
 sys.path.append('../data')
 sys.path.append('../svr_plus_tdnn') # TODO: temporary
-from dataProcessor import DataProcessor
+from imageprocessor import ImageProcessor
 from transfer_model import TransferModel
 from tdnn import TDNN
 from regressionModel import RegressionModel
+from featureextractor import FeatureExtractor
 
 runInceptionV3 = False
 runRegressionPlusTDNN = True
 runConvLSTM = False
 
 verbose = True
+target_dimensions = (128, 128)
+raw_dimensions = (48, 48)
 
 if runInceptionV3:
     print('--------------- Inception-V3 Model -------------------')
@@ -20,15 +23,14 @@ if runInceptionV3:
 
     print('Extracting training data...')
 
-    target_image_dims = (128,128)
 
-    d = DataProcessor()
-    root_directory = "../data/cohn_kanade_images"
     csv_file_path = "../data/fer2013/fer2013.csv"
+    root_directory = "../data/cohn_kanade_images"
+    imageProcessor = ImageProcessor(from_csv=True, datapath=csv_file_path, target_dimensions=target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1)
 
-    d.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
+    # imageProcessor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
 
-    X_train, y_train, X_test, y_test = d.get_training_data(from_csv=True, dataset_location=csv_file_path, target_image_dims=target_image_dims, initial_image_dims=(48, 48), label_index=0, image_index=1, vector=False, time_series=False)
+    X_train, y_train, X_test, y_test = imageProcessor.get_training_data()
 
     print('X_train shape: ' + str(X_train.shape))
     print('y_train shape: ' + str(y_train.shape))
@@ -47,20 +49,20 @@ if runInceptionV3:
 if runRegressionPlusTDNN:
 
     print('--------------- Regression + TDNN Model -------------------')
-    print('Extracting features...')
-    d = DataProcessor()
+    print('Collecting data...')
     root_directory = '../data/cohn_kanade_images'
+    imageProcessor = ImageProcessor(from_csv=False, datapath=root_directory, target_dimensions=target_dimensions, raw_dimensions=None)
+    images, labels = imageProcessor.get_training_data()
 
-    d.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-    # d.add_feature('lbp', {'n_points': 24, 'radius': 3})
+    print ('images shape: ' + str(images.shape))
+    print('Extracting features...')
 
-    features = d.get_training_data(from_csv=False, dataset_location=root_directory, initial_image_dims=None, target_image_dims=(64, 64), vector=True, time_series=False)
+    featureExtractor = FeatureExtractor(images, return_array=False)
+    featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
+    # featureExtractor.add_feature('lbp', {'n_points': 24, 'radius': 3})
 
-
-# if False:
-
-    # TODO: Add label processing to DataProcessor class
-    labels = d.get_training_label_array()
+    features = featureExtractor.extract()
+    print ("features shape: " + str(features.shape))
 
     print('Training regression model...')
     model = RegressionModel(features, labels)
@@ -68,7 +70,7 @@ if runRegressionPlusTDNN:
     predictions = model.predict()
 
     print('Applying time-delay to regression output...')
-    X_train, y_train, X_test, y_test = d.get_time_delay_training_data(predictions, predictions)
+    X_train, y_train, X_test, y_test = imageProcessor.get_time_delay_training_data(predictions, predictions)
 
     if verbose:
         print ('X_train: ' + str(X_train.shape))

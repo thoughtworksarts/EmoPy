@@ -1,142 +1,97 @@
 import os, csv, cv2, math, datetime
-
+from skimage import color, io
 import numpy as np
-from skimage import io
 from matplotlib import pyplot as plt
 from keras.preprocessing.image import ImageDataGenerator
 
-from feature import Feature
 
+# TODO: Do we need this global?
 EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
-class DataProcessor:
-    """
-    Class containing all necessary data preprocessing methods.
-    """
+class ImageProcessor:
 
-    def __init__(self):
-        self.feature_parameters = dict()
-        self.possible_features = ['hog', 'lbp']
-        self.required_feature_parameters = dict()
-        self.required_feature_parameters['hog'] = ['orientations', 'pixels_per_cell', 'cells_per_block']
-        self.required_feature_parameters['lbp'] = ['radius', 'n_points']
+    def __init__(self, from_csv, datapath, target_dimensions, raw_dimensions, csv_label_col=None, csv_image_col=None):
+        self.from_csv = from_csv
+        self.datapath = datapath
+        self.target_dimensions = target_dimensions
+        self.raw_dimensions = raw_dimensions
+        self.csv_label_col = csv_label_col
+        self.csv_image_col = csv_image_col
 
-    def add_feature(self, feature_type, params):
-        if feature_type not in self.possible_features:
-            raise ValueError('Cannot extract specified feature. Use one of: ' + ', '.join(self.possible_features))
-
-        if set(params.keys()) != set(self.required_feature_parameters[feature_type]):
-            raise ValueError(('Expected %s parameters: ' + ', '.join(self.required_feature_parameters[feature_type])) % feature_type)
-
-        self.feature_parameters[feature_type] = params
-
-    def get_training_data(self, from_csv, dataset_location, target_image_dims, initial_image_dims=None, label_index=None, image_index=None, vector=True, time_series=True, test_data_percentage=0.20):
-
-        if from_csv:
-            return self.get_training_data_from_csv(dataset_location, initial_image_dims, target_image_dims, label_index, image_index, vector, test_data_percentage)
+    def get_training_data(self):
+        if self.from_csv:
+            return self.get_training_data_from_csv()
         else:
-            if time_series:
-                return self.get_time_series_image_feature_array_from_directory(dataset_location, target_image_dims, vector)
-            else:
-                return self.get_image_feature_array_from_directory(dataset_location, target_image_dims, vector)
+            images = self.get_image_feature_array_from_directory()
+            labels = self.get_training_label_array()
+            return images, labels
 
-
-    def get_image_feature_array_from_directory(self, root_directory, target_image_dims, vector=True):
-        """
-        Extracts features vectors of all images found in root_directory.
-        :param root_directory: location of image data
-        :param vector: if true returns features as vectors, otherwise as 2D arrays
-        :return: numpy array of extracted feature vectors
-        """
-        feature_type_index = 0 if vector else 1
-        feature = Feature()
-        features = list()
-        for sub_directory in os.listdir(root_directory):
+    def get_image_feature_array_from_directory(self):
+        images = list()
+        for sub_directory in os.listdir(self.datapath):
             if not sub_directory.startswith('.'):
-                sub_directory_path = root_directory + '/' + sub_directory
+                sub_directory_path = self.datapath + '/' + sub_directory
                 for image_file in os.listdir(sub_directory_path):
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
-                        features.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_file=image_file_path))
+                        image = io.imread(image_file_path)
+                        image.resize(self.target_dimensions)
+                        image = color.rgb2gray(image)
+                        images.append(image)
+        return np.array(images)
 
-
-        return np.array(features)
-
-    def get_time_series_image_feature_array_from_directory(self, root_directory, target_image_dims, vector=True):
-        """
-        Extracts features vectors of images found in root_directory and groups them
-        by time_series batch. Subdirectories of root_directory must contain a single
-        time series batch.
-        :param root_directory: location of image data
-        :param vector: if true returns features as vectors, otherwise as 2D arrays
-        :return: numpy array of arrays which contain time series batch features
-        """
+    def get_time_series_image_feature_array_from_directory(self, datapath, target_image_dims, vector=True):
         feature_type_index = 0 if vector else 1
         feature = Feature()
         features = list()
-        for sub_directory in os.listdir(root_directory):
+        for sub_directory in os.listdir(datapath):
             if not sub_directory.startswith('.'):
-                sub_directory_path = root_directory + '/' + sub_directory
+                sub_directory_path = datapath + '/' + sub_directory
                 feature_batch = list()
                 for image_file in os.listdir(sub_directory_path):
                     if not image_file.startswith('.'):
                         image_file_path = sub_directory_path + '/' + image_file
-                        feature_batch.append(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_file=image_file_path))
-
+                        feature_batch.append(feature.extract(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_file=image_file_path))
 
                 features.append(feature_batch)
 
         return np.array(features)
 
-    def get_training_data_from_csv(self, csv_file_path, image_dims, target_image_dims, label_index=0, image_index=1, vector=True, test_data_percentage=0.20):
-        """
-        Extracts features vectors of all images found in specified csv file.
-        :param csv_file_path: location of dataset csv file
-        :param image_dims: dimensions of image
-        :param label_index: column index of label value
-        :param image_index: column index of image values
-        :param vector: if true returns features as vectors, otherwise as 2D arrays
-        :return: numpy array of extracted feature vectors
-        """
+    def get_training_data_from_csv(self, test_data_percentage=0.2):
 
         print('Extracting training data from csv...')
         start = datetime.datetime.now()
 
-        feature_type_index = 0 if vector else 1
-
-        feature = Feature()
-        features = list()
+        images = list()
         labels = list()
-        with open(csv_file_path) as csv_file:
+        with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 
             tempCount = 0
 
             for row in reader:
-                if row[label_index] == 'emotion': continue
+                if row[self.csv_label_col] == 'emotion': continue
 
                 label = [0]*7
-                label[int(row[label_index])] = 1.0
+                label[int(row[self.csv_label_col])] = 1.0
                 labels.append(np.array(label))
 
-                image = np.asarray([int(pixel) for pixel in row[image_index].split(' ')], dtype=np.uint8).reshape(image_dims)
-                image = cv2.resize(image, target_image_dims, interpolation=cv2.INTER_LINEAR)
-                image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
-
-                # image = np.array(feature.extract_features(target_image_dims, self.feature_parameters, feature_type_index=feature_type_index, image_array=image))
+                image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.raw_dimensions)
+                image = cv2.resize(image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
+                image_3d = np.array([image, image, image]).reshape((self.target_dimensions[0], self.target_dimensions[1], 3))
 
                 # io.imshow(image)
                 # plt.show()
 
                 # image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
-                features.append(image_3d)
+                images.append(image_3d)
 
                 if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
                 tempCount += 1
 
 
-        X_test = np.array(features[int(math.ceil(len(features)*(1-test_data_percentage))):len(features)])
-        X_train = np.array(features[0:int(math.ceil(len(features)*(1-test_data_percentage)))])
+        X_test = np.array(images[int(math.ceil(len(images)*(1-test_data_percentage))):len(images)])
+        X_train = np.array(images[0:int(math.ceil(len(images)*(1-test_data_percentage)))])
         y_test = np.array(labels[int(math.ceil(len(labels)*(1-test_data_percentage))):len(labels)])
         y_train = np.array(labels[0:int(math.ceil(len(labels)*(1-test_data_percentage)))])
 
