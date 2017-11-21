@@ -18,8 +18,8 @@ class RegressionModel:
         self.model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
 
         self.model.fit(self.features, self.labels,
-                  batch_size=1, epochs=2,
-                  validation_split=self.test_data_percentage)
+                  batch_size=1, epochs=20,
+                  validation_split=self.test_data_percentage, shuffle=True)
 
     def predict(self):
         return self.model.predict(self.test_features, batch_size=1)
