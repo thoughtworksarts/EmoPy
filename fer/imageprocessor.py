@@ -97,7 +97,8 @@ class ImageProcessor:
 
         data_gen = ImageDataGenerator(rotation_range=180)
 
-        data_gen.fit(X_train)
+        data_gen.fit(X_train)   # TODO: functionality: send data_gen new image set to feature extractor
+                                # TODO: functionality:
 
         end = datetime.datetime.now()
         print('Training data extraction runtime - ' + str(end-start))

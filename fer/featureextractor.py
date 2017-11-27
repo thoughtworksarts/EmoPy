@@ -5,10 +5,10 @@ import numpy as np
 
 class FeatureExtractor:
 
-    def __init__(self, images, return_array=True):
+    def __init__(self, images, return_2d_array=True):
         # user-supplied parameters
         self.images = images
-        self.return_array = return_array
+        self.return_2d_array = return_2d_array
         self.feature_params = dict()
 
         # feature requirements
@@ -29,7 +29,7 @@ class FeatureExtractor:
         for image in self.images:
             feature = list()
             for feature_type in self.feature_params.keys():
-                feature += list(getattr(self, 'extract_%s_feature' % feature_type)(self.feature_params[feature_type], image)[self.return_array])
+                feature += list(getattr(self, 'extract_%s_feature' % feature_type)(self.feature_params[feature_type], image)[self.return_2d_array])
             features.append(feature)
         return np.array(features)
 
