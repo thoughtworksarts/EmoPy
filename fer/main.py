@@ -9,8 +9,8 @@ import numpy as np
 import math
 
 runTransferLearningNN = True
-runRegressionPlusTimeDelayNN = True
-runConvLSTM = True
+runRegressionPlusTimeDelayNN = False
+runConvLSTM = False
 
 verbose = True
 target_dimensions = (128, 128)
@@ -42,8 +42,13 @@ if runTransferLearningNN:
     print('numLayers: ' + str(len(model.model.layers)))
     model.fit(X_train, y_train, X_test, y_test)
 
-    trained_model_output_filepath = '../trained_models/inception_v3_model_1.h5'
-    model.model.save(trained_model_output_filepath)
+    trained_weights_output_filepath = '../trained_models/inception_v3_weights.h5'
+    model.model.save_weights(trained_weights_output_filepath)
+    trained_model_output_filepath = '../trained_models/inception_v3_model.json'
+    model_json_string = model.model.to_json()
+    model_json_file = open(trained_model_output_filepath, 'w')
+    model_json_file.write(model_json_string)
+    model_json_file.close()
 
 
 if runRegressionPlusTimeDelayNN:
