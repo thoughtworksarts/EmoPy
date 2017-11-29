@@ -89,21 +89,15 @@ class ImageProcessor:
                 if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
                 tempCount += 1
 
+        #data_gen = ImageDataGenerator(rotation_range=180)
 
-        X_test = np.array(images[int(math.ceil(len(images)*(1-test_data_percentage))):len(images)])
-        X_train = np.array(images[0:int(math.ceil(len(images)*(1-test_data_percentage)))])
-        y_test = np.array(labels[int(math.ceil(len(labels)*(1-test_data_percentage))):len(labels)])
-        y_train = np.array(labels[0:int(math.ceil(len(labels)*(1-test_data_percentage)))])
-
-        data_gen = ImageDataGenerator(rotation_range=180)
-
-        data_gen.fit(X_train)   # TODO: functionality: send data_gen new image set to feature extractor
+        #data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor
                                 # TODO: functionality:
 
         end = datetime.datetime.now()
         print('Training data extraction runtime - ' + str(end-start))
 
-        return X_train, y_train, X_test, y_test
+        return np.array(images), np.array(labels)
 
     def get_training_label_array(self):
         raw_training_labels = self.get_raw_training_labels()
@@ -147,17 +141,12 @@ class ImageProcessor:
 
         return labels
 
-    def get_time_delay_training_data(self, features, labels, time_delay=2, testing_percentage=0.25):
-        X_train = list()
-        for data_point_idx in range(time_delay, len(features)):
-            data_point = [features[data_point_idx-offset] for offset in range(time_delay+1)]
-            X_train.append([data_point])
+    def get_time_delay_training_data(self, datapoints, labels, time_delay=2, testing_percentage=0.25):
+        features = list()
+        for data_point_idx in range(time_delay, len(datapoints)):
+            data_point = [datapoints[data_point_idx-offset] for offset in range(time_delay+1)]
+            features.append([data_point])
 
-        y_train = labels[time_delay:len(labels)]
+        labels = labels[time_delay:len(labels)]
 
-        X_test = np.array(X_train[int(math.ceil(len(X_train)*(1-testing_percentage))):len(X_train)])
-        X_train = np.array(X_train[0:int(math.ceil(len(X_train)*(1-testing_percentage)))])
-        y_test = np.array(y_train[int(math.ceil(len(y_train)*(1-testing_percentage))):len(y_train)])
-        y_train = np.array(y_train[0:int(math.ceil(len(y_train)*(1-testing_percentage)))])
-
-        return (X_train, y_train, X_test, y_test)
+        return (features, labels)

@@ -33,10 +33,10 @@ class FeatureExtractor:
             features.append(feature)
         return np.array(features)
 
-    def _extract_hog_feature(self, params, image):
+    def extract_hog_feature(self, params, image):
         feature_vector, hog_image = hog(image, orientations=params['orientations'], pixels_per_cell=params['pixels_per_cell'], cells_per_block=params['cells_per_block'], visualise=True)
         return feature_vector, hog_image
 
-    def _extract_lbp_feature(self, params, image):
+    def extract_lbp_feature(self, params, image):
         feature_image = local_binary_pattern(image, params['n_points'], params['radius'])
         return feature_image.flatten(), feature_image

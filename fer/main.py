@@ -9,8 +9,8 @@ import numpy as np
 import math
 
 runTransferLearningNN = True
-runRegressionPlusTimeDelayNN = False
-runConvLSTM = False
+runRegressionPlusTimeDelayNN = True
+runConvLSTM = True
 
 verbose = True
 target_dimensions = (128, 128)
@@ -30,26 +30,26 @@ if runTransferLearningNN:
 
     # imageProcessor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
 
-    X_train, y_train, X_test, y_test = imageProcessor.get_training_data()
+    features, labels = imageProcessor.get_training_data()
 
-    print('X_train shape: ' + str(X_train.shape))
-    print('y_train shape: ' + str(y_train.shape))
-    print('X_test shape: ' + str(X_test.shape))
-    print('y_test shape: ' + str(y_test.shape))
+    # print('X_train shape: ' + str(X_train.shape))
+    # print('y_train shape: ' + str(y_train.shape))
+    # print('X_test shape: ' + str(X_test.shape))
+    # print('y_test shape: ' + str(y_test.shape))
 
 
     print ('Training model...')
     print('numLayers: ' + str(len(model.model.layers)))
-    model.fit(X_train, y_train, X_test, y_test)
+    model.fit(features, labels, 0.15)
 
-    trained_weights_output_filepath = '../trained_models/inception_v3_weights.h5'
-    model.model.save_weights(trained_weights_output_filepath)
-    trained_model_output_filepath = '../trained_models/inception_v3_model.json'
-    model_json_string = model.model.to_json()
-    model_json_file = open(trained_model_output_filepath, 'w')
-    model_json_file.write(model_json_string)
-    model_json_file.close()
-
+    # -- Export model and trained weights to json and h5 files
+    # trained_weights_output_filepath = '../trained_models/inception_v3_weights.h5'
+    # model.model.save_weights(trained_weights_output_filepath)
+    # trained_model_output_filepath = '../trained_models/inception_v3_model.json'
+    # model_json_string = model.model.to_json()
+    # model_json_file = open(trained_model_output_filepath, 'w')
+    # model_json_file.write(model_json_string)
+    # model_json_file.close()
 
 if runRegressionPlusTimeDelayNN:
 
@@ -73,16 +73,17 @@ if runRegressionPlusTimeDelayNN:
     predictions = model.predict()
 
     print('Applying time-delay to regression output...')
-    X_train, y_train, X_test, y_test = imageProcessor.get_time_delay_training_data(predictions, predictions)
-    if verbose:
-        print ('X_train: ' + str(X_train.shape))
-        print ('y_train: ' + str(y_train.shape))
-        print('X_test: ' + str(X_test.shape))
-        print ('y_test: ' + str(y_test.shape))
+    features, labels = imageProcessor.get_time_delay_training_data(predictions, predictions)
+    # if verbose:
+    #     print ('X_train: ' + str(X_train.shape))
+    #     print ('y_train: ' + str(y_train.shape))
+    #     print('X_test: ' + str(X_test.shape))
+    #     print ('y_test: ' + str(y_test.shape))
 
     print('Training TimeDelayNN...')
     tdnn = TimeDelayNN(verbose=True)
-    tdnn.fit(X_train, y_train, X_test, y_test)
+
+    tdnn.fit(features, labels, 0.15)
 
 if runConvLSTM:
     samples = None
@@ -112,18 +113,9 @@ if runConvLSTM:
         print('label shape: ' + str(labels.shape))
 
     print('Creating training/testing data...')
-    testing_percentage = 0.20
-    X_test = np.array(features[int(math.ceil(len(features)*(1-testing_percentage))):len(features)])
-    X_train = np.array(features[0:int(math.ceil(len(features)*(1-testing_percentage)))])
-    y_test = np.array(labels[int(math.ceil(len(labels)*(1-testing_percentage))):len(labels)])
-    y_train = np.array(labels[0:int(math.ceil(len(labels)*(1-testing_percentage)))])
-    if verbose:
-        print('X_train shape: ' + str(X_train.shape))
-        print('y_train shape: ' + str(y_train.shape))
-        print('X_test shape: ' + str(X_test.shape))
-        print('y_test shape: ' + str(y_test.shape))
+    validation_split = 0.15
 
     print('Training net...')
     net = ConvolutionalLstmNN(target_dimensions, channels, time_delay=time_delay)
-    net.fit(X_train, y_train, X_test, y_test)
+    net.fit(features, labels, validation_split)
 
