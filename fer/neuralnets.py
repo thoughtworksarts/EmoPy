@@ -9,13 +9,13 @@ class FERNeuralNet(object):
     def __init__(self):
         self.model = self.init_model()
 
-    def init_model(self):
+    def _init_model(self):
         raise NotImplementedError("Class %s doesn't implement init_model()" % self.__class__.__name__)
 
-    def fit(self, X_train, y_train, X_test, y_test):
+    def _fit(self, X_train, y_train, X_test, y_test):
         raise NotImplementedError("Class %s doesn't implement fit()" % self.__class__.__name__)
 
-    def predict(self):
+    def _predict(self):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
 
 
