@@ -11,7 +11,9 @@ Welcome to FERPython's documentation!
    :caption: Contents:
 
    neuralnets
-
+   featureextractor
+   imageprocessor
+   
 Indices and tables
 ==================
 
