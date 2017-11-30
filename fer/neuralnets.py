@@ -2,12 +2,13 @@ from keras.applications.inception_v3 import InceptionV3
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D
 from keras.models import Model, Sequential
-
+from imageprocessor import ImageProcessor
 
 class FERNeuralNet(object):
 
     def __init__(self):
-        self.model = self.init_model()
+        self.model = None
+        self.init_model()
 
     def _init_model(self):
         raise NotImplementedError("Class %s doesn't implement init_model()" % self.__class__.__name__)
@@ -52,7 +53,7 @@ class TransferLearningNN(FERNeuralNet):
         # compile the model (should be done *after* setting layers to non-trainable)
         model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        return model
+        self.model = model
 
     def fit(self, features, labels, validation_split):
         self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
@@ -68,26 +69,45 @@ class TransferLearningNN(FERNeuralNet):
 
 class TimeDelayNN(FERNeuralNet):
 
-    def __init__(self, time_delay=3, num_output_values=4, verbose=False):
+    def __init__(self, feature_vector_length, time_delay=3, num_output_values=4, verbose=False):
         self.time_delay = time_delay
         self.num_output_values = num_output_values
+        self.feature_vector_length = feature_vector_length
         self.verbose = verbose
+        self.regression_model = None
         super().__init__()
 
     def init_model(self):
+        self.init_regression_model()
+        self.init_neural_net_model()
+
+    def init_regression_model(self):
+        model = Sequential()
+        model.add(Dense(self.num_output_values, input_shape=(self.feature_vector_length,), activation="sigmoid"))
+        self.regression_model = model
+
+    def init_neural_net_model(self):
+
         model = Sequential()
         model.add(Conv2D(filters=10, kernel_size=(self.time_delay, self.num_output_values), activation="sigmoid", input_shape=(1,self.time_delay,self.num_output_values), padding="same"))
         model.add(Flatten())
         model.add(Dense(units=4, activation="sigmoid"))
         if self.verbose:
             model.summary()
-        return model
+        self.model = model
+
 
     def fit(self, features, labels, validation_split):
-        self.model.compile(optimizer="RMSProp", loss="cosine_proximity",
-                         metrics=["accuracy"])
-        self.model.fit(features, labels, batch_size=10, epochs=100, validation_split=validation_split,
-                     callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+        self.regression_model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
+        self.regression_model.fit(features, labels,
+                       batch_size=1, epochs=20,
+                       validation_split=0.0, shuffle=True)
+
+        regression_predictions = self.regression_model.predict(features)
+        imageProcessor = ImageProcessor()
+        features, labels = imageProcessor.get_time_delay_training_data(regression_predictions, regression_predictions)
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit(features, labels, batch_size=10, epochs=100, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
 
 class ConvolutionalLstmNN(FERNeuralNet):
@@ -106,7 +126,7 @@ class ConvolutionalLstmNN(FERNeuralNet):
         model.add(Dense(units=4, activation="sigmoid"))
         if self.verbose:
             model.summary()
-        return model
+        self.model = model
 
     def fit(self, features, labels, validation_split):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])

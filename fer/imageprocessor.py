@@ -10,7 +10,7 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 class ImageProcessor:
 
-    def __init__(self, from_csv, datapath, target_dimensions, raw_dimensions, csv_label_col=None, csv_image_col=None):
+    def __init__(self, from_csv=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None):
         self.from_csv = from_csv
         self.datapath = datapath
         self.target_dimensions = target_dimensions

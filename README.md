@@ -6,6 +6,8 @@ TODO: Add diagram of system
 
 TODO: Link class documentation
 
+## How to Contribute
+
 ## Neural Net Classes
 
 TODO: Outline

@@ -9,8 +9,8 @@ import numpy as np
 import math
 
 runTransferLearningNN = True
-runRegressionPlusTimeDelayNN = True
-runConvLSTM = True
+runRegressionPlusTimeDelayNN = False
+runConvLSTM = False
 
 verbose = True
 target_dimensions = (128, 128)
@@ -67,22 +67,7 @@ if runRegressionPlusTimeDelayNN:
     features = featureExtractor.extract()
     print ("features shape: " + str(features.shape))
 
-    print('Training regression model...')
-    model = RegressionModel(features, labels)
-    model.fit()
-    predictions = model.predict()
-
-    print('Applying time-delay to regression output...')
-    features, labels = imageProcessor.get_time_delay_training_data(predictions, predictions)
-    # if verbose:
-    #     print ('X_train: ' + str(X_train.shape))
-    #     print ('y_train: ' + str(y_train.shape))
-    #     print('X_test: ' + str(X_test.shape))
-    #     print ('y_test: ' + str(y_test.shape))
-
-    print('Training TimeDelayNN...')
-    tdnn = TimeDelayNN(verbose=True)
-
+    tdnn = TimeDelayNN(len(features[0]), verbose=True)
     tdnn.fit(features, labels, 0.15)
 
 if runConvLSTM:
