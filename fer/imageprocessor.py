@@ -10,13 +10,15 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 class ImageProcessor:
 
-    def __init__(self, from_csv=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None):
+    def __init__(self, from_csv=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, rgb=False, channels=3):
         self.from_csv = from_csv
         self.datapath = datapath
         self.target_dimensions = target_dimensions
         self.raw_dimensions = raw_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
+        self.rgb = rgb
+        self.channels = channels
 
     def get_training_data(self):
         if self.from_csv:
@@ -78,13 +80,15 @@ class ImageProcessor:
 
                 image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.raw_dimensions)
                 image = cv2.resize(image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
-                image_3d = np.array([image, image, image]).reshape((self.target_dimensions[0], self.target_dimensions[1], 3))
+
+                if not self.rgb and self.channels==3:
+                    image = np.array([image, image, image]).reshape((self.target_dimensions[0], self.target_dimensions[1], 3))
 
                 # io.imshow(image)
                 # plt.show()
 
                 # image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
-                images.append(image_3d)
+                images.append([image])
 
                 if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
                 tempCount += 1
