@@ -51,7 +51,7 @@
 <span id="imageprocessor"></span><h1>ImageProcessor<a class="headerlink" href="#module-imageprocessor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="imageprocessor.ImageProcessor">
-<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>from_csv</em>, <em>datapath</em>, <em>target_dimensions</em>, <em>raw_dimensions</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>from_csv=None</em>, <em>datapath=None</em>, <em>target_dimensions=None</em>, <em>raw_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em>, <em>rgb=False</em>, <em>channels=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="imageprocessor.ImageProcessor.get_image_feature_array_from_directory">
 <code class="descname">get_image_feature_array_from_directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_image_feature_array_from_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_image_feature_array_from_directory" title="Permalink to this definition">¶</a></dt>
@@ -64,7 +64,7 @@
 
 <dl class="method">
 <dt id="imageprocessor.ImageProcessor.get_time_delay_training_data">
-<code class="descname">get_time_delay_training_data</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>time_delay=2</em>, <em>testing_percentage=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_time_delay_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_time_delay_training_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_time_delay_training_data</code><span class="sig-paren">(</span><em>datapoints</em>, <em>labels</em>, <em>time_delay=2</em>, <em>testing_percentage=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_time_delay_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_time_delay_training_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
