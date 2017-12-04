@@ -63,13 +63,15 @@
 
     <span class="n">POSSIBLE_EMOTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">train_images</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">train_images</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emotions_are_valid</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Target emotions must be subset of </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">train_images</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">csv_data_path</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must supply training images or datapath containing training images.&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span> <span class="o">=</span> <span class="n">target_emotions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">train_images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span> <span class="o">=</span> <span class="n">train_images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">train_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
@@ -89,10 +91,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trains FERModel on supplied image data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training FERModel...&#39;</span><span class="p">)</span>
         <span class="n">validation_split</span> <span class="o">=</span> <span class="mf">0.15</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="n">validation_split</span><span class="p">)</span></div>
@@ -131,6 +129,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating FER model...&#39;</span><span class="p">)</span>
         <span class="c1"># TODO: call _extract_features for appropriate models</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span><span class="p">)</span>
         <span class="c1"># TODO: add conditionals to choose best models for all emotion subsets</span>
 

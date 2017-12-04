@@ -5,23 +5,23 @@ from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
 from imageprocessor import ImageProcessor
 
-class FERNeuralNet(object):
+class _FERNeuralNet(object):
 
     def __init__(self):
         self.model = None
-        self.init_model()
+        self._init_model()
 
     def _init_model(self):
-        raise NotImplementedError("Class %s doesn't implement init_model()" % self.__class__.__name__)
+        raise NotImplementedError("Class %s doesn't implement _init_model()" % self.__class__.__name__)
 
-    def _fit(self, X_train, y_train, X_test, y_test):
+    def fit(self, X_train, y_train, X_test, y_test):
         raise NotImplementedError("Class %s doesn't implement fit()" % self.__class__.__name__)
 
-    def _predict(self):
+    def predict(self):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
 
 
-class TransferLearningNN(FERNeuralNet):
+class TransferLearningNN(_FERNeuralNet):
     """
     Convolutional Neural Network initialized with pretrained weights.
 
@@ -35,7 +35,7 @@ class TransferLearningNN(FERNeuralNet):
         self.model_name = model_name
         super().__init__()
 
-    def init_model(self):
+    def _init_model(self):
 
         # create the base pre-trained model
         base_model = None
@@ -83,7 +83,7 @@ class TransferLearningNN(FERNeuralNet):
         self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
 
 
-class TimeDelayNN(FERNeuralNet):
+class TimeDelayNN(_FERNeuralNet):
 
     def __init__(self, feature_vector_length, time_delay=3, num_output_values=4, verbose=False):
         self.time_delay = time_delay
@@ -93,16 +93,16 @@ class TimeDelayNN(FERNeuralNet):
         self.regression_model = None
         super().__init__()
 
-    def init_model(self):
+    def _init_model(self):
         self.init_regression_model()
         self.init_neural_net_model()
 
-    def init_regression_model(self):
+    def _init_regression_model(self):
         model = Sequential()
         model.add(Dense(self.num_output_values, input_shape=(self.feature_vector_length,), activation="sigmoid"))
         self.regression_model = model
 
-    def init_neural_net_model(self):
+    def _init_neural_net_model(self):
 
         model = Sequential()
         model.add(Conv2D(filters=10, kernel_size=(self.time_delay, self.num_output_values), activation="sigmoid", input_shape=(1,self.time_delay,self.num_output_values), padding="same"))
@@ -133,7 +133,7 @@ class TimeDelayNN(FERNeuralNet):
         self.model.fit(features, labels, batch_size=10, epochs=100, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
 
-class ConvolutionalLstmNN(FERNeuralNet):
+class ConvolutionalLstmNN(_FERNeuralNet):
     """
     Convolutional Long Short Term Memory Neural Network.
 
@@ -149,7 +149,7 @@ class ConvolutionalLstmNN(FERNeuralNet):
         self.verbose = verbose
         super().__init__()
 
-    def init_model(self):
+    def _init_model(self):
         model = Sequential()
         model.add(ConvLSTM2D(filters=10, kernel_size=(4, 4), activation="sigmoid", input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
         model.add(BatchNormalization())

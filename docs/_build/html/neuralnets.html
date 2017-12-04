@@ -92,6 +92,30 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="neuralnets.TimeDelayNN">
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TimeDelayNN</code><span class="sig-paren">(</span><em>feature_vector_length</em>, <em>time_delay=3</em>, <em>num_output_values=4</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="neuralnets.TimeDelayNN.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the neural net on the data provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>features</strong> – Numpy array of training data.</li>
+<li><strong>labels</strong> – Numpy array of target (label) data.</li>
+<li><strong>validation_split</strong> – Float between 0 and 1. Percentage of training data to use for validation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="neuralnets.TransferLearningNN">
 <em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TransferLearningNN</code><span class="sig-paren">(</span><em>model_name='inception_v3'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolutional Neural Network initialized with pretrained weights.</p>
