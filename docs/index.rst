@@ -13,6 +13,7 @@ Welcome to FERPython's documentation!
    neuralnets
    featureextractor
    imageprocessor
+   fermodel
    
 Indices and tables
 ==================

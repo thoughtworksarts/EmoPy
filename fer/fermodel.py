@@ -3,7 +3,9 @@ from imageprocessor import ImageProcessor
 from featureextractor import FeatureExtractor
 import numpy as np
 
+
 class FERModel:
+
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
 
     def __init__(self, target_emotions, train_images=None, data_path=None, extract_features=False, verbose=False):
@@ -34,6 +36,9 @@ class FERModel:
             self._extract_features()
         else:
             self.x_train = self.train_images
+        print('Training FERModel...')
+        validation_split = 0.15
+        self.model.fit(self.x_train, self.y_train, validation_split)
 
     def predict(self, images):
         pass
