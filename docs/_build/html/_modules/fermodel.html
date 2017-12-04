@@ -52,25 +52,32 @@
 
 
 <div class="viewcode-block" id="FERModel"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel">[docs]</a><span class="k">class</span> <span class="nc">FERModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.</span>
+
+<span class="sd">    :param target_emotions: set of target emotions to classify</span>
+<span class="sd">    :param train_images: numpy array of training images</span>
+<span class="sd">    :param csv_data_path: local path to directory containing csv with image pixel values</span>
+<span class="sd">    :param verbose: if true, will print out extra process information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">POSSIBLE_EMOTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">train_images</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extract_features</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">train_images</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emotions_are_valid</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Target emotions must be subset of </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">train_images</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data_path</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">train_images</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">csv_data_path</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must supply training images or datapath containing training images.&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span> <span class="o">=</span> <span class="n">target_emotions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">train_images</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span> <span class="o">=</span> <span class="n">extract_features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">data_path</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_training_images_from_path</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">csv_data_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_training_images_from_path</span><span class="p">(</span><span class="n">csv_data_path</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_model</span><span class="p">()</span>
 
@@ -79,6 +86,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choose_model_from_target_emotions</span><span class="p">()</span>
 
 <div class="viewcode-block" id="FERModel.train"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains FERModel on supplied image data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -91,11 +101,20 @@
         <span class="k">pass</span></div>
 
     <span class="k">def</span> <span class="nf">_emotions_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emotions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates set of user-supplied target emotions</span>
+<span class="sd">        :param emotions: list of emotions supplied by user</span>
+<span class="sd">        :return: true if emotion set is valid, false otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">emotions</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_extract_training_images_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_extract_training_images_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts training images from csv file found in user-supplied directory path</span>
+<span class="sd">        :param csv_data_path: path to directory containing image data csv file supplied by user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting training images from path...&#39;</span><span class="p">)</span>
-        <span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">data_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_data_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">images</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">labels</span>
@@ -105,12 +124,20 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_choose_model_from_target_emotions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Chooses best-performing deep learning model for the set of target emotions supplied by user.</span>
+<span class="sd">        :return: One of deep learning models from neuralnets.py</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating FER model...&#39;</span><span class="p">)</span>
+        <span class="c1"># TODO: call _extract_features for appropriate models</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span><span class="p">)</span>
         <span class="c1"># TODO: add conditionals to choose best models for all emotion subsets</span>
 
     <span class="k">def</span> <span class="nf">_extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract best-performing features from images for model. If called, features will be used for training rather than the raw images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting features from training images...&#39;</span><span class="p">)</span>
         <span class="n">temp_images</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span><span class="p">:</span>

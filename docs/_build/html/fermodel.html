@@ -22,7 +22,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ImageProcessor" href="imageprocessor.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -34,6 +35,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="imageprocessor.html" title="ImageProcessor"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -47,8 +51,23 @@
 <span id="fermodel"></span><h1>FERModel<a class="headerlink" href="#module-fermodel" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="fermodel.FERModel">
-<em class="property">class </em><code class="descclassname">fermodel.</code><code class="descname">FERModel</code><span class="sig-paren">(</span><em>target_emotions</em>, <em>train_images=None</em>, <em>data_path=None</em>, <em>extract_features=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<em class="property">class </em><code class="descclassname">fermodel.</code><code class="descname">FERModel</code><span class="sig-paren">(</span><em>target_emotions</em>, <em>train_images=None</em>, <em>csv_data_path=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>target_emotions</strong> – set of target emotions to classify</li>
+<li><strong>train_images</strong> – numpy array of training images</li>
+<li><strong>csv_data_path</strong> – local path to directory containing csv with image pixel values</li>
+<li><strong>verbose</strong> – if true, will print out extra process information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
 <dt id="fermodel.FERModel.POSSIBLE_EMOTIONS">
 <code class="descname">POSSIBLE_EMOTIONS</code><em class="property"> = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']</em><a class="headerlink" href="#fermodel.FERModel.POSSIBLE_EMOTIONS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -61,7 +80,8 @@
 <dl class="method">
 <dt id="fermodel.FERModel.train">
 <code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel.train" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Trains FERModel on supplied image data.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -73,6 +93,9 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="imageprocessor.html"
+                        title="previous chapter">ImageProcessor</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -96,6 +119,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="imageprocessor.html" title="ImageProcessor"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
