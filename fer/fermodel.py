@@ -16,7 +16,7 @@ class FERModel:
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
 
-    def __init__(self, target_emotions, train_images=None, train_labels=None, csv_data_path=None, verbose=False):
+    def __init__(self, target_emotions, train_images=None, train_labels=None, csv_data_path=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, verbose=False):
         if not self._emotions_are_valid(target_emotions):
             raise ValueError('Target emotions must be subset of %s.' % self.POSSIBLE_EMOTIONS)
         if not train_images and not csv_data_path:
@@ -27,12 +27,11 @@ class FERModel:
         self.y_train = train_labels
         self.verbose = verbose
         self.time_delay = 1
-        self.raw_dimensions = (48, 48)
         self.target_dimensions = (64, 64)
         self.channels = 1
 
         if csv_data_path:
-            self._extract_training_images_from_path(csv_data_path)
+            self._extract_training_images_from_path(csv_data_path, raw_dimensions, csv_image_col, csv_label_col)
 
         self._initialize_model()
 
@@ -59,13 +58,13 @@ class FERModel:
         """
         return set(emotions).issubset(set(self.POSSIBLE_EMOTIONS))
 
-    def _extract_training_images_from_path(self, csv_data_path):
+    def _extract_training_images_from_path(self, csv_data_path, raw_dimensions, csv_image_col, csv_label_col):
         """
         Extracts training images from csv file found in user-supplied directory path
         :param csv_data_path: path to directory containing image data csv file supplied by user
         """
         print('Extracting training images from path...')
-        imageProcessor = ImageProcessor(from_csv=True, datapath=csv_data_path, target_dimensions=self.target_dimensions, raw_dimensions=self.raw_dimensions, csv_label_col=0, csv_image_col=1, channels=1)
+        imageProcessor = ImageProcessor(from_csv=True, datapath=csv_data_path, target_dimensions=self.target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col, channels=1)
         images, labels = imageProcessor.get_training_data()
         self.train_images = images
         self.y_train = labels

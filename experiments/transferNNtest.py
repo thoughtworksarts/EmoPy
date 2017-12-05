@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../data')
+sys.path.append('../fer')
 from imageprocessor import ImageProcessor
 from neuralnets import TransferLearningNN, TimeDelayNN, ConvolutionalLstmNN
 

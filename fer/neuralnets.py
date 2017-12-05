@@ -6,6 +6,9 @@ from keras.models import Model, Sequential
 from imageprocessor import ImageProcessor
 
 class _FERNeuralNet(object):
+    """
+    Interface for all FER deep neural net classes.
+    """
 
     def __init__(self):
         self.model = None
@@ -94,8 +97,8 @@ class TimeDelayNN(_FERNeuralNet):
         super().__init__()
 
     def _init_model(self):
-        self.init_regression_model()
-        self.init_neural_net_model()
+        self._init_regression_model()
+        self._init_neural_net_model()
 
     def _init_regression_model(self):
         model = Sequential()
