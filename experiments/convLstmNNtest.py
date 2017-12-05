@@ -23,12 +23,6 @@ images, labels = imageProcessor.get_training_data()
 if verbose:
 	print ('images shape: ' + str(images.shape))
 
-temp_images = list()
-if using_feature_extraction:
-	for image in images:
-		temp_images.append(image[0])
-images = temp_images
-
 print('Extracting features...')
 featureExtractor = FeatureExtractor(images, return_2d_array=True)
 featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})

@@ -59,7 +59,7 @@ class ImageProcessor:
 
         return np.array(features)
 
-    def get_training_data_from_csv(self, test_data_percentage=0.2):
+    def get_training_data_from_csv(self):
 
         print('Extracting training data from csv...')
         start = datetime.datetime.now()
@@ -69,6 +69,7 @@ class ImageProcessor:
         with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 
+            # TODO: Remove for open sourcing or add variable for number of images to use
             tempCount = 0
 
             for row in reader:
@@ -84,11 +85,7 @@ class ImageProcessor:
                 if not self.rgb and self.channels==3:
                     image = np.array([image, image, image]).reshape((self.target_dimensions[0], self.target_dimensions[1], 3))
 
-                # io.imshow(image)
-                # plt.show()
-
-                # image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))
-                images.append([image])
+                images.append(image)
 
                 if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
                 tempCount += 1

@@ -19,7 +19,6 @@ print('Extracting training data...')
 csv_file_path = "../data/fer2013/fer2013.csv"
 root_directory = "../data/cohn_kanade_images"
 imageProcessor = ImageProcessor(from_csv=True, datapath=csv_file_path, target_dimensions=target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1)
-# imageProcessor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
 
 features, labels = imageProcessor.get_training_data()
 
