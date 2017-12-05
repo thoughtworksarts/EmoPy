@@ -57,13 +57,14 @@
 
 <div class="viewcode-block" id="ImageProcessor"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor">[docs]</a><span class="k">class</span> <span class="nc">ImageProcessor</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_csv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_csv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span> <span class="o">=</span> <span class="n">from_csv</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">datapath</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="n">target_dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span> <span class="o">=</span> <span class="n">raw_dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span> <span class="o">=</span> <span class="n">csv_label_col</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span> <span class="o">=</span> <span class="n">csv_image_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span> <span class="o">=</span> <span class="n">target_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span>
 
@@ -106,7 +107,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ImageProcessor.get_training_data_from_csv"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_training_data_from_csv">[docs]</a>    <span class="k">def</span> <span class="nf">get_training_data_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data_percentage</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageProcessor.get_training_data_from_csv"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_training_data_from_csv">[docs]</a>    <span class="k">def</span> <span class="nf">get_training_data_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting training data from csv...&#39;</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
@@ -116,10 +117,13 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
 
+            <span class="c1"># TODO: Remove for open sourcing or add variable for number of images to use</span>
             <span class="n">tempCount</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;emotion&#39;</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
                 <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">7</span>
                 <span class="n">label</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">])]</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -131,11 +135,7 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
                     <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
 
-                <span class="c1"># io.imshow(image)</span>
-                <span class="c1"># plt.show()</span>
-
-                <span class="c1"># image_3d = np.array([image, image, image]).reshape((target_image_dims[0], target_image_dims[1], 3))</span>
-                <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">image</span><span class="p">])</span>
+                <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">tempCount</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>  <span class="k">break</span>   <span class="c1"># for now only processing 10 images, o/w training will take too long</span>
                 <span class="n">tempCount</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -143,7 +143,7 @@
         <span class="c1">#data_gen = ImageDataGenerator(rotation_range=180)</span>
 
         <span class="c1">#data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor</span>
-                                <span class="c1"># TODO: functionality:</span>
+                                <span class="c1"># TODO: functionality: ImDataGen input will be dependent on experimentation results for emotion subsets</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training data extraction runtime - &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>

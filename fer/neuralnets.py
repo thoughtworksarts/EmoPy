@@ -21,10 +21,10 @@ class _FERNeuralNet(object):
     def _init_model(self):
         raise NotImplementedError("Class %s doesn't implement _init_model()" % self.__class__.__name__)
 
-    def fit(self, X_train, y_train, X_test, y_test):
+    def fit(self, x_train, y_train):
         raise NotImplementedError("Class %s doesn't implement fit()" % self.__class__.__name__)
 
-    def predict(self):
+    def predict(self, images):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
 
 
@@ -35,7 +35,7 @@ class TransferLearningNN(_FERNeuralNet):
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
     :param target_labels: list of target emotion labels
     """
-    NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
+    _NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
 
     def __init__(self, model_name, target_labels):
         self.model_name = model_name
@@ -43,33 +43,29 @@ class TransferLearningNN(_FERNeuralNet):
         super().__init__()
 
     def _init_model(self):
-
-        # create the base pre-trained model
+        """
+        Initialize base model from Keras and add top layers to match number of training emotions labels.
+        :return:
+        """
         base_model = self._get_base_model()
 
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(1024, activation='relu')(x)
-        # add a logistic layer -- FER+ has 7 prediction classes
-        # (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral)
-        predictions = Dense(units=len(self.target_labels), activation='softmax')(x)
+        top_layer_model = base_model.output
+        top_layer_model = GlobalAveragePooling2D()(top_layer_model)
+        top_layer_model = Dense(1024, activation='relu')(top_layer_model)
+        prediction_layer = Dense(units=len(self.target_labels), activation='softmax')(top_layer_model)
 
-        # this is the model we will train
-        model = Model(inputs=base_model.input, outputs=predictions)
-
+        model = Model(inputs=base_model.input, outputs=prediction_layer)
         print(model.summary())
-
-        # first: train only the top layers (which were randomly initialized)
-        # i.e. freeze all convolutional InceptionV3 layers
         for layer in base_model.layers:
             layer.trainable = False
-
-        # compile the model (should be done *after* setting layers to non-trainable)
         model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
         self.model = model
 
     def _get_base_model(self):
+        """
+        :return: base model from Keras based on user-supplied model name
+        """
         if self.model_name == 'inception_v3':
             return InceptionV3(weights='imagenet', include_top=False)
         elif self.model_name == 'xception':
@@ -90,12 +86,13 @@ class TransferLearningNN(_FERNeuralNet):
         :param features: Numpy array of training data.
         :param labels: Numpy array of target (label) data.
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
+        :param epochs: Max number of times to train over dataset.
         """
         self.model.fit(x=features, y=labels, epochs=epochs, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
 
-        for layer in self.model.layers[:self.NUM_BOTTOM_LAYERS_TO_RETRAIN]:
+        for layer in self.model.layers[:self._NUM_BOTTOM_LAYERS_TO_RETRAIN]:
             layer.trainable = False
-        for layer in self.model.layers[self.NUM_BOTTOM_LAYERS_TO_RETRAIN:]:
+        for layer in self.model.layers[self._NUM_BOTTOM_LAYERS_TO_RETRAIN:]:
             layer.trainable = True
 
         self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -103,7 +100,15 @@ class TransferLearningNN(_FERNeuralNet):
 
 
 class TimeDelayNN(_FERNeuralNet):
+    """
+    This model is broken down into two steps: regression and CNN variant.
+    The regression step is trained on the supplied image dataset, and its output is used to train the CNN. The output from the regression step is preprocessed to create new "time-delayed" datapoints. In other words, the output becomes 3-dimensional (1, regression_output_dim, number_of_previous_time_steps_considered +1)
 
+    :param feature_vector_length: length of input feature vectors used to train regression step
+    :param time_delay: number of previous datapoints to consider for each new datapoint in CNN step
+    :param num_output_values: number of classification labels
+    :param verbose: if true, will print out extra process information
+    """
     def __init__(self, feature_vector_length, time_delay=3, num_output_values=4, verbose=False):
         self.time_delay = time_delay
         self.num_output_values = num_output_values
@@ -122,7 +127,6 @@ class TimeDelayNN(_FERNeuralNet):
         self.regression_model = model
 
     def _init_neural_net_model(self):
-
         model = Sequential()
         model.add(Conv2D(filters=10, kernel_size=(self.time_delay, self.num_output_values), activation="sigmoid", input_shape=(1,self.time_delay,self.num_output_values), padding="same"))
         model.add(Flatten())
@@ -131,7 +135,6 @@ class TimeDelayNN(_FERNeuralNet):
             model.summary()
         self.model = model
 
-
     def fit(self, features, labels, validation_split, batch_size=10, epochs=20):
         """
         Trains the neural net on the data provided.
@@ -139,6 +142,8 @@ class TimeDelayNN(_FERNeuralNet):
         :param features: Numpy array of training data.
         :param labels: Numpy array of target (label) data.
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
+        :param batch_size:
+        :param epochs: Max number of times to train on input data.
         """
         self.regression_model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
         self.regression_model.fit(features, labels,
@@ -160,6 +165,9 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     :param channels: number of image channels
     :param target_labels: list of target emotion labels
     :param time_delay: number time steps for lookback
+    :param filters: number of filters/nodes per layer in CNN
+    :param kernel_size: size of sliding window for each layer of CNN
+    :param activation: name of activation function for CNN
     :param verbose: if true, will print out extra process information
     """
 
@@ -176,6 +184,9 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         super().__init__()
 
     def _init_model(self):
+        """
+        Composes all layers of CNN.
+        """
         model = Sequential()
         model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
         model.add(BatchNormalization())
@@ -183,7 +194,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         model.add(BatchNormalization())
         model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation))
         model.add(BatchNormalization())
-        model.add(Conv2D(filters=1, kernel_size=(4, 4), activation="sigmoid", data_format="channels_first"))
+        model.add(Conv2D(filters=1, kernel_size=self.kernel_size, activation="sigmoid", data_format="channels_first"))
         model.add(Flatten())
         model.add(Dense(units=len(self.target_labels), activation="sigmoid"))
         if self.verbose:
@@ -197,6 +208,8 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         :param features: Numpy array of training data.
         :param labels: Numpy array of target (label) data.
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
+        :param batch_size:
+        :param epochs: number of times to train over input dataset.
         """
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split,

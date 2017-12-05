@@ -55,7 +55,7 @@
 <span id="fer-neural-net-models"></span><h1>FER Neural Net Models<a class="headerlink" href="#module-neuralnets" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="neuralnets.ConvolutionalLstmNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalLstmNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>time_delay=2</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalLstmNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>target_labels</em>, <em>time_delay=2</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='sigmoid'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolutional Long Short Term Memory Neural Network.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -64,7 +64,12 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>image_size</strong> – dimensions of input images</li>
 <li><strong>channels</strong> – number of image channels</li>
+<li><strong>target_labels</strong> – list of target emotion labels</li>
 <li><strong>time_delay</strong> – number time steps for lookback</li>
+<li><strong>filters</strong> – number of filters/nodes per layer in CNN</li>
+<li><strong>kernel_size</strong> – size of sliding window for each layer of CNN</li>
+<li><strong>activation</strong> – name of activation function for CNN</li>
+<li><strong>verbose</strong> – if true, will print out extra process information</li>
 </ul>
 </td>
 </tr>
@@ -72,7 +77,7 @@
 </table>
 <dl class="method">
 <dt id="neuralnets.ConvolutionalLstmNN.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>batch_size=10</em>, <em>epochs=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the neural net on the data provided.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -82,6 +87,8 @@
 <li><strong>features</strong> – Numpy array of training data.</li>
 <li><strong>labels</strong> – Numpy array of target (label) data.</li>
 <li><strong>validation_split</strong> – Float between 0 and 1. Percentage of training data to use for validation</li>
+<li><strong>batch_size</strong> – </li>
+<li><strong>epochs</strong> – number of times to train over input dataset.</li>
 </ul>
 </td>
 </tr>
@@ -94,9 +101,25 @@
 <dl class="class">
 <dt id="neuralnets.TimeDelayNN">
 <em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TimeDelayNN</code><span class="sig-paren">(</span><em>feature_vector_length</em>, <em>time_delay=3</em>, <em>num_output_values=4</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>This model is broken down into two steps: regression and CNN variant.
+The regression step is trained on the supplied image dataset, and its output is used to train the CNN. The output from the regression step is preprocessed to create new “time-delayed” datapoints. In other words, the output becomes 3-dimensional (1, regression_output_dim, number_of_previous_time_steps_considered +1)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>feature_vector_length</strong> – length of input feature vectors used to train regression step</li>
+<li><strong>time_delay</strong> – number of previous datapoints to consider for each new datapoint in CNN step</li>
+<li><strong>num_output_values</strong> – number of classification labels</li>
+<li><strong>verbose</strong> – if true, will print out extra process information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="neuralnets.TimeDelayNN.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>batch_size=10</em>, <em>epochs=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the neural net on the data provided.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -106,6 +129,8 @@
 <li><strong>features</strong> – Numpy array of training data.</li>
 <li><strong>labels</strong> – Numpy array of target (label) data.</li>
 <li><strong>validation_split</strong> – Float between 0 and 1. Percentage of training data to use for validation</li>
+<li><strong>batch_size</strong> – </li>
+<li><strong>epochs</strong> – Max number of times to train on input data.</li>
 </ul>
 </td>
 </tr>
@@ -117,25 +142,28 @@
 
 <dl class="class">
 <dt id="neuralnets.TransferLearningNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TransferLearningNN</code><span class="sig-paren">(</span><em>model_name='inception_v3'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convolutional Neural Network initialized with pretrained weights.</p>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TransferLearningNN</code><span class="sig-paren">(</span><em>model_name</em>, <em>target_labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer Learning Convolutional Neural Network initialized with pretrained weights.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>image_size</strong> – dimensions of input images</li>
-<li><strong>channels</strong> – number of image channels</li>
-<li><strong>time_delay</strong> – number time steps for lookback</li>
 <li><strong>model_name</strong> – name of pretrained model to use for initial weights. Options: [‘Xception’, ‘VGG16’, ‘VGG19’, ‘ResNet50’, ‘InceptionV3’, ‘InceptionResNetV2’]</li>
+<li><strong>target_labels</strong> – list of target emotion labels</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="neuralnets.TransferLearningNN.NUM_BOTTOM_LAYERS_TO_RETRAIN">
+<code class="descname">NUM_BOTTOM_LAYERS_TO_RETRAIN</code><em class="property"> = 249</em><a class="headerlink" href="#neuralnets.TransferLearningNN.NUM_BOTTOM_LAYERS_TO_RETRAIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="neuralnets.TransferLearningNN.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>epochs=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the neural net on the data provided.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,6 +173,7 @@
 <li><strong>features</strong> – Numpy array of training data.</li>
 <li><strong>labels</strong> – Numpy array of target (label) data.</li>
 <li><strong>validation_split</strong> – Float between 0 and 1. Percentage of training data to use for validation</li>
+<li><strong>epochs</strong> – Max number of times to train over dataset.</li>
 </ul>
 </td>
 </tr>
