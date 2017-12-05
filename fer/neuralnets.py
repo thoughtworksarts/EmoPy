@@ -9,6 +9,7 @@ from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
 from imageprocessor import ImageProcessor
 
+
 class _FERNeuralNet(object):
     """
     Interface for all FER deep neural net classes.
@@ -34,6 +35,18 @@ class TransferLearningNN(_FERNeuralNet):
 
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
     :param target_labels: list of target emotion labels
+
+    **Example**::
+
+        csv_file_path = '<local csv file path>'
+        target_labels = [0,1,2,3,4,5,6]
+
+        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
+        features, labels = imageProcessor.get_training_data()
+
+        model = TransferLearningNN(model_name='inception_v3', target_labels=target_labels)
+        model.fit(features, labels, 0.15)
+
     """
     _NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
 
@@ -98,6 +111,9 @@ class TransferLearningNN(_FERNeuralNet):
         self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
         self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
 
+    def predict(self, images):
+        pass
+
 
 class TimeDelayNN(_FERNeuralNet):
     """
@@ -108,6 +124,23 @@ class TimeDelayNN(_FERNeuralNet):
     :param time_delay: number of previous datapoints to consider for each new datapoint in CNN step
     :param num_output_values: number of classification labels
     :param verbose: if true, will print out extra process information
+
+    **Example**::
+
+        target_dimensions = (128, 128)
+        target_labels = [0,1,2,3]
+
+        root_directory = '<local training image directory>'
+        imageProcessor = ImageProcessor(from_csv=False, target_labels=target_labels, datapath=root_directory, target_dimensions=target_dimensions)
+        images, labels = imageProcessor.get_training_data()
+
+        featureExtractor = FeatureExtractor(images, return_2d_array=False)
+        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
+        features = featureExtractor.extract()
+
+        tdnn = TimeDelayNN(len(features[0]), verbose=True)
+        tdnn.fit(features, labels, 0.15)
+
     """
     def __init__(self, feature_vector_length, time_delay=3, num_output_values=4, verbose=False):
         self.time_delay = time_delay
@@ -152,9 +185,12 @@ class TimeDelayNN(_FERNeuralNet):
 
         regression_predictions = self.regression_model.predict(features)
         imageProcessor = ImageProcessor()
-        features, labels = imageProcessor.get_time_delay_training_data(regression_predictions, regression_predictions)
+        features, labels = imageProcessor._get_time_delay_training_data(regression_predictions, regression_predictions)
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def predict(self, images):
+        pass
 
 
 class ConvolutionalLstmNN(_FERNeuralNet):
@@ -169,6 +205,22 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     :param kernel_size: size of sliding window for each layer of CNN
     :param activation: name of activation function for CNN
     :param verbose: if true, will print out extra process information
+
+    **Example**::
+
+        target_labels = [0,1,2,3,4,5,6]
+        csv_file_path = "<local csv file path>"
+
+        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1, channels=1)
+        images, labels = imageProcessor.get_training_data()
+
+        featureExtractor = FeatureExtractor(images, return_2d_array=True)
+        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
+        features = featureExtractor.extract()
+
+        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=target_labels, time_delay=3)
+        net.fit(features, labels, validation_split=0.15)
+
     """
 
     def __init__(self, image_size, channels, target_labels, time_delay=2, filters=10, kernel_size=(4,4), activation='sigmoid', verbose=False):
@@ -214,3 +266,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split,
             callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def predict(self, images):
+        pass
+

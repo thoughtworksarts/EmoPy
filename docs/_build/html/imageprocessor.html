@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="FERModel" href="fermodel.html" />
-    <link rel="prev" title="FeatureExtractor" href="featureextractor.html" /> 
+    <link rel="next" title="FeatureExtractor" href="featureextractor.html" />
+    <link rel="prev" title="FERNeuralNets" href="neuralnets.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,10 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fermodel.html" title="FERModel"
+          <a href="featureextractor.html" title="FeatureExtractor"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="neuralnets.html" title="FERNeuralNets"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -77,41 +77,6 @@
 </tbody>
 </table>
 <dl class="method">
-<dt id="imageprocessor.ImageProcessor.get_image_feature_array_from_directory">
-<code class="descname">get_image_feature_array_from_directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_image_feature_array_from_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_image_feature_array_from_directory" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of images from directory location, resized to specified target dimensions</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="imageprocessor.ImageProcessor.get_time_delay_training_data">
-<code class="descname">get_time_delay_training_data</code><span class="sig-paren">(</span><em>datapoints</em>, <em>labels</em>, <em>time_delay=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_time_delay_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_time_delay_training_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds time delay dimension to given datapoints.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>datapoints</strong> – list of datapoints</li>
-<li><strong>labels</strong> – list of labels</li>
-<li><strong>time_delay</strong> – number of previous time steps to add to each datapoint</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list of time-delayed datapoints</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="imageprocessor.ImageProcessor.get_training_data">
 <code class="descname">get_training_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_training_data" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -124,24 +89,6 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="imageprocessor.ImageProcessor.get_training_data_from_csv">
-<code class="descname">get_training_data_from_csv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_training_data_from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_training_data_from_csv" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of images from csv file, resized to specified target dimensions</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="imageprocessor.ImageProcessor.get_training_label_array">
-<code class="descname">get_training_label_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.get_training_label_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.get_training_label_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -153,11 +100,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="featureextractor.html"
-                        title="previous chapter">FeatureExtractor</a></p>
+  <p class="topless"><a href="neuralnets.html"
+                        title="previous chapter">FERNeuralNets</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="fermodel.html"
-                        title="next chapter">FERModel</a></p>
+  <p class="topless"><a href="featureextractor.html"
+                        title="next chapter">FeatureExtractor</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -182,10 +129,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fermodel.html" title="FERModel"
+          <a href="featureextractor.html" title="FeatureExtractor"
              >next</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="neuralnets.html" title="FERNeuralNets"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>

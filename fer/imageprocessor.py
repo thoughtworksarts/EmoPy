@@ -38,13 +38,13 @@ class ImageProcessor:
         :return: list of images from specified location with preliminary processing applied
         """
         if self.from_csv:
-            return self.get_training_data_from_csv()
+            return self._get_training_data_from_csv()
         else:
-            images = self.get_image_feature_array_from_directory()
-            labels = self.get_training_label_array()
+            images = self._get_image_feature_array_from_directory()
+            labels = self._get_training_label_array()
             return images, labels
 
-    def get_image_feature_array_from_directory(self):
+    def _get_image_feature_array_from_directory(self):
         """
         :return:  list of images from directory location, resized to specified target dimensions
         """
@@ -78,7 +78,7 @@ class ImageProcessor:
 
         return np.array(features)
 
-    def get_training_data_from_csv(self):
+    def _get_training_data_from_csv(self):
         """
         :return:  list of images from csv file, resized to specified target dimensions
         """
@@ -123,7 +123,7 @@ class ImageProcessor:
 
         return np.array(images), np.array(labels)
 
-    def get_training_label_array(self):
+    def _get_training_label_array(self):
         raw_training_labels = self._get_raw_training_labels()
         training_label_array = list()
         for time_series_key in raw_training_labels:
@@ -165,7 +165,7 @@ class ImageProcessor:
 
         return labels
 
-    def get_time_delay_training_data(self, datapoints, labels, time_delay=2):
+    def _get_time_delay_training_data(self, datapoints, labels, time_delay=2):
         """
         Adds time delay dimension to given datapoints.
 

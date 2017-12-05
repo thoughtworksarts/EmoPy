@@ -12,6 +12,16 @@ class FERModel:
     :param train_images: numpy array of training images
     :param csv_data_path: local path to directory containing csv with image pixel values
     :param verbose: if true, will print out extra process information
+
+    **Example**::
+
+        from fermodel import FERModel
+
+        target_emotions = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
+        csv_file_path = "<your local csv file path>"
+        model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(48,48), csv_image_col=1, csv_label_col=0, verbose=True)
+        model.train()
+
     """
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
@@ -48,6 +58,11 @@ class FERModel:
         self.model.fit(self.x_train, self.y_train, validation_split)
 
     def predict(self, images):
+        """
+        Predicts discrete emotions for given images.
+
+        :param images: list of images
+        """
         pass
 
     def _emotions_are_valid(self, emotions):

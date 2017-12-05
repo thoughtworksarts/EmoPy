@@ -85,13 +85,13 @@
 <span class="sd">        :return: list of images from specified location with preliminary processing applied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_training_data_from_csv</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_training_data_from_csv</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_feature_array_from_directory</span><span class="p">()</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_training_label_array</span><span class="p">()</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_image_feature_array_from_directory</span><span class="p">()</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_training_label_array</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span></div>
 
-<div class="viewcode-block" id="ImageProcessor.get_image_feature_array_from_directory"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_image_feature_array_from_directory">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_feature_array_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_image_feature_array_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:  list of images from directory location, resized to specified target dimensions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -106,7 +106,7 @@
                         <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">)</span>
                         <span class="n">image</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">rgb2gray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
                         <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_time_series_image_feature_array_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">target_image_dims</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">feature_type_index</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">vector</span> <span class="k">else</span> <span class="mi">1</span>
@@ -125,7 +125,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ImageProcessor.get_training_data_from_csv"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_training_data_from_csv">[docs]</a>    <span class="k">def</span> <span class="nf">get_training_data_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_training_data_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:  list of images from csv file, resized to specified target dimensions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -168,16 +168,16 @@
         <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training data extraction runtime - &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ImageProcessor.get_training_label_array"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_training_label_array">[docs]</a>    <span class="k">def</span> <span class="nf">get_training_label_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_training_label_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">raw_training_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_raw_training_labels</span><span class="p">()</span>
         <span class="n">training_label_array</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">time_series_key</span> <span class="ow">in</span> <span class="n">raw_training_labels</span><span class="p">:</span>
             <span class="n">time_series</span> <span class="o">=</span> <span class="n">raw_training_labels</span><span class="p">[</span><span class="n">time_series_key</span><span class="p">]</span>
             <span class="n">training_label_array</span> <span class="o">+=</span> <span class="n">time_series</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">training_label_array</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">training_label_array</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_raw_training_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Uses 20 photo series from the Cohn-Kanade dataset</span>
@@ -212,7 +212,7 @@
 
         <span class="k">return</span> <span class="n">labels</span>
 
-<div class="viewcode-block" id="ImageProcessor.get_time_delay_training_data"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.get_time_delay_training_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_time_delay_training_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datapoints</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_time_delay_training_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datapoints</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds time delay dimension to given datapoints.</span>
 
@@ -228,7 +228,7 @@
 
         <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">time_delay</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)]</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

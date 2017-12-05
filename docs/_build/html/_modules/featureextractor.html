@@ -51,20 +51,37 @@
 
 
 <div class="viewcode-block" id="FeatureExtractor"><a class="viewcode-back" href="../featureextractor.html#featureextractor.FeatureExtractor">[docs]</a><span class="k">class</span> <span class="nc">FeatureExtractor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param images: list of images</span>
+<span class="sd">    :param return_2d_array: if true, process features as 2d arrays, otherwise processes a 1d vectors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="c1"># user-supplied parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">images</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">return_2d_array</span> <span class="o">=</span> <span class="n">return_2d_array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="c1"># feature requirements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">possible_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="s1">&#39;lbp&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">required_feature_parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">required_feature_parameters</span><span class="p">[</span><span class="s1">&#39;hog&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orientations&#39;</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">,</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">required_feature_parameters</span><span class="p">[</span><span class="s1">&#39;lbp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="s1">&#39;n_points&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="FeatureExtractor.add_feature"><a class="viewcode-back" href="../featureextractor.html#featureextractor.FeatureExtractor.add_feature">[docs]</a>    <span class="k">def</span> <span class="nf">add_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the specified feature type and corresponding feature parameters to the list of types to be extracted.</span>
+
+<span class="sd">        :param feature_type: feature type (e.g. &#39;hog&#39;)</span>
+<span class="sd">        :param params: parameters corresponding to specified feature type</span>
+
+<span class="sd">        ==================      =======================================================</span>
+<span class="sd">            Possible Feature Types</span>
+<span class="sd">        -------------------------------------------------------------------------------</span>
+<span class="sd">            feature_type             required parameters</span>
+<span class="sd">        ==================      =======================================================</span>
+<span class="sd">            hog                      orientations, pixels_per_cell, cells_per_block</span>
+<span class="sd">            lbp                      radius, n_points</span>
+<span class="sd">        ==================      =======================================================</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">feature_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">possible_features</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot extract specified feature. Use one of: &#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">possible_features</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_feature_parameters</span><span class="p">[</span><span class="n">feature_type</span><span class="p">]):</span>
@@ -72,6 +89,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_params</span><span class="p">[</span><span class="n">feature_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span></div>
 
 <div class="viewcode-block" id="FeatureExtractor.extract"><a class="viewcode-back" href="../featureextractor.html#featureextractor.FeatureExtractor.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts specified feature types from input training images.</span>
+
+<span class="sd">        :return: list of features</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
             <span class="n">feature</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -81,10 +103,24 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FeatureExtractor.extract_hog_feature"><a class="viewcode-back" href="../featureextractor.html#featureextractor.FeatureExtractor.extract_hog_feature">[docs]</a>    <span class="k">def</span> <span class="nf">extract_hog_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts Histogram of Oriented Gradients (HOG) feature from images based on specified parameters.</span>
+
+<span class="sd">        :param params: user-supplied HOG feature parameters</span>
+<span class="sd">        :param image: target image</span>
+<span class="sd">        :return: feature vector/array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">feature_vector</span><span class="p">,</span> <span class="n">hog_image</span> <span class="o">=</span> <span class="n">hog</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">orientations</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;orientations&#39;</span><span class="p">],</span> <span class="n">pixels_per_cell</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">],</span> <span class="n">cells_per_block</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;cells_per_block&#39;</span><span class="p">],</span> <span class="n">visualise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">feature_vector</span><span class="p">,</span> <span class="n">hog_image</span></div>
 
 <div class="viewcode-block" id="FeatureExtractor.extract_lbp_feature"><a class="viewcode-back" href="../featureextractor.html#featureextractor.FeatureExtractor.extract_lbp_feature">[docs]</a>    <span class="k">def</span> <span class="nf">extract_lbp_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts Local Binary Pattern (LBP) feature from images based on specified parameters.</span>
+
+<span class="sd">        :param params: user-supplied LBP feature parameters</span>
+<span class="sd">        :param image: target image</span>
+<span class="sd">        :return: feature vector/array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">feature_image</span> <span class="o">=</span> <span class="n">local_binary_pattern</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;n_points&#39;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">feature_image</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">feature_image</span></div></div>
 </pre></div>

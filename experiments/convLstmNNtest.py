@@ -6,7 +6,6 @@ from neuralnets import TransferLearningNN, TimeDelayNN, ConvolutionalLstmNN
 from featureextractor import FeatureExtractor
 import numpy as np
 
-samples = None
 time_delay = 1
 raw_dimensions = (48, 48)
 target_dimensions = (64, 64)

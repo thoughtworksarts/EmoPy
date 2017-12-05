@@ -59,6 +59,16 @@
 <span class="sd">    :param train_images: numpy array of training images</span>
 <span class="sd">    :param csv_data_path: local path to directory containing csv with image pixel values</span>
 <span class="sd">    :param verbose: if true, will print out extra process information</span>
+
+<span class="sd">    **Example**::</span>
+
+<span class="sd">        from fermodel import FERModel</span>
+
+<span class="sd">        target_emotions = [&#39;anger&#39;, &#39;fear&#39;, &#39;calm&#39;, &#39;sad&#39;, &#39;happy&#39;, &#39;surprise&#39;]</span>
+<span class="sd">        csv_file_path = &quot;&lt;your local csv file path&gt;&quot;</span>
+<span class="sd">        model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(48,48), csv_image_col=1, csv_label_col=0, verbose=True)</span>
+<span class="sd">        model.train()</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">POSSIBLE_EMOTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
@@ -95,6 +105,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="n">validation_split</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FERModel.predict"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts discrete emotions for given images.</span>
+
+<span class="sd">        :param images: list of images</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
     <span class="k">def</span> <span class="nf">_emotions_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emotions</span><span class="p">):</span>

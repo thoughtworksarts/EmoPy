@@ -1,4 +1,4 @@
-FER Neural Net Models
+FERNeuralNets
 **********************
 
 .. automodule:: neuralnets

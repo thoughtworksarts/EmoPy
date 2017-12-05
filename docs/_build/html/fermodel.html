@@ -23,7 +23,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="ImageProcessor" href="imageprocessor.html" /> 
+    <link rel="next" title="FERNeuralNets" href="neuralnets.html" />
+    <link rel="prev" title="Welcome to FERPython’s documentation!" href="index.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,7 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="imageprocessor.html" title="ImageProcessor"
+          <a href="neuralnets.html" title="FERNeuralNets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to FERPython’s documentation!"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -67,6 +71,15 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fermodel</span> <span class="k">import</span> <span class="n">FERModel</span>
+
+<span class="n">target_emotions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
+<span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;your local csv file path&gt;&quot;</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FERModel</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="attribute">
 <dt id="fermodel.FERModel.POSSIBLE_EMOTIONS">
 <code class="descname">POSSIBLE_EMOTIONS</code><em class="property"> = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']</em><a class="headerlink" href="#fermodel.FERModel.POSSIBLE_EMOTIONS" title="Permalink to this definition">¶</a></dt>
@@ -75,7 +88,16 @@
 <dl class="method">
 <dt id="fermodel.FERModel.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Predicts discrete emotions for given images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>images</strong> – list of images</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="fermodel.FERModel.train">
@@ -94,8 +116,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="imageprocessor.html"
-                        title="previous chapter">ImageProcessor</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to FERPython’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="neuralnets.html"
+                        title="next chapter">FERNeuralNets</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -120,7 +145,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="imageprocessor.html" title="ImageProcessor"
+          <a href="neuralnets.html" title="FERNeuralNets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to FERPython’s documentation!"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>FER Neural Net Models &#8212; FERPython 1.0 documentation</title>
+    <title>FERNeuralNets &#8212; FERPython 1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="FeatureExtractor" href="featureextractor.html" />
-    <link rel="prev" title="Welcome to FERPython’s documentation!" href="index.html" /> 
+    <link rel="next" title="ImageProcessor" href="imageprocessor.html" />
+    <link rel="prev" title="FERModel" href="fermodel.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,10 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="imageprocessor.html" title="ImageProcessor"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to FERPython’s documentation!"
+          <a href="fermodel.html" title="FERModel"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -52,7 +52,7 @@
           <div class="body" role="main">
             
   <div class="section" id="module-neuralnets">
-<span id="fer-neural-net-models"></span><h1>FER Neural Net Models<a class="headerlink" href="#module-neuralnets" title="Permalink to this headline">¶</a></h1>
+<span id="ferneuralnets"></span><h1>FERNeuralNets<a class="headerlink" href="#module-neuralnets" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="neuralnets.ConvolutionalLstmNN">
 <em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalLstmNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>target_labels</em>, <em>time_delay=2</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='sigmoid'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN" title="Permalink to this definition">¶</a></dt>
@@ -75,6 +75,21 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;local csv file path&gt;&quot;</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+
+<span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">featureExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="neuralnets.ConvolutionalLstmNN.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>batch_size=10</em>, <em>epochs=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN.fit" title="Permalink to this definition">¶</a></dt>
@@ -95,6 +110,11 @@
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="neuralnets.ConvolutionalLstmNN.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -117,6 +137,22 @@ The regression step is trained on the supplied image dataset, and its output is 
 </tr>
 </tbody>
 </table>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="n">root_directory</span> <span class="o">=</span> <span class="s1">&#39;&lt;local training image directory&gt;&#39;</span>
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">root_directory</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="n">target_dimensions</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+
+<span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">featureExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+<span class="n">tdnn</span> <span class="o">=</span> <span class="n">TimeDelayNN</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tdnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="neuralnets.TimeDelayNN.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>batch_size=10</em>, <em>epochs=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN.fit" title="Permalink to this definition">¶</a></dt>
@@ -138,6 +174,11 @@ The regression step is trained on the supplied image dataset, and its output is 
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="neuralnets.TimeDelayNN.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -156,6 +197,17 @@ The regression step is trained on the supplied image dataset, and its output is 
 </tr>
 </tbody>
 </table>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">csv_file_path</span> <span class="o">=</span> <span class="s1">&#39;&lt;local csv file path&gt;&#39;</span>
+<span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">TransferLearningNN</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;inception_v3&#39;</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="neuralnets.TransferLearningNN.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>features</em>, <em>labels</em>, <em>validation_split</em>, <em>epochs=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN.fit" title="Permalink to this definition">¶</a></dt>
@@ -176,6 +228,11 @@ The regression step is trained on the supplied image dataset, and its output is 
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="neuralnets.TransferLearningNN.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -187,11 +244,11 @@ The regression step is trained on the supplied image dataset, and its output is 
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to FERPython’s documentation!</a></p>
+  <p class="topless"><a href="fermodel.html"
+                        title="previous chapter">FERModel</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="featureextractor.html"
-                        title="next chapter">FeatureExtractor</a></p>
+  <p class="topless"><a href="imageprocessor.html"
+                        title="next chapter">ImageProcessor</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -216,10 +273,10 @@ The regression step is trained on the supplied image dataset, and its output is 
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="imageprocessor.html" title="ImageProcessor"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to FERPython’s documentation!"
+          <a href="fermodel.html" title="FERModel"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FERPython 1.0 documentation</a> &#187;</li> 
       </ul>

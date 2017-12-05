@@ -10,11 +10,11 @@ Welcome to FERPython's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   neuralnets
-   featureextractor
-   imageprocessor
    fermodel
-   
+   neuralnets
+   imageprocessor
+   featureextractor
+
 Indices and tables
 ==================
 

@@ -5,10 +5,13 @@ from imageprocessor import ImageProcessor
 from neuralnets import TransferLearningNN, TimeDelayNN, ConvolutionalLstmNN
 from featureextractor import FeatureExtractor
 
+
+# ------------- PARAMETERS -------------- #
 verbose = True
 target_dimensions = (128, 128)
 raw_dimensions = (48, 48)
 target_labels = [0,1,2,3]
+
 print('--------------- Regression + TimeDelayNN Model -------------------')
 print('Collecting data...')
 root_directory = '../data/cohn_kanade_images'
