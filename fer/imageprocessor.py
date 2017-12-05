@@ -10,13 +10,14 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 class ImageProcessor:
 
-    def __init__(self, from_csv=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, rgb=False, channels=3):
+    def __init__(self, from_csv, target_labels, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, rgb=False, channels=3):
         self.from_csv = from_csv
         self.datapath = datapath
         self.target_dimensions = target_dimensions
         self.raw_dimensions = raw_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
+        self.target_labels = target_labels
         self.rgb = rgb
         self.channels = channels
 
@@ -74,6 +75,8 @@ class ImageProcessor:
 
             for row in reader:
                 if row[self.csv_label_col] == 'emotion': continue
+                if int(row[self.csv_label_col]) not in self.target_labels:
+                    continue
 
                 label = [0]*7
                 label[int(row[self.csv_label_col])] = 1.0
@@ -93,7 +96,7 @@ class ImageProcessor:
         #data_gen = ImageDataGenerator(rotation_range=180)
 
         #data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor
-                                # TODO: functionality:
+                                # TODO: functionality: ImDataGen input will be dependent on experimentation results for emotion subsets
 
         end = datetime.datetime.now()
         print('Training data extraction runtime - ' + str(end-start))

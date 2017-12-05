@@ -16,6 +16,7 @@ imageProcessor = ImageProcessor(from_csv=False, datapath=root_directory, target_
 images, labels = imageProcessor.get_training_data()
 
 print ('images shape: ' + str(images.shape))
+print ('labels shape: ' + str(labels.shape))
 print('Extracting features...')
 featureExtractor = FeatureExtractor(images, return_2d_array=False)
 featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})

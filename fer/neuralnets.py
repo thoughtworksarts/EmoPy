@@ -34,8 +34,9 @@ class TransferLearningNN(_FERNeuralNet):
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
     """
     #TODO: update constructor parameters
-    def __init__(self, model_name='inception_v3'):
+    def __init__(self, model_name, target_labels):
         self.model_name = model_name
+        self.target_labels = target_labels
         super().__init__()
 
     def _init_model(self):
@@ -50,7 +51,7 @@ class TransferLearningNN(_FERNeuralNet):
         x = Dense(1024, activation='relu')(x)
         # add a logistic layer -- FER+ has 7 prediction classes
         # (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral)
-        predictions = Dense(units=7, activation='softmax')(x)
+        predictions = Dense(units=len(self.target_labels), activation='softmax')(x)
 
         # this is the model we will train
         model = Model(inputs=base_model.input, outputs=predictions)
@@ -145,10 +146,11 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     :param time_delay: number time steps for lookback
     """
 
-    def __init__(self, image_size, channels, time_delay=2, verbose=False):
+    def __init__(self, image_size, channels, target_labels, time_delay=2, verbose=False):
         self.time_delay = time_delay
         self.channels = channels
         self.image_size = image_size
+        self.target_labels = target_labels
         self.verbose = verbose
         super().__init__()
 
@@ -162,7 +164,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         model.add(BatchNormalization())
         model.add(Conv2D(filters=1, kernel_size=(4, 4), activation="sigmoid", data_format="channels_first"))
         model.add(Flatten())
-        model.add(Dense(units=7, activation="sigmoid"))
+        model.add(Dense(units=len(self.target_labels), activation="sigmoid"))
         if self.verbose:
             model.summary()
         self.model = model
