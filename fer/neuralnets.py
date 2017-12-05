@@ -1,4 +1,8 @@
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.xception import Xception
+from keras.applications.vgg16 import VGG16
+from keras.applications.vgg19 import VGG19
+from keras.applications.resnet50 import ResNet50
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D, Conv3D
 from keras.layers.normalization import BatchNormalization
@@ -26,14 +30,11 @@ class _FERNeuralNet(object):
 
 class TransferLearningNN(_FERNeuralNet):
     """
-    Convolutional Neural Network initialized with pretrained weights.
+    Transfer Learning Convolutional Neural Network initialized with pretrained weights.
 
-    :param image_size: dimensions of input images
-    :param channels: number of image channels
-    :param time_delay: number time steps for lookback
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
+    :param target_labels: list of target emotion labels
     """
-    #TODO: update constructor parameters
     def __init__(self, model_name, target_labels):
         self.model_name = model_name
         self.target_labels = target_labels
@@ -42,9 +43,7 @@ class TransferLearningNN(_FERNeuralNet):
     def _init_model(self):
 
         # create the base pre-trained model
-        base_model = None
-        if self.model_name == 'inception_v3':
-            base_model = InceptionV3(weights='imagenet', include_top=False)
+        base_model = self._get_base_model()
 
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
@@ -67,6 +66,20 @@ class TransferLearningNN(_FERNeuralNet):
         model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
         self.model = model
+
+    def _get_base_model(self):
+        if self.model_name == 'inception_v3':
+            return InceptionV3(weights='imagenet', include_top=False)
+        elif self.model_name == 'xception':
+            return Xception(weights='imagenet', include_top=False)
+        elif self.model_name == 'vgg16':
+            return VGG16(weights='imagenet', include_top=False)
+        elif self.model_name == 'vgg19':
+            return VGG19(weights='imagenet', include_top=False)
+        elif self.model_name == 'resnet50':
+            return ResNet50(weights='imagenet', include_top=False)
+        else:
+            raise ValueError('Cannot find base model %s' % self.model_name)
 
     def fit(self, features, labels, validation_split):
         """
@@ -143,7 +156,9 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
     :param image_size: dimensions of input images
     :param channels: number of image channels
+    :param target_labels: list of target emotion labels
     :param time_delay: number time steps for lookback
+    :param verbose: if true, will print out extra process information
     """
 
     def __init__(self, image_size, channels, target_labels, time_delay=2, verbose=False):

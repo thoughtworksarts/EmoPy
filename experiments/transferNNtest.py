@@ -9,7 +9,7 @@ verbose = True
 target_dimensions = (128, 128)
 raw_dimensions = (48, 48)
 target_labels = [0,1,2,3,4,5,6]
-model_name = 'inception_v3'
+model_name = 'resnet50'
 
 print('--------------- Inception-V3 Model -------------------')
 print('Creating NN with InceptionV3 base model...')
