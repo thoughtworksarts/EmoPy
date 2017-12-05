@@ -9,7 +9,19 @@ from keras.preprocessing.image import ImageDataGenerator
 EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
 class ImageProcessor:
+    """
+    Contains various image preprocessing methods.
 
+    :param from_csv: if true, images will be extracted from csv file
+    :param target_labels: list of target label values/strings
+    :param datapath: location of image dataset
+    :param target_dimensions: final dimensions of training images
+    :param raw_dimensions: initial dimensions of raw training images
+    :param csv_label_col: index of label value column in csv
+    :param csv_image_col: index of image column in csv
+    :param rgb: true if images are in rgb
+    :param channels: number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input
+    """
     def __init__(self, from_csv=None, target_labels=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, rgb=False, channels=3):
         self.from_csv = from_csv
         self.datapath = datapath
@@ -22,6 +34,9 @@ class ImageProcessor:
         self.channels = channels
 
     def get_training_data(self):
+        """
+        :return: list of images from specified location with preliminary processing applied
+        """
         if self.from_csv:
             return self.get_training_data_from_csv()
         else:
@@ -30,6 +45,9 @@ class ImageProcessor:
             return images, labels
 
     def get_image_feature_array_from_directory(self):
+        """
+        :return:  list of images from directory location, resized to specified target dimensions
+        """
         images = list()
         for sub_directory in os.listdir(self.datapath):
             if not sub_directory.startswith('.'):
@@ -43,7 +61,7 @@ class ImageProcessor:
                         images.append(image)
         return np.array(images)
 
-    def get_time_series_image_feature_array_from_directory(self, datapath, target_image_dims, vector=True):
+    def _get_time_series_image_feature_array_from_directory(self, datapath, target_image_dims, vector=True):
         feature_type_index = 0 if vector else 1
         feature = Feature()
         features = list()
@@ -61,7 +79,9 @@ class ImageProcessor:
         return np.array(features)
 
     def get_training_data_from_csv(self):
-
+        """
+        :return:  list of images from csv file, resized to specified target dimensions
+        """
         print('Extracting training data from csv...')
         start = datetime.datetime.now()
 
@@ -104,7 +124,7 @@ class ImageProcessor:
         return np.array(images), np.array(labels)
 
     def get_training_label_array(self):
-        raw_training_labels = self.get_raw_training_labels()
+        raw_training_labels = self._get_raw_training_labels()
         training_label_array = list()
         for time_series_key in raw_training_labels:
             time_series = raw_training_labels[time_series_key]
@@ -112,7 +132,7 @@ class ImageProcessor:
 
         return np.array(training_label_array)
 
-    def get_raw_training_labels(self):
+    def _get_raw_training_labels(self):
         # Uses 20 photo series from the Cohn-Kanade dataset
         # hand labeled by AP
         # arousal(least, most), valence(negative, positive), power, anticipation
@@ -145,10 +165,18 @@ class ImageProcessor:
 
         return labels
 
-    def get_time_delay_training_data(self, datapoints, labels, time_delay=2, testing_percentage=0.25):
+    def get_time_delay_training_data(self, datapoints, labels, time_delay=2):
+        """
+        Adds time delay dimension to given datapoints.
+
+        :param datapoints: list of datapoints
+        :param labels: list of labels
+        :param time_delay: number of previous time steps to add to each datapoint
+        :return: list of time-delayed datapoints
+        """
         features = list()
         for data_point_idx in range(time_delay, len(datapoints)):
-            data_point = [datapoints[data_point_idx-offset] for offset in range(time_delay+1)]
+            data_point = [datapoints[data_point_idx - offset] for offset in range(time_delay + 1)]
             features.append([data_point])
 
         labels = labels[time_delay:len(labels)]
