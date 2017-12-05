@@ -35,6 +35,8 @@ class TransferLearningNN(_FERNeuralNet):
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
     :param target_labels: list of target emotion labels
     """
+    NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
+
     def __init__(self, model_name, target_labels):
         self.model_name = model_name
         self.target_labels = target_labels
@@ -81,7 +83,7 @@ class TransferLearningNN(_FERNeuralNet):
         else:
             raise ValueError('Cannot find base model %s' % self.model_name)
 
-    def fit(self, features, labels, validation_split):
+    def fit(self, features, labels, validation_split, epochs=50):
         """
         Trains the neural net on the data provided.
 
@@ -89,11 +91,11 @@ class TransferLearningNN(_FERNeuralNet):
         :param labels: Numpy array of target (label) data.
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
         """
-        self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
+        self.model.fit(x=features, y=labels, epochs=epochs, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
 
-        for layer in self.model.layers[:249]:
+        for layer in self.model.layers[:self.NUM_BOTTOM_LAYERS_TO_RETRAIN]:
             layer.trainable = False
-        for layer in self.model.layers[249:]:
+        for layer in self.model.layers[self.NUM_BOTTOM_LAYERS_TO_RETRAIN:]:
             layer.trainable = True
 
         self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -124,13 +126,13 @@ class TimeDelayNN(_FERNeuralNet):
         model = Sequential()
         model.add(Conv2D(filters=10, kernel_size=(self.time_delay, self.num_output_values), activation="sigmoid", input_shape=(1,self.time_delay,self.num_output_values), padding="same"))
         model.add(Flatten())
-        model.add(Dense(units=4, activation="sigmoid"))
+        model.add(Dense(units=self.num_output_values, activation="sigmoid"))
         if self.verbose:
             model.summary()
         self.model = model
 
 
-    def fit(self, features, labels, validation_split):
+    def fit(self, features, labels, validation_split, batch_size=10, epochs=20):
         """
         Trains the neural net on the data provided.
 
@@ -140,14 +142,14 @@ class TimeDelayNN(_FERNeuralNet):
         """
         self.regression_model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
         self.regression_model.fit(features, labels,
-                       batch_size=1, epochs=20,
+                       batch_size=batch_size, epochs=epochs,
                        validation_split=0.0, shuffle=True)
 
         regression_predictions = self.regression_model.predict(features)
         imageProcessor = ImageProcessor()
         features, labels = imageProcessor.get_time_delay_training_data(regression_predictions, regression_predictions)
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
-        self.model.fit(features, labels, batch_size=10, epochs=100, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+        self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
 
 class ConvolutionalLstmNN(_FERNeuralNet):
@@ -161,21 +163,25 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     :param verbose: if true, will print out extra process information
     """
 
-    def __init__(self, image_size, channels, target_labels, time_delay=2, verbose=False):
+    def __init__(self, image_size, channels, target_labels, time_delay=2, filters=10, kernel_size=(4,4), activation='sigmoid', verbose=False):
         self.time_delay = time_delay
         self.channels = channels
         self.image_size = image_size
         self.target_labels = target_labels
         self.verbose = verbose
+
+        self.filters = filters
+        self.kernel_size = kernel_size
+        self.activation = activation
         super().__init__()
 
     def _init_model(self):
         model = Sequential()
-        model.add(ConvLSTM2D(filters=10, kernel_size=(4, 4), activation="sigmoid", input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
         model.add(BatchNormalization())
-        model.add(ConvLSTM2D(filters=10, kernel_size=(4, 4), activation="sigmoid", input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
         model.add(BatchNormalization())
-        model.add(ConvLSTM2D(filters=10, kernel_size=(4, 4), activation="sigmoid")) #, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation))
         model.add(BatchNormalization())
         model.add(Conv2D(filters=1, kernel_size=(4, 4), activation="sigmoid", data_format="channels_first"))
         model.add(Flatten())
@@ -184,7 +190,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
             model.summary()
         self.model = model
 
-    def fit(self, features, labels, validation_split):
+    def fit(self, features, labels, validation_split, batch_size=10, epochs=50):
         """
         Trains the neural net on the data provided.
 
@@ -193,5 +199,5 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
         """
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
-        self.model.fit(features, labels, batch_size=10, epochs=100, validation_split=validation_split,
+        self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split,
             callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])

@@ -8,11 +8,11 @@ from featureextractor import FeatureExtractor
 verbose = True
 target_dimensions = (128, 128)
 raw_dimensions = (48, 48)
-
+target_labels = [0,1,2,3]
 print('--------------- Regression + TimeDelayNN Model -------------------')
 print('Collecting data...')
 root_directory = '../data/cohn_kanade_images'
-imageProcessor = ImageProcessor(from_csv=False, datapath=root_directory, target_dimensions=target_dimensions, raw_dimensions=None)
+imageProcessor = ImageProcessor(from_csv=False, target_labels=target_labels, datapath=root_directory, target_dimensions=target_dimensions, raw_dimensions=None)
 images, labels = imageProcessor.get_training_data()
 
 print ('images shape: ' + str(images.shape))
