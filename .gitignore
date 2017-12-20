@@ -8,3 +8,5 @@ dist/
 Riot_python.egg-info
 *.pyc
 build/
+data/
+trained_models/
