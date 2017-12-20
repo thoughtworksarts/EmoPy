@@ -8,20 +8,22 @@ The aim of this project is to make accurate [Facial Expression Recognition (FER)
 
 ## Overview
 
-EmoPy includes four primary modules that are plugged together to build a trained FER prediction model:
+EmoPy includes four primary modules that are plugged together to build a trained FER prediction model.
 
 - `fermodel.py`
 - `neuralnets.py`
 - `imageprocessor.py`
 - `featureextractor.py`
 
-These modules all have only one class each, except for `neuralnets.py`, which has one interface and three subclasses:
+The `fermodel.py` module operates the other modules as shown below, making it the easiest entry point to get a trained model up and running quickly.
 
 ![EmoPy Modules](readme_docs/module_diagram.png "EmoPy Modules")
 
-The `fermodel` class operates all the other module classes shown above, making it the easiest entry point to get a trained model up and running quickly. As the diagram shows, the modules are designed to allow you to experiment with raw images, processed images, and feature extraction.
+The `imageprocessor.py` and `featureextractor.py` modules are designed to allow you to experiment with raw images, processed images, and feature extraction.
 
-To dig further into the modules and classes, [read the EmoPy documentation](https://emopy.readthedocs.io/).
+Each of the modules contains one class, except for `neuralnets.py`, which has one interface and three subclasses. Each of these subclasses implements a different neural net model, allowing you to experiment and see which one performs best for your needs.
+
+The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed information on the classes and their interactions. Also, an overview of the different neural nets included in this project is included below.
 
 ## Datasets
 
@@ -60,9 +62,7 @@ Now you're ready to go!
 
 ## Running the examples
 
-You can find example code to run each of the current neural net classes in the [examples](examples) subdirectory. The [example](examples/fermodel_example.py) of the FERModel class, shown below, is so easy to use that all you have to supply is a set of target emotions and a data path. Eventually FERModel will choose the best-performing neural net based on the set of target emotions.
-
-#### Example using FERModel:
+You can find example code to run each of the current neural net classes in [examples](examples). The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
 
 ```python
 import sys
@@ -75,14 +75,16 @@ model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(4
 model.train()
 ```
 
-The example above initializes and trains an FER deep neural net model for the target emotions listed using the sample images from the a small [csv dataset](examples/image_data/sample.csv). Once you have completed the installation step, you can run the example by moving into the examples folder and running the example script like so:
+The code above initializes and trains an FER deep neural net model for the target emotions listed using the sample images from the a small [csv dataset](examples/image_data/sample.csv). As you can see, all you have to supply with this example is a set of target emotions and a data path.
+
+Once you have completed the installation, you can run this example by moving into the examples folder and running the example script.
 
 ```
 cd examples
 python fermodel_example.py
 ```
 
-When you run the example, you will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
+You will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
 
 ![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
 
@@ -108,7 +110,7 @@ If you would like to experiment with different parameters using our neural net c
 
 - __Experimentation to Maximize Performance__. Optimal performance in FER prediction is a primary goal. The deep neural net classes are designed to easily modify training parameters, image pre-processing options, and feature extraction methods in the hopes that experimentation in the open-source community will lead to high-performing FER prediction.
 
-- __Modularity.__ EmoPy contains four base modules (fermodel, neuralnets, imageprocessor, and featureextractor) that can be easily used together with minimal restrictions. 
+- __Modularity.__ EmoPy contains four base modules (`fermodel`, `neuralnets`, `imageprocessor`, and `featureextractor`) that can be easily used together with minimal restrictions. 
 
 ## Contributing
 
