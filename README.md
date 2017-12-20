@@ -34,8 +34,8 @@ Predictions ideally perform well on a diversity of datasets, illumination condit
 To get started, clone the directory and open it in your terminal.
 
 ```
-git clone https://github.com/thoughtworksarts/fer-python.git
-cd fer-python
+git clone https://github.com/thoughtworksarts/EmoPy.git
+cd EmoPy
 ```
 
 You will need to install Python 3.6.3. We recommend setting up a Python virtual environment using pyenv. Install pyenv with homebrew:
@@ -86,7 +86,7 @@ When you run the example, you will see the training and validation accuracies of
 
 ![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
 
-## Current Performance 
+## Performance
 
 Currently the ConvolutionalLstmNN model is performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
 
