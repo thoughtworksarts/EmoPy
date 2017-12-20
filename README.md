@@ -1,41 +1,37 @@
-# FERPython
-FERPython is a [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) python toolbox containing deep neural net classes that accurately predict emotions given facial expression images. These models can be trained on FER image datasets and used to predict emotions from new facial expression images.
+# EmoPy
+EmoPy is a python toolkit with deep neural net classes which accurately predict emotions given images of people's faces.
 
 ![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")
 *Figure from [@Chen2014FacialER]*
 
-This is a community effort, initiated by the [ThoughtWorks Arts Residency](https://thoughtworksarts.io/) program in New York and based on the paper of Dr. Hongying Meng at Brunel University in London. 
+The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects. We also aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
 
-Our aim is to make this research available to all as a public, easy-to-use FER toolkit that you can use fairly easily out of the box. We are also looking to expand our development community and are open to contributions - you can [contact us](mailto:aperez@thoughtworks.com) to discuss.
+## Overview
 
-## Toolkit Overview
+EmoPy includes four primary modules that are plugged together to build a trained FER prediction model:
 
-FERPython includes four primary modules that are plugged together to build a trained FER prediction model:
+- `fermodel.py`
+- `neuralnets.py`
+- `imageprocessor.py`
+- `featureextractor.py`
 
-- __fermodel.py__
-- __neuralnets.py__
-- __imageprocessor.py__
-- __featureextractor.py__
+These modules all have only one class each, except for `neuralnets.py`, which has one interface and three subclasses:
 
-The diagram below shows these modules, their responsibilities, and the different paths training images can take through them to build a trained model. 
+![EmoPy Modules](readme_docs/module_diagram.png "EmoPy Modules")
 
-![FERPython Modules](readme_docs/module_diagram.png "FERPython Modules")
+The `fermodel` class operates all the other module classes shown above, making it the easiest entry point to get a trained model up and running quickly. As the diagram shows, the modules are designed to allow you to experiment with raw images, processed images, and feature extraction.
 
-You never know which patterns a neural net is going to pick up on. Experimenting with raw images, altered/augmented images, and features extracted from images can lead to interesting results. The modularity of FERPython allows for this experimentation.
-
-The FERModel class encapsulates the entire process seen in the diagram. It's job is to be the easiest tool to get a trained model up and running by using all the other module classes under the hood.
-
-Further FERPython documentation can be found [here](emopy.readthedocs.io).
+To dig further into the modules and classes, [read the EmoPy documentation](https://emopy.readthedocs.io/).
 
 ## Datasets
 
-As of this moment, in order to use this repository you will have to provide your own facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
+As of this moment, in order to use this repository you will have to provide your own facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
 
-Predictions ideally perform well on diverse datasets, illumination conditions, and subsets of the standard 7 emotion labels (i.e. happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
+Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
 ## Installation
 
-The first step is to clone the directory and open it in your terminal.
+To get started, clone the directory and open it in your terminal.
 
 ```
 git clone https://github.com/thoughtworksarts/fer-python.git
@@ -54,7 +50,7 @@ pyenv install 3.6.3
 pyenv local 3.6.3
 ```
  
-Once Python 3.6.3 is set up, install all additional dependencies:
+Once Python 3.6.3 is set up, install the dependencies:
 
 ```
 pip install -r requirements.txt
@@ -62,7 +58,7 @@ pip install -r requirements.txt
 
 Now you're ready to go!
 
-## Get Started in 5 minutes!
+## Running the examples
 
 You can find example code to run each of the current neural net classes in the [examples](examples) subdirectory. The [example](examples/fermodel_example.py) of the FERModel class, shown below, is so easy to use that all you have to supply is a set of target emotions and a data path. Eventually FERModel will choose the best-performing neural net based on the set of target emotions.
 
@@ -92,7 +88,7 @@ When you run the example, you will see the training and validation accuracies of
 
 ## Current Performance 
 
-Currently the ConvolutionalLstmNN model is currently performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
+Currently the ConvolutionalLstmNN model is performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
 
 | Neural Net Model    | 7 emotions        |                     | 3 emotions        |                     |
 |---------------------|-------------------|---------------------|-------------------|---------------------|
@@ -106,13 +102,13 @@ If you would like to experiment with different parameters using our neural net c
 
 ## Guiding Principles
 
-- __FER for Good__. FER applications have the potential to be used for malicious purposes. We want to build FERPython with a community that champions integrity, transparency, and awareness and hope to instill these values throughout development while maintaining an accessible, quality toolkit.
+- __FER for Good__. FER applications have the potential to be used for malicious purposes. We want to build EmoPy with a community that champions integrity, transparency, and awareness and hope to instill these values throughout development while maintaining an accessible, quality toolkit.
 
-- __User Friendliness.__ FERPython prioritizes user experience and is designed to be as easy as possible to get an FER prediction model up and running by minimizing the total user requirements for basic use cases.
+- __User Friendliness.__ EmoPy prioritizes user experience and is designed to be as easy as possible to get an FER prediction model up and running by minimizing the total user requirements for basic use cases.
 
 - __Experimentation to Maximize Performance__. Optimal performance in FER prediction is a primary goal. The deep neural net classes are designed to easily modify training parameters, image pre-processing options, and feature extraction methods in the hopes that experimentation in the open-source community will lead to high-performing FER prediction.
 
-- __Modularity.__ FERPython contains four base modules (fermodel, neuralnets, imageprocessor, and featureextractor) that can be easily used together with minimal restrictions. 
+- __Modularity.__ EmoPy contains four base modules (fermodel, neuralnets, imageprocessor, and featureextractor) that can be easily used together with minimal restrictions. 
 
 ## Contributing
 
@@ -123,6 +119,5 @@ If you would like to experiment with different parameters using our neural net c
 5. Submit a pull request :D
 
 This is a new library that has a lot of room for growth. Check out the list of open issues that we need help addressing! 
-
 
 [@Chen2014FacialER]: https://www.semanticscholar.org/paper/Facial-Expression-Recognition-Based-on-Facial-Comp-Chen-Chen/677ebde61ba3936b805357e27fce06c44513a455 "Facial Expression Recognition Based on Facial Components Detection and HOG Features"
