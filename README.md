@@ -16,7 +16,22 @@ Predictions ideally perform well on diverse datasets, illumination conditions, a
 
 ## Toolkit Overview
 
-The library includes deep neural net classes in the neuralnets.py module that use image pre-processing, feature extraction, and regression classes/functions found in additional modules. Documentation can be found here.
+FERPython includes four primary modules that are plugged together to build a trained FER prediction model:
+
+- __fermodel.py__
+- __neuralnets.py__
+- __imageprocessor.py__
+- __featureextractor.py__
+
+The diagram below shows these modules, their responsibilities, and the different paths training images can take through them to build a trained model. 
+
+![FERPython Modules](readme_docs/module_diagram.png "FERPython Modules")
+
+You never know which patterns a neural net is going to pick up on. Experimenting with raw images, altered/augmented images, and features extracted from images can lead to interesting results. The modularity of FERPython allows for this experimentation.
+
+The FERModel class encapsulates the entire process seen in the diagram. It's job is to be the easiest tool to get a trained model up and running by using all the other module classes under the hood.
+
+Further FERPython documentation can be found here.
 
 ## Installation
 
