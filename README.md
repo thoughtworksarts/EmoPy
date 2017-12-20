@@ -25,7 +25,7 @@ You never know which patterns a neural net is going to pick up on. Experimenting
 
 The FERModel class encapsulates the entire process seen in the diagram. It's job is to be the easiest tool to get a trained model up and running by using all the other module classes under the hood.
 
-Further FERPython documentation can be found [here](ferpython.readthedocs.io).
+Further FERPython documentation can be found [here](emopy.readthedocs.io).
 
 ## Datasets
 
