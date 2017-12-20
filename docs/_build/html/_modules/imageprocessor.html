@@ -52,7 +52,6 @@
 <span class="kn">from</span> <span class="nn">keras.preprocessing.image</span> <span class="k">import</span> <span class="n">ImageDataGenerator</span>
 
 
-<span class="c1"># TODO: Do we need this global?</span>
 <span class="n">EMOTION_DIMENSION_COUNT</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># emotional dimensions: arousal, valence, expectation, power</span>
 
 <div class="viewcode-block" id="ImageProcessor"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor">[docs]</a><span class="k">class</span> <span class="nc">ImageProcessor</span><span class="p">:</span>
@@ -69,13 +68,14 @@
 <span class="sd">    :param rgb: true if images are in rgb</span>
 <span class="sd">    :param channels: number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_csv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_csv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">augment_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span> <span class="o">=</span> <span class="n">from_csv</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">datapath</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="n">target_dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_dimensions</span> <span class="o">=</span> <span class="n">raw_dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span> <span class="o">=</span> <span class="n">csv_label_col</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span> <span class="o">=</span> <span class="n">csv_image_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augment_data</span> <span class="o">=</span> <span class="n">augment_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span> <span class="o">=</span> <span class="n">target_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span>
@@ -137,9 +137,6 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
 
-            <span class="c1"># TODO: Remove for open sourcing or add variable for number of images to use</span>
-            <span class="n">tempCount</span> <span class="o">=</span> <span class="mi">0</span>
-
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;emotion&#39;</span><span class="p">:</span> <span class="k">continue</span>
                 <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span><span class="p">:</span>
@@ -157,12 +154,9 @@
 
                 <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">tempCount</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>  <span class="k">break</span>   <span class="c1"># for now only processing 10 images, o/w training will take too long</span>
-                <span class="n">tempCount</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="c1">#data_gen = ImageDataGenerator(rotation_range=180)</span>
-
-        <span class="c1">#data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_data</span><span class="p">:</span>
+            <span class="n">data_gen</span> <span class="o">=</span> <span class="n">ImageDataGenerator</span><span class="p">(</span><span class="n">rotation_range</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+            <span class="n">data_gen</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>   <span class="c1"># TODO: functionality: send data_gen new image set to feature extractor</span>
                                 <span class="c1"># TODO: functionality: ImDataGen input will be dependent on experimentation results for emotion subsets</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
