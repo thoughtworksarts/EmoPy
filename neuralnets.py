@@ -65,9 +65,9 @@ class TransferLearningNN(_FERNeuralNet):
         top_layer_model = base_model.output
         top_layer_model = GlobalAveragePooling2D()(top_layer_model)
         top_layer_model = Dense(1024, activation='relu')(top_layer_model)
-        prediction_layer = Dense(units=len(self.target_labels), activation='softmax')(top_layer_model)
+        prediction_layer = Dense(output_dim=len(self.target_labels), activation='softmax')(top_layer_model)
 
-        model = Model(inputs=base_model.input, outputs=prediction_layer)
+        model = Model(input=base_model.input, output=prediction_layer)
         print(model.summary())
         for layer in base_model.layers:
             layer.trainable = False
@@ -112,7 +112,7 @@ class TransferLearningNN(_FERNeuralNet):
         self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
 
     def predict(self, images):
-        pass
+        self.model.predict(images)
 
 
 class TimeDelayNN(_FERNeuralNet):
@@ -268,5 +268,5 @@ class ConvolutionalLstmNN(_FERNeuralNet):
             callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
     def predict(self, images):
-        pass
+        self.model.predict(images)
 

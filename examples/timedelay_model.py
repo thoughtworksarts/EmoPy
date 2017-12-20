@@ -1,8 +1,7 @@
 import sys
-sys.path.append('../data')
-sys.path.append('../fer')
+sys.path.append('../')
 from imageprocessor import ImageProcessor
-from neuralnets import TransferLearningNN, TimeDelayNN, ConvolutionalLstmNN
+from neuralnets import TimeDelayNN
 from featureextractor import FeatureExtractor
 
 
@@ -14,7 +13,7 @@ target_labels = [0,1,2,3]
 
 print('--------------- Regression + TimeDelayNN Model -------------------')
 print('Collecting data...')
-root_directory = '../data/cohn_kanade_images'
+root_directory = 'image_data/sample_directory'
 imageProcessor = ImageProcessor(from_csv=False, target_labels=target_labels, datapath=root_directory, target_dimensions=target_dimensions, raw_dimensions=None)
 images, labels = imageProcessor.get_training_data()
 
@@ -23,7 +22,6 @@ print ('labels shape: ' + str(labels.shape))
 print('Extracting features...')
 featureExtractor = FeatureExtractor(images, return_2d_array=False)
 featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-# featureExtractor.add_feature('lbp', {'n_points': 24, 'radius': 3})
 features = featureExtractor.extract()
 print ("features shape: " + str(features.shape))
 

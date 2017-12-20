@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 from keras.preprocessing.image import ImageDataGenerator
 
 
-# TODO: Do we need this global?
 EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectation, power
 
 class ImageProcessor:
@@ -22,13 +21,14 @@ class ImageProcessor:
     :param rgb: true if images are in rgb
     :param channels: number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input
     """
-    def __init__(self, from_csv=None, target_labels=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, rgb=False, channels=3):
+    def __init__(self, from_csv=None, target_labels=None, datapath=None, target_dimensions=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, augment_data=False, rgb=False, channels=3):
         self.from_csv = from_csv
         self.datapath = datapath
         self.target_dimensions = target_dimensions
         self.raw_dimensions = raw_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
+        self.augment_data = augment_data
         self.target_labels = target_labels
         self.rgb = rgb
         self.channels = channels
@@ -90,9 +90,6 @@ class ImageProcessor:
         with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 
-            # TODO: Remove for open sourcing or add variable for number of images to use
-            tempCount = 0
-
             for row in reader:
                 if row[self.csv_label_col] == 'emotion': continue
                 if int(row[self.csv_label_col]) not in self.target_labels:
@@ -110,12 +107,9 @@ class ImageProcessor:
 
                 images.append(image)
 
-                if tempCount == 9:  break   # for now only processing 10 images, o/w training will take too long
-                tempCount += 1
-
-        #data_gen = ImageDataGenerator(rotation_range=180)
-
-        #data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor
+        if self.augment_data:
+            data_gen = ImageDataGenerator(rotation_range=180)
+            data_gen.fit(images)   # TODO: functionality: send data_gen new image set to feature extractor
                                 # TODO: functionality: ImDataGen input will be dependent on experimentation results for emotion subsets
 
         end = datetime.datetime.now()

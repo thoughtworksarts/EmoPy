@@ -24,7 +24,7 @@ class FERModel:
 
     """
 
-    POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
+    POSSIBLE_EMOTIONS = ['anger', 'fear', 'neutral', 'sad', 'happy', 'surprise', 'disgust']
 
     def __init__(self, target_emotions, train_images=None, train_labels=None, csv_data_path=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, verbose=False):
         if not self._emotions_are_valid(target_emotions):
@@ -79,7 +79,7 @@ class FERModel:
         :param csv_data_path: path to directory containing image data csv file supplied by user
         """
         print('Extracting training images from path...')
-        imageProcessor = ImageProcessor(from_csv=True, datapath=csv_data_path, target_dimensions=self.target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col, channels=1)
+        imageProcessor = ImageProcessor(from_csv=True, datapath=csv_data_path, target_labels=[0,1,2,3,4,5,6,7], target_dimensions=self.target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col, channels=1)
         images, labels = imageProcessor.get_training_data()
         self.train_images = images
         self.y_train = labels
@@ -94,10 +94,8 @@ class FERModel:
         :return: One of deep learning models from neuralnets.py
         """
         print('Creating FER model...')
-        # TODO: call _extract_features for appropriate models
-        if self.target_emotions == self.POSSIBLE_EMOTIONS:
-            self._extract_features()
-            return ConvolutionalLstmNN(self.target_dimensions, self.channels, time_delay=self.time_delay)
+        self._extract_features()    # TODO: call _extract_features for appropriate models
+        return ConvolutionalLstmNN(self.target_dimensions, self.channels, target_labels=range(len(self.target_emotions)), time_delay=self.time_delay)
         # TODO: add conditionals to choose best models for all emotion subsets
 
     def _extract_features(self):
@@ -105,14 +103,8 @@ class FERModel:
         Extract best-performing features from images for model. If called, features will be used for training rather than the raw images.
         """
         print('Extracting features from training images...')
-        temp_images = list()
-        for image in self.train_images:
-            temp_images.append(image[0])
-        images = temp_images
-
-        featureExtractor = FeatureExtractor(images, return_2d_array=True)
-        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-        #featureExtractor.add_feature('lbp', {'n_points': 24, 'radius': 3})
+        featureExtractor = FeatureExtractor(self.train_images, return_2d_array=True)
+        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
         raw_features = featureExtractor.extract()
         features = list()
         for feature in raw_features:
