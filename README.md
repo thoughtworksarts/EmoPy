@@ -8,12 +8,6 @@ This is a community effort, initiated by the [ThoughtWorks Arts Residency](https
 
 Our aim is to make this research available to all as a public, easy-to-use FER toolkit that you can use fairly easily out of the box. We are also looking to expand our development community and are open to contributions - you can [contact us](mailto:aperez@thoughtworks.com) to discuss.
 
-## Datasets
-
-As of this moment, in order to use this repository you will have to provide your own facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
-
-Predictions ideally perform well on diverse datasets, illumination conditions, and subsets of the standard 7 emotion labels (i.e. happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
-
 ## Toolkit Overview
 
 FERPython includes four primary modules that are plugged together to build a trained FER prediction model:
@@ -32,6 +26,12 @@ You never know which patterns a neural net is going to pick up on. Experimenting
 The FERModel class encapsulates the entire process seen in the diagram. It's job is to be the easiest tool to get a trained model up and running by using all the other module classes under the hood.
 
 Further FERPython documentation can be found here.
+
+## Datasets
+
+As of this moment, in order to use this repository you will have to provide your own facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
+
+Predictions ideally perform well on diverse datasets, illumination conditions, and subsets of the standard 7 emotion labels (i.e. happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
 ## Installation
 
@@ -89,6 +89,20 @@ python fermodel_example.py
 When you run the example, you will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
 
 ![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
+
+## Current Performance 
+
+Currently the ConvolutionalLstmNN model is currently performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
+
+| Neural Net Model    | 7 emotions        |                     | 3 emotions        |                     |
+|---------------------|-------------------|---------------------|-------------------|---------------------|
+|                     | Training Accuracy | Validation Accuracy | Training Accuracy | Validation Accuracy |
+| ConvolutionalLstmNN | 0.6187            | 0.4751              | 0.9148            | 0.6267              |
+| TransferLearningNN  | 0.5358            | 0.2933              | 0.7393            | 0.4840              |
+
+Both models are overfitting, meaning that training accuracies are much higher than validation accuracies. This means that the models are doing a really good job of recognizing and classifying patterns in the training images, but are overgeneralizing. They are less accurate when predicting emotions for new images.
+
+If you would like to experiment with different parameters using our neural net classes, we recommend you use [FloydHub](https://www.floydhub.com/about), a platform for training and deploying deep learning models in the cloud. Let us know how your models are doing! The goal is to optimize the performance and generalizability of all the FERPython models.
 
 ## Guiding Principles
 
