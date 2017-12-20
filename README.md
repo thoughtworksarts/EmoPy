@@ -14,24 +14,6 @@ As of this moment, in order to use this repository you will have to provide your
 
 Predictions ideally perform well on diverse datasets, illumination conditions, and subsets of the standard 7 emotion labels (i.e. happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
------
-
-TODO: add ReadTheDocs link
-
-TODO: rewrite run on sentences
-
-TODO: Add diagrams to overview and explanation
-
-TODO: Add how long it'll take to install and run a model
-
-TODO: change audience
-TODO: be more clear
-We want the help of the open-source community to experiment with deep neural network architectures to improve their performance in the context of FER and develop a public, easy-to-use FER toolkit. We want to provide pre-trained prediction models for quick and easy experimentation and a top-layer class (FERModel) that can be used to train and/or predict by simply supplying an image dataset.
-
-Note: Levy Rosenthal
-    wave sythesis - 3d measurement of emotion, arousal and ??
-
-
 ## Toolkit Overview
 
 The library includes deep neural net classes in the neuralnets.py module that use image pre-processing, feature extraction, and regression classes/functions found in additional modules. Documentation can be found here.
@@ -65,11 +47,9 @@ pip install -r requirements.txt
 
 Now you're ready to go!
 
-## Try Out Some Examples
+## Get Started in 5 minutes!
 
-You can find example code to run each of the current neural net classes in the [examples](examples) subdirectory. The  example of the FERModel class below is so easy to use that all you have to supply is a set of target emotions and a data path. Eventually FERModel will choose the best-performing neural net based on the set of target emotions.
-
-TODO: Clone this directory and cd into examples folder.
+You can find example code to run each of the current neural net classes in the [examples](examples) subdirectory. The [example](examples/fermodel_example.py) of the FERModel class, shown below, is so easy to use that all you have to supply is a set of target emotions and a data path. Eventually FERModel will choose the best-performing neural net based on the set of target emotions.
 
 #### Example using FERModel:
 
@@ -84,7 +64,16 @@ model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(4
 model.train()
 ```
 
-TODO: When you run this example, you will see an output that looks like blah blah
+The example above initializes and trains an FER deep neural net model for the target emotions listed using the sample images from the a small [csv dataset](examples/image_data/sample.csv). Once you have completed the installation step, you can run the example by moving into the examples folder and running the example script like so:
+
+```
+cd examples
+python fermodel_example.py
+```
+
+When you run the example, you will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
+
+![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
 
 ## Guiding Principles
 
