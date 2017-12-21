@@ -143,6 +143,8 @@ If you would like to experiment with different parameters using our neural net c
 
 ## Guiding Principles
 
+These are the principals we use to guide development and contributions to the project:
+
 - __FER for Good__. FER applications have the potential to be used for malicious purposes. We want to build EmoPy with a community that champions integrity, transparency, and awareness and hope to instill these values throughout development while maintaining an accessible, quality toolkit.
 
 - __User Friendliness.__ EmoPy prioritizes user experience and is designed to be as easy as possible to get an FER prediction model up and running by minimizing the total user requirements for basic use cases.
