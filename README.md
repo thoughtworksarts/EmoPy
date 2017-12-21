@@ -40,19 +40,32 @@ git clone https://github.com/thoughtworksarts/EmoPy.git
 cd EmoPy
 ```
 
-You will need to install Python 3.6.3. We recommend setting up a Python virtual environment using pyenv. Install pyenv with homebrew:
+You will need to install Python 3.6.3 using Homebrew. If you do not have Homebrew installed run this command to install:
 
 ```
-brew install pyenv
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-Next install Python 3.6.3 using pyenv and set it as the local distribution while in the fer-python directory:
+Now you can install Python 3.6.3 using Homebrew.
+
 ```
-pyenv install 3.6.3
-pyenv local 3.6.3
+brew install python3
 ```
- 
-Once Python 3.6.3 is set up, install the dependencies:
+
+The next step is to set up a virtual environment using virtualenv. Install virtualenv with sudo.
+```
+sudo pip install virtualenv
+```
+
+To create and activate the virtual environment, make sure you are in the ```EmoPy``` directory and run:
+```
+virtualenv -p $(which python3) venv
+source venv/bin/activate
+```
+
+Your terminal command line should now be prefixed with ```(venv)```. 
+  
+The last step is to install the remaining dependencies using pip:
 
 ```
 pip install -r requirements.txt
