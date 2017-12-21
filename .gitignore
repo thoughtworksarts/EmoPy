@@ -10,3 +10,4 @@ Riot_python.egg-info
 build/
 data/
 trained_models/
+venv/

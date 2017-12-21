@@ -65,13 +65,15 @@ source venv/bin/activate
 
 Your terminal command line should now be prefixed with ```(venv)```. 
   
-The last step is to install the remaining dependencies using pip:
+The last step is to install the remaining dependencies using pip.
 
 ```
 pip install -r requirements.txt
 ```
 
 Now you're ready to go!
+
+To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.
 
 ## Running the examples
 
