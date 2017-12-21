@@ -88,7 +88,33 @@ You will see the training and validation accuracies of the model being updated a
 
 ![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
 
-## Performance
+## Comparison of neural network models
+
+#### TimeDelayNN
+
+This model is based on the approach described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal data for training. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain n number of images from a series. The idea is to capture the progression of a facial expression leading up to a peak emotion.
+
+![Facial Expression Image Sequence](readme_docs/progression-example.png "Facial expression image sequence")
+Facial expression image sequence in Cohn-Kanade database from [@Jia2014]
+
+The Time-Delay model described in Dr. Meng’s paper runs two steps: a regression method to compute an initial prediction value followed by a convolutional neural network (CNN). The initial regression step outputs predictions for each of the training image samples in the form of a 4D vector of AVEP (arousal, valence, expectation, power) values, which can be mapped to emotions. These initial predictions are then processed into time-delayed training samples; each sample includes the prediction value of the original image along with the prediction values of the *n* previous images in the series. These samples result in matrices of shape *4 x n* that are used to train the CNN in the second step. 
+
+The primary purpose of the initial regression step was to reduce the size of the CNN input and thus reduce runtime. Moving forward, the regression step will likely be removed from the model architecture. This will give the CNN richer data to work with. It is the time-delay applied to the training samples that is novel about this approach and it will be applied to the training image samples when further experimenting with this model. 
+
+#### ConvolutionalLstmNN
+
+This is a convolutional and recurrent neural network hybrid. Convolutional NNs (CNNs) use kernels, or filters, to find patterns in smaller parts of an image. Recurrent NNs (RNNs) take into account previous training examples, similar to the TimeDelayNN, for context. This model is able to both extract local data from images and use temporal context.
+
+The TimeDelayNN model and this model differ in how they use temporal context. The former only takes context from within video clips of a single face as shown in the figure above. The ConvolutionLstmNN is given still images that have no relation to each other. It looks for pattern differences between past image samples and the current sample as well as their labels. It isn’t necessary to have a progression of the same face, simply different faces to compare.
+
+![7 Standard Facial Expressions](readme_docs/seven-expression-examples.jpg "7 Standard Facial Expressions")
+Figure from [@vanGent2016]
+
+#### TransferLearningNN
+
+This model uses pre-trained deep neural net models as a starting point. The pre-trained models it uses were trained on images to classify objects. The model then retrains the pre-trained models using facial expression images with emotion classifications rather than object classifications. It adds a couple top layers to the original model to match the number of target emotions we want to classify and reruns the training algorithm with a set of facial expression images. It only uses still images, no temporal context.
+
+## Performance 
 
 Currently the ConvolutionalLstmNN model is performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
 
@@ -123,3 +149,7 @@ If you would like to experiment with different parameters using our neural net c
 This is a new library that has a lot of room for growth. Check out the list of open issues that we need help addressing! 
 
 [@Chen2014FacialER]: https://www.semanticscholar.org/paper/Facial-Expression-Recognition-Based-on-Facial-Comp-Chen-Chen/677ebde61ba3936b805357e27fce06c44513a455 "Facial Expression Recognition Based on Facial Components Detection and HOG Features"
+
+[@Jia2014]: https://www.researchgate.net/figure/Fig-2-Facial-expression-image-sequence-in-Cohn-Kanade-database_257627744_fig1 "Head and facial gestures synthesis using PAD model for an expressive talking avatar"
+
+[@vanGent2016]: http://www.paulvangent.com/2016/04/01/emotion-recognition-with-python-opencv-and-a-face-dataset/ "Emotion Recognition With Python, OpenCV and a Face Dataset. A tech blog about fun things with Python and embedded electronics."
