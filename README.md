@@ -27,7 +27,7 @@ The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed infor
 
 ## Datasets
 
-As of this moment, in order to use this repository you will have to provide your own facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
+As of this moment, in order to use this repository you will have to provide your own labeled facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
@@ -107,7 +107,7 @@ You will see the training and validation accuracies of the model being updated a
 
 #### TimeDelayNN
 
-This model is based on the approach described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal data for training. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain n number of images from a series. The idea is to capture the progression of a facial expression leading up to a peak emotion.
+The Time-Delayed Neural Network model is based on the approach described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal information as part of its training samples. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain *n* number of images from a series and its emotion label will be that of the most recent image. The idea is to capture the progression of a facial expression leading up to a peak emotion.
 
 ![Facial Expression Image Sequence](readme_docs/progression-example.png "Facial expression image sequence")
 Facial expression image sequence in Cohn-Kanade database from [@Jia2014]
@@ -118,16 +118,16 @@ The primary purpose of the initial regression step was to reduce the size of the
 
 #### ConvolutionalLstmNN
 
-This is a convolutional and recurrent neural network hybrid. Convolutional NNs (CNNs) use kernels, or filters, to find patterns in smaller parts of an image. Recurrent NNs (RNNs) take into account previous training examples, similar to the TimeDelayNN, for context. This model is able to both extract local data from images and use temporal context.
+The Convolutional Long Short Term Memory neural net is a convolutional and recurrent neural network hybrid. Convolutional NNs ([CNNs](https://medium.com/technologymadeeasy/the-best-explanation-of-convolutional-neural-networks-on-the-internet-fbb8b1ad5df8)) use kernels, or filters, to find patterns in smaller parts of an image. Recurrent NNs ([RNNs](https://deeplearning4j.org/lstm.html#recurrent)) take into account previous training examples, similar to the Time-Delay Neural Network, for context. This model is able to both extract local data from images and use temporal context.
 
-The TimeDelayNN model and this model differ in how they use temporal context. The former only takes context from within video clips of a single face as shown in the figure above. The ConvolutionLstmNN is given still images that have no relation to each other. It looks for pattern differences between past image samples and the current sample as well as their labels. It isn’t necessary to have a progression of the same face, simply different faces to compare.
+The Time-Delay model and this model differ in how they use temporal context. The former only takes context from within video clips of a single face as shown in the figure above. The ConvolutionLstmNN is given still images that have no relation to each other. It looks for pattern differences between past image samples and the current sample as well as their labels. It isn’t necessary to have a progression of the same face, simply different faces to compare.
 
 ![7 Standard Facial Expressions](readme_docs/seven-expression-examples.jpg "7 Standard Facial Expressions")
 Figure from [@vanGent2016]
 
 #### TransferLearningNN
 
-This model uses pre-trained deep neural net models as a starting point. The pre-trained models it uses were trained on images to classify objects. The model then retrains the pre-trained models using facial expression images with emotion classifications rather than object classifications. It adds a couple top layers to the original model to match the number of target emotions we want to classify and reruns the training algorithm with a set of facial expression images. It only uses still images, no temporal context.
+This model uses a technique known as [Transfer Learning](https://www.analyticsvidhya.com/blog/2017/06/transfer-learning-the-art-of-fine-tuning-a-pre-trained-model/), where pre-trained deep neural net models are used as starting points. The pre-trained models it uses are trained on images to classify objects. The model then retrains the pre-trained models using facial expression images with emotion classifications rather than object classifications. It adds a couple top layers to the original model to match the number of target emotions we want to classify and reruns the training algorithm with a set of facial expression images. It only uses still images, no temporal context.
 
 ## Performance 
 
