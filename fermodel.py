@@ -95,7 +95,7 @@ class FERModel:
         """
         print('Creating FER model...')
         self._extract_features()    # TODO: call _extract_features for appropriate models
-        return ConvolutionalLstmNN(self.target_dimensions, self.channels, target_labels=range(len(self.target_emotions)), time_delay=self.time_delay)
+        return ConvolutionalLstmNN(self.target_dimensions, self.channels, target_labels=range(len(self.target_emotions)), time_delay=self.time_delay, verbose=self.verbose)
         # TODO: add conditionals to choose best models for all emotion subsets
 
     def _extract_features(self):
