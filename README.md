@@ -21,7 +21,7 @@ The `fermodel.py` module operates the other modules as shown below, making it th
 
 The `imageprocessor.py` and `featureextractor.py` modules are designed to allow you to experiment with raw images, processed images, and feature extraction.
 
-Each of the modules contains one class, except for `neuralnets.py`, which has one interface and three subclasses. Each of these subclasses implements a different neural net model, allowing you to experiment and see which one performs best for your needs.
+Each of the modules contains one class, except for `neuralnets.py`, which has one interface and three subclasses. Each of these subclasses implements a different neural net model using the Keras framework with Tensorflow backend, allowing you to experiment and see which one performs best for your needs.
 
 The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed information on the classes and their interactions. Also, an overview of the different neural nets included in this project is included below.
 
