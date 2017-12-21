@@ -99,9 +99,13 @@ cd examples
 python fermodel_example.py
 ```
 
+The first thing the example does is initialize the model. A summary of the model architecture will be printed out. This includes a list of all the neural net layers and the shape of their output. Our models are built using the Keras framework, which offers this visualization function.
+
+![ConvLstmNN Architecture](readme_docs/convlstm-layers-print-statement.png "ConvLstmNN Architecture")
+
 You will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
 
-![FERModel Training Output](readme_docs/sample_fermodel_output.png "FERModel Training Output")
+![FERModel Training Output](readme_docs/sample-fermodel-output.png "FERModel Training Output")
 
 ## Comparison of neural network models
 
