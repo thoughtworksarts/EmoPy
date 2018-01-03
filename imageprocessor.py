@@ -1,7 +1,6 @@
 import os, csv, cv2, math, datetime
 from skimage import color, io
 import numpy as np
-from matplotlib import pyplot as plt
 from keras.preprocessing.image import ImageDataGenerator
 
 

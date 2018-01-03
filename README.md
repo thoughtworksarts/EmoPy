@@ -27,7 +27,7 @@ The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed infor
 
 ## Datasets
 
-As of this moment, in order to use this repository you will have to provide your own labeled facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or one of the small datasets we have provided in the [image-data](image-data) subdirectory.
+As of this moment, in order to use this repository you will have to provide your own labeled facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or a small dataset we have provided in the [image-data](image-data) subdirectory.
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
