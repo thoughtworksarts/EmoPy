@@ -7,7 +7,7 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D, Conv3D
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
-from imageprocessor import ImageProcessor
+from dataloader import DataLoader
 
 
 class _FERNeuralNet(object):
@@ -184,8 +184,8 @@ class TimeDelayNN(_FERNeuralNet):
                        validation_split=0.0, shuffle=True)
 
         regression_predictions = self.regression_model.predict(features)
-        imageProcessor = ImageProcessor()
-        features, labels = imageProcessor._get_time_delay_training_data(regression_predictions, regression_predictions)
+        dataLoader = DataLoader()
+        features, labels = dataLoader._get_time_delay_data(regression_predictions, regression_predictions)
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 

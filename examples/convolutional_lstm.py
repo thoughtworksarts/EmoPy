@@ -1,10 +1,10 @@
 import sys
 sys.path.append('../')
 from imageprocessor import ImageProcessor
+from dataloader import DataLoader
 from neuralnets import ConvolutionalLstmNN
 from featureextractor import FeatureExtractor
 import numpy as np
-from skimage import color, io
 
 time_delay = 1
 raw_dimensions = (48, 48)
@@ -16,12 +16,19 @@ target_labels = [0,1,2,3,4,5,6]
 
 
 print('--------------- Convolutional LSTM Model -------------------')
-print('Collecting data...')
+print('Loading data...')
 csv_file_path = "image_data/sample.csv"
-imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=target_dimensions, raw_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1, channels=1)
-images, labels = imageProcessor.get_training_data()
+
+dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1)
+images, labels = dataLoader.get_data()
 if verbose:
-	print ('images shape: ' + str(images.shape))
+    print('raw image shape: ' + str(images.shape))
+
+print('Processing data...')
+imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, rgb=False, channels=1)
+images = imageProcessor.process_training_data()
+if verbose:
+	print ('processed image shape: ' + str(images.shape))
 
 print('Extracting features...')
 featureExtractor = FeatureExtractor(images, return_2d_array=True)
