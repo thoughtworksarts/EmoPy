@@ -127,7 +127,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting training images from path...&#39;</span><span class="p">)</span>
         <span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_data_path</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="n">csv_label_col</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="n">csv_image_col</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+        <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">images</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">labels</span>
 
@@ -142,7 +142,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating FER model...&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">()</span>    <span class="c1"># TODO: call _extract_features for appropriate models</span>
-        <span class="k">return</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">)),</span> <span class="n">time_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">)),</span> <span class="n">time_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
         <span class="c1"># TODO: add conditionals to choose best models for all emotion subsets</span>
 
     <span class="k">def</span> <span class="nf">_extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -196,7 +196,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, AP.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ImageProcessor &#8212; EmoPy 1.0 documentation</title>
+    <title>DataLoader &#8212; EmoPy 1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="FeatureExtractor" href="featureextractor.html" />
-    <link rel="prev" title="ImageProcessor" href="dataloader.html" /> 
+    <link rel="next" title="ImageProcessor" href="imageprocessor.html" />
+    <link rel="prev" title="FERNeuralNets" href="neuralnets.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,10 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="imageprocessor.html" title="ImageProcessor"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="ImageProcessor"
+          <a href="neuralnets.html" title="FERNeuralNets"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">EmoPy 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -51,33 +51,36 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-imageprocessor">
-<span id="imageprocessor"></span><h1>ImageProcessor<a class="headerlink" href="#module-imageprocessor" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-dataloader">
+<span id="dataloader"></span><h1>DataLoader<a class="headerlink" href="#module-dataloader" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="imageprocessor.ImageProcessor">
-<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>images</em>, <em>target_dimensions=None</em>, <em>augment_data=False</em>, <em>rgb=False</em>, <em>channels=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.</p>
+<dt id="dataloader.DataLoader">
+<em class="property">class </em><code class="descclassname">dataloader.</code><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>from_csv=None</em>, <em>target_labels=None</em>, <em>datapath=None</em>, <em>image_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads images and labels from dataset path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>target_dimensions</strong> – final dimensions of training images</li>
-<li><strong>rgb</strong> – true if images are in rgb</li>
-<li><strong>channels</strong> – number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input</li>
+<li><strong>from_csv</strong> – if true, images will be extracted from csv file</li>
+<li><strong>target_labels</strong> – list of target label values/strings</li>
+<li><strong>datapath</strong> – location of image dataset</li>
+<li><strong>image_dimensions</strong> – initial dimensions of raw training images</li>
+<li><strong>csv_label_col</strong> – index of label value column in csv</li>
+<li><strong>csv_image_col</strong> – index of image column in csv</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="imageprocessor.ImageProcessor.process_training_data">
-<code class="descname">process_training_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.process_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.process_training_data" title="Permalink to this definition">¶</a></dt>
+<dt id="dataloader.DataLoader.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataloader.html#DataLoader.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataloader.DataLoader.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of processed images</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of images and list of corresponding labels from specified location</td>
 </tr>
 </tbody>
 </table>
@@ -94,11 +97,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dataloader.html"
-                        title="previous chapter">ImageProcessor</a></p>
+  <p class="topless"><a href="neuralnets.html"
+                        title="previous chapter">FERNeuralNets</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="featureextractor.html"
-                        title="next chapter">FeatureExtractor</a></p>
+  <p class="topless"><a href="imageprocessor.html"
+                        title="next chapter">ImageProcessor</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -123,10 +126,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="imageprocessor.html" title="ImageProcessor"
              >next</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="ImageProcessor"
+          <a href="neuralnets.html" title="FERNeuralNets"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">EmoPy 1.0 documentation</a> &#187;</li> 
       </ul>

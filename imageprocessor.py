@@ -7,7 +7,7 @@ EMOTION_DIMENSION_COUNT = 4 # emotional dimensions: arousal, valence, expectatio
 
 class ImageProcessor:
     """
-    Contains various image preprocessing methods.
+    Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.
 
     :param target_dimensions: final dimensions of training images
     :param rgb: true if images are in rgb

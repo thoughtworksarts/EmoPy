@@ -54,7 +54,7 @@
 <span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">GlobalAveragePooling2D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">ConvLSTM2D</span><span class="p">,</span> <span class="n">Conv3D</span>
 <span class="kn">from</span> <span class="nn">keras.layers.normalization</span> <span class="k">import</span> <span class="n">BatchNormalization</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
-<span class="kn">from</span> <span class="nn">imageprocessor</span> <span class="k">import</span> <span class="n">ImageProcessor</span>
+<span class="kn">from</span> <span class="nn">dataloader</span> <span class="k">import</span> <span class="n">DataLoader</span>
 
 
 <span class="k">class</span> <span class="nc">_FERNeuralNet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -231,8 +231,8 @@
                        <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">regression_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-        <span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">()</span>
-        <span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">_get_time_delay_training_data</span><span class="p">(</span><span class="n">regression_predictions</span><span class="p">,</span> <span class="n">regression_predictions</span><span class="p">)</span>
+        <span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">()</span>
+        <span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">_get_time_delay_data</span><span class="p">(</span><span class="n">regression_predictions</span><span class="p">,</span> <span class="n">regression_predictions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s2">&quot;RMSProp&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;cosine_proximity&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="n">validation_split</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">ReduceLROnPlateau</span><span class="p">(),</span> <span class="n">EarlyStopping</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">3</span><span class="p">)])</span></div>
 
@@ -353,7 +353,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, AP.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

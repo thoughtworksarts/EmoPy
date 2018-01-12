@@ -12,6 +12,7 @@ Welcome to EmoPy's documentation!
 
    fermodel
    neuralnets
+   dataloader
    imageprocessor
    featureextractor
 
