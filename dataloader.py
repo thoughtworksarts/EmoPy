@@ -32,9 +32,6 @@ class DataLoader:
             return self._get_data_from_directory()
         else:
             return self._get_image_series_data_from_directory()
-            # images = self._get_image_series_from_directory()
-            # labels = self._get_image_series_labels()
-            # return images, labels
 
     def _get_data_from_directory(self):
         """
