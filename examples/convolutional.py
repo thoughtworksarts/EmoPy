@@ -3,7 +3,6 @@ sys.path.append('../')
 from imageprocessor import ImageProcessor
 from dataloader import DataLoader
 from neuralnets import ConvolutionalNN
-from featureextractor import FeatureExtractor
 import numpy as np
 
 target_dimensions = (64, 64)
