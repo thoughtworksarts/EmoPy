@@ -51,7 +51,7 @@
 <span class="kn">from</span> <span class="nn">keras.applications.vgg19</span> <span class="k">import</span> <span class="n">VGG19</span>
 <span class="kn">from</span> <span class="nn">keras.applications.resnet50</span> <span class="k">import</span> <span class="n">ResNet50</span>
 <span class="kn">from</span> <span class="nn">keras.callbacks</span> <span class="k">import</span> <span class="n">ReduceLROnPlateau</span><span class="p">,</span> <span class="n">EarlyStopping</span>
-<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">GlobalAveragePooling2D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">ConvLSTM2D</span><span class="p">,</span> <span class="n">Conv3D</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">GlobalAveragePooling2D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">ConvLSTM2D</span><span class="p">,</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPooling2D</span><span class="p">,</span> <span class="n">Dropout</span>
 <span class="kn">from</span> <span class="nn">keras.layers.normalization</span> <span class="k">import</span> <span class="n">BatchNormalization</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
 <span class="kn">from</span> <span class="nn">dataloader</span> <span class="k">import</span> <span class="n">DataLoader</span>
@@ -88,11 +88,14 @@
 <span class="sd">        csv_file_path = &#39;&lt;local csv file path&gt;&#39;</span>
 <span class="sd">        target_labels = [0,1,2,3,4,5,6]</span>
 
-<span class="sd">        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1)</span>
-<span class="sd">        features, labels = imageProcessor.get_training_data()</span>
+<span class="sd">        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)</span>
+<span class="sd">        images, labels = dataLoader.get_data()</span>
+
+<span class="sd">        imageProcessor = ImageProcessor(images, target_dimensions=(64,64))</span>
+<span class="sd">        images = imageProcessor.process_training_data()</span>
 
 <span class="sd">        model = TransferLearningNN(model_name=&#39;inception_v3&#39;, target_labels=target_labels)</span>
-<span class="sd">        model.fit(features, labels, 0.15)</span>
+<span class="sd">        model.fit(images, labels, 0.15)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_NUM_BOTTOM_LAYERS_TO_RETRAIN</span> <span class="o">=</span> <span class="mi">249</span>
@@ -178,8 +181,11 @@
 <span class="sd">        target_labels = [0,1,2,3]</span>
 
 <span class="sd">        root_directory = &#39;&lt;local training image directory&gt;&#39;</span>
-<span class="sd">        imageProcessor = ImageProcessor(from_csv=False, target_labels=target_labels, datapath=root_directory, target_dimensions=target_dimensions)</span>
-<span class="sd">        images, labels = imageProcessor.get_training_data()</span>
+<span class="sd">        dataLoader = DataLoader(from_csv=False, target_labels=target_labels, datapath=root_directory, image_dimensions=raw_dimensions, avep=True)</span>
+<span class="sd">        images, labels = dataLoader.get_data()</span>
+
+<span class="sd">        imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, channels=1)</span>
+<span class="sd">        images = imageProcessor.process_training_data()</span>
 
 <span class="sd">        featureExtractor = FeatureExtractor(images, return_2d_array=False)</span>
 <span class="sd">        featureExtractor.add_feature(&#39;hog&#39;, {&#39;orientations&#39;: 8, &#39;pixels_per_cell&#39;: (16, 16), &#39;cells_per_block&#39;: (1, 1)})</span>
@@ -258,8 +264,11 @@
 <span class="sd">        target_labels = [0,1,2,3,4,5,6]</span>
 <span class="sd">        csv_file_path = &quot;&lt;local csv file path&gt;&quot;</span>
 
-<span class="sd">        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1, channels=1)</span>
-<span class="sd">        images, labels = imageProcessor.get_training_data()</span>
+<span class="sd">        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)</span>
+<span class="sd">        images, labels = dataLoader.get_data()</span>
+
+<span class="sd">        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)</span>
+<span class="sd">        images = imageProcessor.process_training_data()</span>
 
 <span class="sd">        featureExtractor = FeatureExtractor(images, return_2d_array=True)</span>
 <span class="sd">        featureExtractor.add_feature(&#39;hog&#39;, {&#39;orientations&#39;: 8, &#39;pixels_per_cell&#39;: (16, 16), &#39;cells_per_block&#39;: (1, 1)})</span>
@@ -317,6 +326,82 @@
 <div class="viewcode-block" id="ConvolutionalLstmNN.predict"><a class="viewcode-back" href="../neuralnets.html#neuralnets.ConvolutionalLstmNN.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">images</span><span class="p">)</span></div></div>
 
+<div class="viewcode-block" id="ConvolutionalNN"><a class="viewcode-back" href="../neuralnets.html#neuralnets.ConvolutionalNN">[docs]</a><span class="k">class</span> <span class="nc">ConvolutionalNN</span><span class="p">(</span><span class="n">_FERNeuralNet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convolutional Neural Network.</span>
+
+<span class="sd">    :param image_size: dimensions of input images</span>
+<span class="sd">    :param channels: number of image channels</span>
+<span class="sd">    :param label_count: total number of target emotion labels</span>
+<span class="sd">    :param filters: number of filters/nodes per layer in CNN</span>
+<span class="sd">    :param kernel_size: size of sliding window for each layer of CNN</span>
+<span class="sd">    :param activation: name of activation function for CNN</span>
+<span class="sd">    :param verbose: if true, will print out extra process information</span>
+
+<span class="sd">    **Example**::</span>
+
+<span class="sd">        directory_path = &quot;image_data/sample_image_directory&quot;</span>
+
+<span class="sd">        dataLoader = DataLoader(from_csv=False, datapath=directory_path)</span>
+<span class="sd">        image_data, labels = dataLoader.get_data()</span>
+
+<span class="sd">        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)</span>
+<span class="sd">        images = imageProcessor.process_training_data()</span>
+
+<span class="sd">        featureExtractor = FeatureExtractor(images, return_2d_array=True)</span>
+<span class="sd">        featureExtractor.add_feature(&#39;hog&#39;, {&#39;orientations&#39;: 8, &#39;pixels_per_cell&#39;: (16, 16), &#39;cells_per_block&#39;: (1, 1)})</span>
+<span class="sd">        features = featureExtractor.extract()</span>
+
+<span class="sd">        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=target_labels, time_delay=3)</span>
+<span class="sd">        net.fit(features, labels, validation_split=0.15)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">label_count</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span> <span class="o">=</span> <span class="n">image_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_count</span> <span class="o">=</span> <span class="n">label_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">=</span> <span class="n">kernel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_init_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Composes all layers of CNN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">),</span> <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;channels_first&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;channels_first&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;channels_first&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;channels_first&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">())</span>
+        <span class="c1"># model.add(Dropout(0.25))</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label_count</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="ConvolutionalNN.fit"><a class="viewcode-back" href="../neuralnets.html#neuralnets.ConvolutionalNN.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">validation_split</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains the neural net on the data provided.</span>
+
+<span class="sd">        :param image_data: Numpy array of training data.</span>
+<span class="sd">        :param labels: Numpy array of target (label) data.</span>
+<span class="sd">        :param validation_split: Float between 0 and 1. Percentage of training data to use for validation</span>
+<span class="sd">        :param batch_size:</span>
+<span class="sd">        :param epochs: number of times to train over input dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s2">&quot;RMSProp&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;cosine_proximity&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="n">validation_split</span><span class="p">,</span>
+                       <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">ReduceLROnPlateau</span><span class="p">(),</span> <span class="n">EarlyStopping</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">3</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="ConvolutionalNN.predict"><a class="viewcode-back" href="../neuralnets.html#neuralnets.ConvolutionalNN.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">images</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

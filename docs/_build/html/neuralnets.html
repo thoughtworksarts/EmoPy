@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ImageProcessor" href="dataloader.html" />
+    <link rel="next" title="DataLoader" href="dataloader.html" />
     <link rel="prev" title="FERModel" href="fermodel.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="ImageProcessor"
+          <a href="dataloader.html" title="DataLoader"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fermodel.html" title="FERModel"
@@ -79,8 +79,11 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
 <span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;local csv file path&gt;&quot;</span>
 
-<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+<span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">image_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
 
 <span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
@@ -119,6 +122,72 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="neuralnets.ConvolutionalNN">
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>label_count</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='relu'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolutional Neural Network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_size</strong> – dimensions of input images</li>
+<li><strong>channels</strong> – number of image channels</li>
+<li><strong>label_count</strong> – total number of target emotion labels</li>
+<li><strong>filters</strong> – number of filters/nodes per layer in CNN</li>
+<li><strong>kernel_size</strong> – size of sliding window for each layer of CNN</li>
+<li><strong>activation</strong> – name of activation function for CNN</li>
+<li><strong>verbose</strong> – if true, will print out extra process information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">directory_path</span> <span class="o">=</span> <span class="s2">&quot;image_data/sample_image_directory&quot;</span>
+
+<span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">directory_path</span><span class="p">)</span>
+<span class="n">image_data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
+
+<span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">featureExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">time_delay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="neuralnets.ConvolutionalNN.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>image_data</em>, <em>labels</em>, <em>validation_split</em>, <em>epochs=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the neural net on the data provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_data</strong> – Numpy array of training data.</li>
+<li><strong>labels</strong> – Numpy array of target (label) data.</li>
+<li><strong>validation_split</strong> – Float between 0 and 1. Percentage of training data to use for validation</li>
+<li><strong>batch_size</strong> – </li>
+<li><strong>epochs</strong> – number of times to train over input dataset.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neuralnets.ConvolutionalNN.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="neuralnets.TimeDelayNN">
 <em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TimeDelayNN</code><span class="sig-paren">(</span><em>feature_vector_length</em>, <em>time_delay=3</em>, <em>num_output_values=4</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>This model is broken down into two steps: regression and CNN variant.
@@ -142,8 +211,11 @@ The regression step is trained on the supplied image dataset, and its output is 
 <span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 
 <span class="n">root_directory</span> <span class="o">=</span> <span class="s1">&#39;&lt;local training image directory&gt;&#39;</span>
-<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">root_directory</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="n">target_dimensions</span><span class="p">)</span>
-<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+<span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">root_directory</span><span class="p">,</span> <span class="n">image_dimensions</span><span class="o">=</span><span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">avep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
 
 <span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
@@ -201,11 +273,14 @@ The regression step is trained on the supplied image dataset, and its output is 
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">csv_file_path</span> <span class="o">=</span> <span class="s1">&#39;&lt;local csv file path&gt;&#39;</span>
 <span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
 
-<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">),</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">get_training_data</span><span class="p">()</span>
+<span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">image_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+<span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">64</span><span class="p">))</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">TransferLearningNN</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;inception_v3&#39;</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -248,7 +323,7 @@ The regression step is trained on the supplied image dataset, and its output is 
                         title="previous chapter">FERModel</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="dataloader.html"
-                        title="next chapter">ImageProcessor</a></p>
+                        title="next chapter">DataLoader</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -273,7 +348,7 @@ The regression step is trained on the supplied image dataset, and its output is 
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="ImageProcessor"
+          <a href="dataloader.html" title="DataLoader"
              >next</a> |</li>
         <li class="right" >
           <a href="fermodel.html" title="FERModel"
