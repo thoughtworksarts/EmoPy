@@ -1,5 +1,6 @@
 from neuralnets import *
 from imageprocessor import ImageProcessor
+from dataloader import DataLoader
 from featureextractor import FeatureExtractor
 import numpy as np
 

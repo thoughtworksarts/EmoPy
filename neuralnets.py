@@ -4,11 +4,9 @@ from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.resnet50 import ResNet50
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout
+from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout, MaxPooling3D
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
-from dataloader import DataLoader
-
 
 class _FERNeuralNet(object):
     """
@@ -28,7 +26,6 @@ class _FERNeuralNet(object):
     def predict(self, images):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
 
-
 class TransferLearningNN(_FERNeuralNet):
     """
     Transfer Learning Convolutional Neural Network initialized with pretrained weights.
@@ -38,17 +35,8 @@ class TransferLearningNN(_FERNeuralNet):
 
     **Example**::
 
-        csv_file_path = '<local csv file path>'
-        target_labels = [0,1,2,3,4,5,6]
-
-        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
-        images, labels = dataLoader.get_data()
-
-        imageProcessor = ImageProcessor(images, target_dimensions=(64,64))
-        images = imageProcessor.process_training_data()
-
-        model = TransferLearningNN(model_name='inception_v3', target_labels=target_labels)
-        model.fit(images, labels, 0.15)
+        model = TransferLearningNN(model_name='inception_v3', target_labels=[0,1,2,3,4,5,6])
+        model.fit(images, labels, validation_split=0.15)
 
     """
     _NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
@@ -117,88 +105,6 @@ class TransferLearningNN(_FERNeuralNet):
     def predict(self, images):
         self.model.predict(images)
 
-
-class TimeDelayNN(_FERNeuralNet):
-    """
-    This model is broken down into two steps: regression and CNN variant.
-    The regression step is trained on the supplied image dataset, and its output is used to train the CNN. The output from the regression step is preprocessed to create new "time-delayed" datapoints. In other words, the output becomes 3-dimensional (1, regression_output_dim, number_of_previous_time_steps_considered +1)
-
-    :param feature_vector_length: length of input feature vectors used to train regression step
-    :param time_delay: number of previous datapoints to consider for each new datapoint in CNN step
-    :param num_output_values: number of classification labels
-    :param verbose: if true, will print out extra process information
-
-    **Example**::
-
-        target_dimensions = (128, 128)
-        target_labels = [0,1,2,3]
-
-        root_directory = '<local training image directory>'
-        dataLoader = DataLoader(from_csv=False, target_labels=target_labels, datapath=root_directory, image_dimensions=raw_dimensions, avep=True)
-        images, labels = dataLoader.get_data()
-
-        imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, channels=1)
-        images = imageProcessor.process_training_data()
-
-        featureExtractor = FeatureExtractor(images, return_2d_array=False)
-        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-        features = featureExtractor.extract()
-
-        tdnn = TimeDelayNN(len(features[0]), verbose=True)
-        tdnn.fit(features, labels, 0.15)
-
-    """
-    def __init__(self, feature_vector_length, time_delay=3, num_output_values=4, verbose=False):
-        self.time_delay = time_delay
-        self.num_output_values = num_output_values
-        self.feature_vector_length = feature_vector_length
-        self.verbose = verbose
-        self.regression_model = None
-        super().__init__()
-
-    def _init_model(self):
-        self._init_regression_model()
-        self._init_neural_net_model()
-
-    def _init_regression_model(self):
-        model = Sequential()
-        model.add(Dense(self.num_output_values, input_shape=(self.feature_vector_length,), activation="sigmoid"))
-        self.regression_model = model
-
-    def _init_neural_net_model(self):
-        model = Sequential()
-        model.add(Conv2D(filters=10, kernel_size=(self.time_delay, self.num_output_values), activation="sigmoid", input_shape=(1,self.time_delay,self.num_output_values), padding="same"))
-        model.add(Flatten())
-        model.add(Dense(units=self.num_output_values, activation="sigmoid"))
-        if self.verbose:
-            model.summary()
-        self.model = model
-
-    def fit(self, features, labels, validation_split, batch_size=10, epochs=20):
-        """
-        Trains the neural net on the data provided.
-
-        :param features: Numpy array of training data.
-        :param labels: Numpy array of target (label) data.
-        :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
-        :param batch_size:
-        :param epochs: Max number of times to train on input data.
-        """
-        self.regression_model.compile(loss="mean_squared_error", optimizer="rmsprop", metrics=["accuracy"])
-        self.regression_model.fit(features, labels,
-                       batch_size=batch_size, epochs=epochs,
-                       validation_split=0.0, shuffle=True)
-
-        regression_predictions = self.regression_model.predict(features)
-        dataLoader = DataLoader()
-        features, labels = dataLoader._get_time_delay_data(regression_predictions, regression_predictions)
-        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
-        self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
-
-    def predict(self, images):
-        pass
-
-
 class ConvolutionalLstmNN(_FERNeuralNet):
     """
     Convolutional Long Short Term Memory Neural Network.
@@ -206,7 +112,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     :param image_size: dimensions of input images
     :param channels: number of image channels
     :param target_labels: list of target emotion labels
-    :param time_delay: number time steps for lookback
+    :param time_delay: number of time steps for lookback
     :param filters: number of filters/nodes per layer in CNN
     :param kernel_size: size of sliding window for each layer of CNN
     :param activation: name of activation function for CNN
@@ -214,20 +120,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
     **Example**::
 
-        target_labels = [0,1,2,3,4,5,6]
-        csv_file_path = "<local csv file path>"
-
-        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
-        images, labels = dataLoader.get_data()
-
-        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)
-        images = imageProcessor.process_training_data()
-
-        featureExtractor = FeatureExtractor(images, return_2d_array=True)
-        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-        features = featureExtractor.extract()
-
-        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=target_labels, time_delay=3)
+        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=[0,1,2,3,4,5,6], time_delay=3)
         net.fit(features, labels, validation_split=0.15)
 
     """
@@ -281,7 +174,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
 class ConvolutionalNN(_FERNeuralNet):
     """
-    Convolutional Neural Network.
+    2D Convolutional Neural Network
 
     :param image_size: dimensions of input images
     :param channels: number of image channels
@@ -293,20 +186,9 @@ class ConvolutionalNN(_FERNeuralNet):
 
     **Example**::
 
-        directory_path = "image_data/sample_image_directory"
-
-        dataLoader = DataLoader(from_csv=False, datapath=directory_path)
-        image_data, labels = dataLoader.get_data()
-
-        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)
-        images = imageProcessor.process_training_data()
-
-        featureExtractor = FeatureExtractor(images, return_2d_array=True)
-        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-        features = featureExtractor.extract()
-
-        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=target_labels, time_delay=3)
+        net = ConvolutionalNN(target_dimensions=(64,64), channels=1, target_labels=[0,1,2,3,4,5,6], time_delay=3)
         net.fit(features, labels, validation_split=0.15)
+
     """
 
     def __init__(self, image_size, channels, label_count, filters=10, kernel_size=(4, 4), activation='relu', verbose=False):
@@ -322,7 +204,7 @@ class ConvolutionalNN(_FERNeuralNet):
 
     def _init_model(self):
         """
-        Composes all layers of CNN.
+        Composes all layers of 2D CNN.
         """
         model = Sequential()
         model.add(Conv2D(input_shape=[self.channels]+list(self.image_size), filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
@@ -332,6 +214,73 @@ class ConvolutionalNN(_FERNeuralNet):
         model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
         model.add(MaxPooling2D())
         # model.add(Dropout(0.25))
+
+        model.add(Flatten())
+        model.add(Dense(units=self.label_count, activation="relu"))
+        if self.verbose:
+            model.summary()
+        self.model = model
+
+    def fit(self, image_data, labels, validation_split, epochs=50):
+        """
+        Trains the neural net on the data provided.
+
+        :param image_data: Numpy array of training data.
+        :param labels: Numpy array of target (label) data.
+        :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
+        :param batch_size:
+        :param epochs: number of times to train over input dataset.
+        """
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def predict(self, images):
+        self.model.predict(images)
+
+class TimeDelayConvNN(_FERNeuralNet):
+    """
+    The Time-Delayed Convolutional Neural Network model is a 3D-Convolutional network that trains on 3-dimensional temporal image data. One training sample will contain n number of images from a series and its emotion label will be that of the most recent image.
+
+    :param image_size: dimensions of input images
+    :param time_delay: number of past time steps included in each training sample
+    :param channels: number of image channels
+    :param label_count: total number of target emotion labels
+    :param filters: number of filters/nodes per layer in CNN
+    :param kernel_size: size of sliding window for each layer of CNN
+    :param activation: name of activation function for CNN
+    :param verbose: if true, will print out extra process information
+
+    **Example**::
+
+        model = TimeDelayConvNN(target_dimensions={64,64), time_delay=3, channels=1, label_count=6)
+        model.fit(image_data, labels, validation_split=0.15)
+
+    """
+
+    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1, 4, 4), activation='relu', verbose=False):
+        self.image_size = image_size
+        self.time_delay = time_delay
+        self.channels = channels
+        self.label_count = label_count
+        self.verbose = verbose
+
+        self.filters = filters
+        self.kernel_size = kernel_size
+        self.activation = activation
+        super().__init__()
+
+    def _init_model(self):
+        """
+        Composes all layers of 3D CNN.
+        """
+        model = Sequential()
+        model.add(Conv3D(input_shape=[self.channels, self.time_delay]+list(self.image_size), filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
 
         model.add(Flatten())
         model.add(Dense(units=self.label_count, activation="relu"))
