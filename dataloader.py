@@ -16,13 +16,14 @@ class DataLoader:
     :param csv_label_col: index of label value column in csv
     :param csv_image_col: index of image column in csv
     """
-    def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None, csv_image_col=None):
+    def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None, csv_image_col=None, avep=False):
         self.from_csv = from_csv
         self.datapath = datapath
         self.image_dimensions = image_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
         self.target_labels = target_labels
+        self.avep = avep
 
     def get_data(self):
         """
@@ -30,26 +31,43 @@ class DataLoader:
         """
         if self.from_csv:
             return self._get_data_from_csv()
+        elif not self.avep:
+            return self._get_data_from_directory()
         else:
-            images = self._get_images_from_directory()
-            labels = self._get_labels()
+            images = self._get_image_series_from_directory()
+            labels = self._get_image_series_labels()
             return images, labels
 
-    def _get_images_from_directory(self):
+    def _get_data_from_directory(self):
         """
-        :return:  list of images from directory location, resized to specified target dimensions
+        :return: list of images and list of corresponding labels from specified directory
         """
         images = list()
-        for sub_directory in os.listdir(self.datapath):
-            if not sub_directory.startswith('.'):
-                sub_directory_path = self.datapath + '/' + sub_directory
-                for image_file in os.listdir(sub_directory_path):
-                    if not image_file.startswith('.'):
-                        image_file_path = sub_directory_path + '/' + image_file
-                        image = io.imread(image_file_path)
-                        image = color.rgb2gray(image)
-                        images.append(image)
-        return np.array(images)
+        labels = list()
+        label_map = dict()
+        label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
+        for label_directory in label_directories:
+            label_directory_path = self.datapath + '/' + label_directory
+            image_files = [image_file for image_file in os.listdir(label_directory_path) if not image_file.startswith('.')]
+            for image_file in image_files:
+                image_file_path = label_directory_path + '/' + image_file
+                image = io.imread(image_file_path)
+                image = color.rgb2gray(image)
+                images.append(image)
+
+                if label_directory not in labels:
+                    new_label_index = len(label_map.keys())
+                    label_map[label_directory] = new_label_index
+                labels.append(label_directory)
+
+        label_values = list()
+        label_count = len(label_map.keys())
+        for label in labels:
+            label_value = [0]*label_count
+            label_value[label_map[label]] = 1.0
+            label_values.append(label_value)
+
+        return np.array(images), np.array(label_values)
 
     def _get_data_from_csv(self):
         """
@@ -80,8 +98,26 @@ class DataLoader:
 
         return np.array(images), np.array(labels)
 
-    def _get_labels(self):
-        raw_labels = self._get_raw_labels()
+    # --------------- Image Series Loading ---------------- #
+
+    def _get_image_series_from_directory(self):
+        """
+        :return:  list of images from directory location, resized to specified target dimensions
+        """
+        images = list()
+        for sub_directory in os.listdir(self.datapath):
+            if not sub_directory.startswith('.'):
+                sub_directory_path = self.datapath + '/' + sub_directory
+                for image_file in os.listdir(sub_directory_path):
+                    if not image_file.startswith('.'):
+                        image_file_path = sub_directory_path + '/' + image_file
+                        image = io.imread(image_file_path)
+                        image = color.rgb2gray(image)
+                        images.append(image)
+        return np.array(images)
+
+    def _get_image_series_labels(self):
+        raw_labels = self._get_raw_image_series_labels()
         training_label_array = list()
         for time_series_key in raw_labels:
             time_series = raw_labels[time_series_key]
@@ -89,10 +125,12 @@ class DataLoader:
 
         return np.array(training_label_array)
 
-    def _get_raw_labels(self):
-        # Uses 20 photo series from the Cohn-Kanade dataset
-        # hand labeled by AP
-        # arousal(least, most), valence(negative, positive), power, anticipation
+    def _get_raw_image_series_labels(self):
+        """
+        Uses 20 photo series from the Cohn-Kanade dataset
+        manually labeled by AP
+        arousal(least, most), valence(negative, positive), power, anticipation
+        """
         raw_labels = {1: [10, [.6, .4, .7, .6], [.9, .1, .8, .9]],
                                2: [9, [.2, .5, .6, .1], [.3, .4, .5, .2]],
                                3: [10, [.8, .9, .2, .9], [.99, .99, .1, .99]],

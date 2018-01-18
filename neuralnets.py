@@ -4,7 +4,7 @@ from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.resnet50 import ResNet50
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D, Conv3D
+from keras.layers import Dense, GlobalAveragePooling2D, Flatten, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
 from dataloader import DataLoader
@@ -41,11 +41,14 @@ class TransferLearningNN(_FERNeuralNet):
         csv_file_path = '<local csv file path>'
         target_labels = [0,1,2,3,4,5,6]
 
-        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
-        features, labels = imageProcessor.get_training_data()
+        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
+        images, labels = dataLoader.get_data()
+
+        imageProcessor = ImageProcessor(images, target_dimensions=(64,64))
+        images = imageProcessor.process_training_data()
 
         model = TransferLearningNN(model_name='inception_v3', target_labels=target_labels)
-        model.fit(features, labels, 0.15)
+        model.fit(images, labels, 0.15)
 
     """
     _NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
@@ -131,8 +134,11 @@ class TimeDelayNN(_FERNeuralNet):
         target_labels = [0,1,2,3]
 
         root_directory = '<local training image directory>'
-        imageProcessor = ImageProcessor(from_csv=False, target_labels=target_labels, datapath=root_directory, target_dimensions=target_dimensions)
-        images, labels = imageProcessor.get_training_data()
+        dataLoader = DataLoader(from_csv=False, target_labels=target_labels, datapath=root_directory, image_dimensions=raw_dimensions, avep=True)
+        images, labels = dataLoader.get_data()
+
+        imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, channels=1)
+        images = imageProcessor.process_training_data()
 
         featureExtractor = FeatureExtractor(images, return_2d_array=False)
         featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
@@ -211,8 +217,11 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         target_labels = [0,1,2,3,4,5,6]
         csv_file_path = "<local csv file path>"
 
-        imageProcessor = ImageProcessor(from_csv=True, target_labels=target_labels, datapath=csv_file_path, target_dimensions=(64,64), raw_dimensions=(48,48), csv_label_col=0, csv_image_col=1, channels=1)
-        images, labels = imageProcessor.get_training_data()
+        dataLoader = DataLoader(from_csv=True, target_labels=target_labels, datapath=csv_file_path, image_dimensions=(48,48), csv_label_col=0, csv_image_col=1)
+        images, labels = dataLoader.get_data()
+
+        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)
+        images = imageProcessor.process_training_data()
 
         featureExtractor = FeatureExtractor(images, return_2d_array=True)
         featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
@@ -270,3 +279,79 @@ class ConvolutionalLstmNN(_FERNeuralNet):
     def predict(self, images):
         self.model.predict(images)
 
+class ConvolutionalNN(_FERNeuralNet):
+    """
+    Convolutional Neural Network.
+
+    :param image_size: dimensions of input images
+    :param channels: number of image channels
+    :param label_count: total number of target emotion labels
+    :param filters: number of filters/nodes per layer in CNN
+    :param kernel_size: size of sliding window for each layer of CNN
+    :param activation: name of activation function for CNN
+    :param verbose: if true, will print out extra process information
+
+    **Example**::
+
+        directory_path = "image_data/sample_image_directory"
+
+        dataLoader = DataLoader(from_csv=False, datapath=directory_path)
+        image_data, labels = dataLoader.get_data()
+
+        imageProcessor = ImageProcessor(images, target_dimensions=(64,64), rgb=False, channels=1)
+        images = imageProcessor.process_training_data()
+
+        featureExtractor = FeatureExtractor(images, return_2d_array=True)
+        featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
+        features = featureExtractor.extract()
+
+        net = ConvolutionalLstmNN(target_dimensions=(64,64), channels=1, target_labels=target_labels, time_delay=3)
+        net.fit(features, labels, validation_split=0.15)
+    """
+
+    def __init__(self, image_size, channels, label_count, filters=10, kernel_size=(4, 4), activation='relu', verbose=False):
+        self.channels = channels
+        self.image_size = image_size
+        self.label_count = label_count
+        self.verbose = verbose
+
+        self.filters = filters
+        self.kernel_size = kernel_size
+        self.activation = activation
+        super().__init__()
+
+    def _init_model(self):
+        """
+        Composes all layers of CNN.
+        """
+        model = Sequential()
+        model.add(Conv2D(input_shape=[self.channels]+list(self.image_size), filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(MaxPooling2D())
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(MaxPooling2D())
+        # model.add(Dropout(0.25))
+
+        model.add(Flatten())
+        model.add(Dense(units=self.label_count, activation="relu"))
+        if self.verbose:
+            model.summary()
+        self.model = model
+
+    def fit(self, image_data, labels, validation_split, epochs=50):
+        """
+        Trains the neural net on the data provided.
+
+        :param image_data: Numpy array of training data.
+        :param labels: Numpy array of target (label) data.
+        :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
+        :param batch_size:
+        :param epochs: number of times to train over input dataset.
+        """
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def predict(self, images):
+        self.model.predict(images)

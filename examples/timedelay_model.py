@@ -13,19 +13,19 @@ target_labels = [0,1,2,3]
 
 print('--------------- Regression + TimeDelayNN Model -------------------')
 print('Loading data...')
-root_directory = 'image_data/sample_directory'
+root_directory = 'image_data/sample_image_series_directory'
 
-dataLoader = DataLoader(from_csv=False, target_labels=target_labels, datapath=root_directory, image_dimensions=raw_dimensions)
+dataLoader = DataLoader(from_csv=False, target_labels=target_labels, datapath=root_directory, image_dimensions=raw_dimensions, avep=True)
 images, labels = dataLoader.get_data()
 if verbose:
-    print('raw image shape: ' + str(images.shape))
+    print('raw image data shape: ' + str(images.shape))
 
 print('Processing data...')
 imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, channels=1)
 images = imageProcessor.process_training_data()
 if verbose:
-    print ('processed image shape: ' + str(images.shape))
-    print ('labels shape: ' + str(labels.shape))
+    print ('processed image data shape: ' + str(images.shape))
+    print ('label data shape: ' + str(labels.shape))
 
 print('Extracting features...')
 featureExtractor = FeatureExtractor(images, return_2d_array=False)
