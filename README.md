@@ -109,16 +109,12 @@ You will see the training and validation accuracies of the model being updated a
 
 ## Comparison of neural network models
 
-#### TimeDelayNN
+#### TimeDelayConvNN
 
-The Time-Delayed Neural Network model is based on the approach described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal information as part of its training samples. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain *n* number of images from a series and its emotion label will be that of the most recent image. The idea is to capture the progression of a facial expression leading up to a peak emotion.
+The Time-Delayed 3D-Convolutional Neural Network model is inspired by the work described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal information as part of its training samples. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain *n* number of images from a series and its emotion label will be that of the most recent image. The idea is to capture the progression of a facial expression leading up to a peak emotion.
 
 ![Facial Expression Image Sequence](readme_docs/progression-example.png "Facial expression image sequence")
 Facial expression image sequence in Cohn-Kanade database from [@Jia2014]
-
-The Time-Delay model described in Dr. Meng’s paper runs two steps: a regression method to compute an initial prediction value followed by a convolutional neural network (CNN). The initial regression step outputs predictions for each of the training image samples in the form of a 4D vector of AVEP (arousal, valence, expectation, power) values, which can be mapped to emotions. These initial predictions are then processed into time-delayed training samples; each sample includes the prediction value of the original image along with the prediction values of the *n* previous images in the series. These samples result in matrices of shape *4 x n* that are used to train the CNN in the second step. 
-
-The primary purpose of the initial regression step was to reduce the size of the CNN input and thus reduce runtime. Moving forward, the regression step will likely be removed from the model architecture. This will give the CNN richer data to work with. It is the time-delay applied to the training samples that is novel about this approach and it will be applied to the training image samples when further experimenting with this model. 
 
 #### ConvolutionalLstmNN
 
