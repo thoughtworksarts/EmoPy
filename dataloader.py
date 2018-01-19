@@ -71,6 +71,8 @@ class DataLoader:
             label_value[label_map[label]] = 1.0
             label_values.append(label_value)
 
+        self._check_data_not_empty(images)
+
         return np.array(images), np.array(label_values), label_map
 
     def _get_data_from_csv(self):
@@ -180,11 +182,9 @@ class DataLoader:
 
     def _check_directory_arguments(self):
         if not os.path.isdir(self.datapath):
-            raise (FileNotFoundError('Directory does not exist: %s' % self.datapath))
+            raise (NotADirectoryError('Directory does not exist: %s' % self.datapath))
 
     def _check_data_not_empty(self, images):
-        print('HERE')
-        print (len(images))
         if len(images) == 0:
             raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.target_labels))
 
