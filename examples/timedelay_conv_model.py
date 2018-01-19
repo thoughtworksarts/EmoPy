@@ -15,7 +15,7 @@ channels = 1
 verbose = True
 
 dataLoader = DataLoader(from_csv=False, datapath=directory_path, time_steps=3)
-image_data, labels = dataLoader.get_data()
+image_data, labels, label_map = dataLoader.get_data()
 if verbose:
     print('raw image data shape: ' + str(image_data.shape))
 label_count = len(labels[0])

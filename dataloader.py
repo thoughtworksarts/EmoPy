@@ -108,18 +108,22 @@ class DataLoader:
 
     def _get_image_series_data_from_directory(self):
         """
-        :return: List of image series data and list of corresponding labels from specified directory.
+        :return: List of image series data, list of corresponding labels, and label index map from specified directory.
         """
         image_series = list()
         labels = list()
-        label_map = dict()
+        label_index_map = dict()
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
+
             label_directory_path = self.datapath + '/' + label_directory
             series_directories = [series_directory for series_directory in os.listdir(label_directory_path) if not series_directory.startswith('.')]
 
             for series_directory in series_directories:
                 series_directory_path = label_directory_path + '/' + series_directory
+
+                self._check_series_directory_size(series_directory_path)
+
                 new_image_series = list()
                 image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
                 for image_file in image_files:
@@ -134,59 +138,74 @@ class DataLoader:
                 image_series.append(new_image_series)
 
                 if label_directory not in labels:
-                    new_label_index = len(label_map.keys())
-                    label_map[label_directory] = new_label_index
+                    new_label_index = len(label_index_map.keys())
+                    label_index_map[label_directory] = new_label_index
                 labels.append(label_directory)
 
         label_values = list()
-        label_count = len(label_map.keys())
+        label_count = len(label_index_map.keys())
         for label in labels:
             label_value = [0]*label_count
-            label_value[label_map[label]] = 1.0
+            label_value[label_index_map[label]] = 1.0
             label_values.append(label_value)
 
-        return np.array(image_series), np.array(label_values)
+        self._check_data_not_empty(image_series)
+
+        return np.array(image_series), np.array(label_values), label_index_map
 
     def _check_arguments(self):
-        # validate arguments for loading from csv file
         if self.from_csv:
             self._check_csv_arguments()
         else:
             self._check_directory_arguments()
 
     def _check_csv_arguments(self):
-            if self.csv_image_col is None or self.csv_label_col is None:
-                raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
+        # validate arguments for loading from csv file
+        if self.csv_image_col is None or self.csv_label_col is None:
+            raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 
-            if self.target_labels is None:
-                raise ValueError('Must supply target_labels when loading data from csv.')
+        if self.target_labels is None:
+            raise ValueError('Must supply target_labels when loading data from csv.')
 
-            if self.image_dimensions is None:
-                raise ValueError('Must provide image dimensions when loading data from csv.')
+        if self.image_dimensions is None:
+            raise ValueError('Must provide image dimensions when loading data from csv.')
 
-            # check received valid csv file
-            with open(self.datapath) as csv_file:
+        # check received valid csv file
+        with open(self.datapath) as csv_file:
 
-                # check image and label indices are valid
-                reader = csv.reader(csv_file, delimiter=',', quotechar='"')
-                num_cols = len(next(reader))
-                if self.csv_image_col >= num_cols:
-                    raise(ValueError('Csv column index for image is out of range: %i' % self.csv_image_col))
-                if self.csv_label_col >= num_cols:
-                    raise(ValueError('Csv column index for label is out of range: %i' % self.csv_label_col))
+            # check image and label indices are valid
+            reader = csv.reader(csv_file, delimiter=',', quotechar='"')
+            num_cols = len(next(reader))
+            if self.csv_image_col >= num_cols:
+                raise(ValueError('Csv column index for image is out of range: %i' % self.csv_image_col))
+            if self.csv_label_col >= num_cols:
+                raise(ValueError('Csv column index for label is out of range: %i' % self.csv_label_col))
 
-                # check image dimensions
-                pixels = next(reader)[self.csv_image_col].split(' ')
-                if len(pixels) != self.image_dimensions[0] * self.image_dimensions[1]:
-                    raise ValueError('Invalid image dimensions: %s' % str(self.image_dimensions))
+            # check image dimensions
+            pixels = next(reader)[self.csv_image_col].split(' ')
+            if len(pixels) != self.image_dimensions[0] * self.image_dimensions[1]:
+                raise ValueError('Invalid image dimensions: %s' % str(self.image_dimensions))
 
     def _check_directory_arguments(self):
+        """
+        Validates arguments for loading from directories, including static image and time series directories.
+        """
         if not os.path.isdir(self.datapath):
             raise (NotADirectoryError('Directory does not exist: %s' % self.datapath))
+        if self.time_steps is not None:
+            if self.time_steps < 1:
+                raise ValueError('Time step argument must be greater than 0, but gave: %i' % self.time_steps)
+            if not isinstance(self.time_steps, int):
+                raise ValueError('Time step argument must be an integer, but gave: %s' % str(self.time_steps))
 
     def _check_data_not_empty(self, images):
         if len(images) == 0:
             raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.target_labels))
+
+    def _check_series_directory_size(self, series_directory_path):
+        image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
+        if len(image_files) < self.time_steps:
+            raise ValueError('Time series sample found in path %s does not contain enough images for %s time steps.' % (series_directory_path, str(self.time_steps)))
 
 
 
