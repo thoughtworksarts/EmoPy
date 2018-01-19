@@ -51,8 +51,22 @@ def test_load_csv_data():
     assert len(images) == len(labels)
 
 def test_load_directory_data():
-    pass
 
+    valid_directory_path =  '../../examples/image_data/sample_image_directory.csv'
+    invalid_directory_path = 'invalid_directory_path'
+    dummy_datapath = '../resources/dummy_data_directory'
+
+    # should receive a valid directory path
+    with pytest.raises(FileNotFoundError):
+        DataLoader(from_csv=False, datapath=invalid_directory_path)
+
+    # should assign an image's parent directory name as its label
+    data_loader = DataLoader(from_csv=False, datapath=dummy_datapath)
+    images, labels, label_map = data_loader.get_data()
+    label_count = len(label_map.keys())
+    label = [0]*label_count
+    label[label_map['happiness']] = 1
+    assert label == labels[0]
 
 if __name__ == '__main__':
     pytest.main([__file__])

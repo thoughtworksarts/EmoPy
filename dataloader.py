@@ -71,7 +71,7 @@ class DataLoader:
             label_value[label_map[label]] = 1.0
             label_values.append(label_value)
 
-        return np.array(images), np.array(label_values)
+        return np.array(images), np.array(label_values), label_map
 
     def _get_data_from_csv(self):
         """
@@ -148,7 +148,11 @@ class DataLoader:
     def _check_arguments(self):
         # validate arguments for loading from csv file
         if self.from_csv:
+            self._check_csv_arguments()
+        else:
+            self._check_directory_arguments()
 
+    def _check_csv_arguments(self):
             if self.csv_image_col is None or self.csv_label_col is None:
                 raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 
@@ -174,8 +178,15 @@ class DataLoader:
                 if len(pixels) != self.image_dimensions[0] * self.image_dimensions[1]:
                     raise ValueError('Invalid image dimensions: %s' % str(self.image_dimensions))
 
+    def _check_directory_arguments(self):
+        if not os.path.isdir(self.datapath):
+            raise (FileNotFoundError('Directory does not exist: %s' % self.datapath))
+
     def _check_data_not_empty(self, images):
         print('HERE')
         print (len(images))
         if len(images) == 0:
             raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.target_labels))
+
+
+

@@ -14,7 +14,7 @@ print('Loading data...')
 directory_path = "image_data/sample_image_directory"
 
 dataLoader = DataLoader(from_csv=False, datapath=directory_path)
-image_data, labels = dataLoader.get_data()
+image_data, labels, label_map = dataLoader.get_data()
 if verbose:
     print('raw image data shape: ' + str(image_data.shape))
 label_count = len(labels[0])
