@@ -33,7 +33,7 @@ class DataLoader:
 
     def get_data(self):
         """
-        :return: list of images and list of corresponding labels from specified location
+        :return: List of images and list of corresponding labels from specified location. If loading from directory, also returns label index map (maps emotion label to integer value used during training).
         """
         if self.from_csv:
             return self._get_data_from_csv()
@@ -44,11 +44,11 @@ class DataLoader:
 
     def _get_data_from_directory(self):
         """
-        :return: list of images and list of corresponding labels from specified directory
+        :return: List of images, list of corresponding labels, and label index map from specified directory.
         """
         images = list()
         labels = list()
-        label_map = dict()
+        label_index_map = dict()
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
             label_directory_path = self.datapath + '/' + label_directory
@@ -60,24 +60,24 @@ class DataLoader:
                 images.append(image)
 
                 if label_directory not in labels:
-                    new_label_index = len(label_map.keys())
-                    label_map[label_directory] = new_label_index
+                    new_label_index = len(label_index_map.keys())
+                    label_index_map[label_directory] = new_label_index
                 labels.append(label_directory)
 
         label_values = list()
-        label_count = len(label_map.keys())
+        label_count = len(label_index_map.keys())
         for label in labels:
             label_value = [0]*label_count
-            label_value[label_map[label]] = 1.0
+            label_value[label_index_map[label]] = 1.0
             label_values.append(label_value)
 
         self._check_data_not_empty(images)
 
-        return np.array(images), np.array(label_values), label_map
+        return np.array(images), np.array(label_values), label_index_map
 
     def _get_data_from_csv(self):
         """
-        :return:  list of images and list of labels from csv file
+        :return:  List of images and list of labels from csv file.
         """
         print('Extracting training data from csv...')
         start = datetime.datetime.now()
@@ -108,7 +108,7 @@ class DataLoader:
 
     def _get_image_series_data_from_directory(self):
         """
-        :return: list of image series data and list of corresponding labels from specified directory
+        :return: List of image series data and list of corresponding labels from specified directory.
         """
         image_series = list()
         labels = list()

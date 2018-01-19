@@ -52,30 +52,29 @@ def test_load_csv_data():
 
 def test_load_directory_data():
 
-    valid_directory_path =  '../../examples/image_data/sample_image_directory.csv'
     invalid_directory_path = 'invalid_directory_path'
-    dummy_directory = '../resources/dummy_data_directory'
-    dummy_empty_directory = '../resources/dummy_empty_data_directory'
+    valid_dummy_directory = '../resources/dummy_data_directory'
+    empty_dummy_directory = '../resources/dummy_empty_data_directory'
 
     # should raise error when receives an invalid directory path
     with pytest.raises(NotADirectoryError):
         DataLoader(from_csv=False, datapath=invalid_directory_path)
 
     # should assign an image's parent directory name as its label
-    data_loader = DataLoader(from_csv=False, datapath=dummy_directory)
-    images, labels, label_map = data_loader.get_data()
-    label_count = len(label_map.keys())
+    data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory)
+    images, labels, label_index_map = data_loader.get_data()
+    label_count = len(label_index_map.keys())
     label = [0]*label_count
-    label[label_map['happiness']] = 1
+    label[label_index_map['happiness']] = 1
     assert label == labels[0]
 
     # should raise error when tries to load empty directory
-    data_loader = DataLoader(from_csv=False, datapath=dummy_empty_directory)
+    data_loader = DataLoader(from_csv=False, datapath=empty_dummy_directory)
     with pytest.raises(AssertionError):
         data_loader.get_data()
 
-    data_loader = DataLoader(from_csv=False, datapath=dummy_directory)
-    images, labels, label_map = data_loader.get_data()
+    data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory)
+    images, labels, label_index_map = data_loader.get_data()
     # should return non-empty image and label arrays when given valid arguments
     assert len(images) > 0 and len(labels) > 0
     # should return same number of labels and images when given valid arguments
