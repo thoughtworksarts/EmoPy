@@ -14,27 +14,27 @@ def test_load_csv_data():
     valid_target_labels = [0,1,2,3,4,5,6]
     invalid_target_labels = [8,9,10]
 
-    # should receive csv column indices for images and labels
+    # should raise error when not given csv column indices for images and labels
     with pytest.raises(ValueError):
        DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path, image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col)
 
-    # should receive valid csv file path
+    # should raise error when given invalid csv file path
     with pytest.raises(FileNotFoundError):
         DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=invalid_csv_file_path, image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
 
-    # should receive valid csv column indices
+    # should raise error when given invalid csv column indices
     with pytest.raises(ValueError):
         DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path, image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col, csv_image_col=10)
 
-    # should receive non-empty target_labels list
+    # should raise error when given empty target_labels list
     with pytest.raises(ValueError):
         DataLoader(from_csv=True, datapath=valid_csv_file_path, image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
 
-    # should receive image dimensions
+    # should raise error when not given image dimensions
     with pytest.raises(ValueError):
         DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
 
-    # should receive valid image dimensions
+    # should raise error when given invalid image dimensions
     with pytest.raises(ValueError):
         DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path, image_dimensions=invalid_image_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
 
@@ -45,9 +45,9 @@ def test_load_csv_data():
 
     data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path, image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
     images, labels = data_loader.get_data()
-    # should return non-empty image and label arrays
+    # should return non-empty image and label arrays when given valid arguments
     assert len(images) > 0 and len(labels) > 0
-    # should return same number of labels and images
+    # should return same number of labels and images when given valid arguments
     assert len(images) == len(labels)
 
 def test_load_directory_data():
@@ -56,7 +56,7 @@ def test_load_directory_data():
     invalid_directory_path = 'invalid_directory_path'
     dummy_datapath = '../resources/dummy_data_directory'
 
-    # should receive a valid directory path
+    # should raise error when receives an invalid directory path
     with pytest.raises(FileNotFoundError):
         DataLoader(from_csv=False, datapath=invalid_directory_path)
 
@@ -67,6 +67,6 @@ def test_load_directory_data():
     label = [0]*label_count
     label[label_map['happiness']] = 1
     assert label == labels[0]
-
+    
 if __name__ == '__main__':
     pytest.main([__file__])
