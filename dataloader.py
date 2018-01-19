@@ -6,12 +6,19 @@ class DataLoader:
     """
     Loads images and labels from dataset path.
 
-    :param from_csv: if true, images will be extracted from csv file
-    :param target_labels: list of target label values/strings
-    :param datapath: location of image dataset
-    :param image_dimensions: initial dimensions of raw training images
-    :param csv_label_col: index of label value column in csv
-    :param csv_image_col: index of image column in csv
+    The *datapath* argument must be a path to a csv file or a directory containing the image and label data.
+
+    If a csv_file is provided, user must indicate so by setting the *from_csv* argument to true and must provide values for the *csv_label_col* and *csv_image_col* arguments to indicate the indices of the images and labels in the csv file.
+
+    If a directory path is provided, the directory must contain emotion label subdirectories containing all image samples pertaining to that label. If the directory contains image time series data, each emotion label subdirectory must contain time series subdirectories, each containing one time series sample. See the sample directories in the folder *examples/image_data*.
+
+    :param from_csv: If true, images will be extracted from csv file.
+    :param target_labels: List of target label values/strings.
+    :param datapath: Location of image dataset.
+    :param image_dimensions: Initial dimensions of raw training images.
+    :param csv_label_col: Index of label value column in csv.
+    :param csv_image_col: Index of image column in csv.
+    :param time_steps: Number of images to load from each time series sample. Parameter must be provided to load time series data.
     """
     def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None, csv_image_col=None, time_steps=None):
         self.from_csv = from_csv
