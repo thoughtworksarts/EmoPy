@@ -29,6 +29,8 @@ class DataLoader:
         self.target_labels = target_labels
         self.time_steps = time_steps
 
+        self._check_arguments()
+
     def get_data(self):
         """
         :return: list of images and list of corresponding labels from specified location
@@ -98,6 +100,8 @@ class DataLoader:
         end = datetime.datetime.now()
         print('Training data extraction runtime - ' + str(end-start))
 
+        self._check_data_not_empty(images)
+
         return np.array(images), np.array(labels)
 
     def _get_image_series_data_from_directory(self):
@@ -140,3 +144,38 @@ class DataLoader:
             label_values.append(label_value)
 
         return np.array(image_series), np.array(label_values)
+
+    def _check_arguments(self):
+        # validate arguments for loading from csv file
+        if self.from_csv:
+
+            if self.csv_image_col is None or self.csv_label_col is None:
+                raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
+
+            if self.target_labels is None:
+                raise ValueError('Must supply target_labels when loading data from csv.')
+
+            if self.image_dimensions is None:
+                raise ValueError('Must provide image dimensions when loading data from csv.')
+
+            # check received valid csv file
+            with open(self.datapath) as csv_file:
+
+                # check image and label indices are valid
+                reader = csv.reader(csv_file, delimiter=',', quotechar='"')
+                num_cols = len(next(reader))
+                if self.csv_image_col >= num_cols:
+                    raise(ValueError('Csv column index for image is out of range: %i' % self.csv_image_col))
+                if self.csv_label_col >= num_cols:
+                    raise(ValueError('Csv column index for label is out of range: %i' % self.csv_label_col))
+
+                # check image dimensions
+                pixels = next(reader)[self.csv_image_col].split(' ')
+                if len(pixels) != self.image_dimensions[0] * self.image_dimensions[1]:
+                    raise ValueError('Invalid image dimensions: %s' % str(self.image_dimensions))
+
+    def _check_data_not_empty(self, images):
+        print('HERE')
+        print (len(images))
+        if len(images) == 0:
+            raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.target_labels))
