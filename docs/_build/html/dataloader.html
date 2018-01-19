@@ -57,17 +57,21 @@
 <dt id="dataloader.DataLoader">
 <em class="property">class </em><code class="descclassname">dataloader.</code><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>from_csv=None</em>, <em>target_labels=None</em>, <em>datapath=None</em>, <em>image_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em>, <em>time_steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads images and labels from dataset path.</p>
+<p>The <em>datapath</em> argument must be a path to a csv file or a directory containing the image and label data.</p>
+<p>If a csv_file is provided, user must indicate so by setting the <em>from_csv</em> argument to true and must provide values for the <em>csv_label_col</em> and <em>csv_image_col</em> arguments to indicate the indices of the images and labels in the csv file.</p>
+<p>If a directory path is provided, the directory must contain emotion label subdirectories containing all image samples pertaining to that label. If the directory contains image time series data, each emotion label subdirectory must contain time series subdirectories, each containing one time series sample. See the sample directories in the folder <em>examples/image_data</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>from_csv</strong> – if true, images will be extracted from csv file</li>
-<li><strong>target_labels</strong> – list of target label values/strings</li>
-<li><strong>datapath</strong> – location of image dataset</li>
-<li><strong>image_dimensions</strong> – initial dimensions of raw training images</li>
-<li><strong>csv_label_col</strong> – index of label value column in csv</li>
-<li><strong>csv_image_col</strong> – index of image column in csv</li>
+<li><strong>from_csv</strong> – If true, images will be extracted from csv file.</li>
+<li><strong>target_labels</strong> – List of target label values/strings.</li>
+<li><strong>datapath</strong> – Location of image dataset.</li>
+<li><strong>image_dimensions</strong> – Initial dimensions of raw training images.</li>
+<li><strong>csv_label_col</strong> – Index of label value column in csv.</li>
+<li><strong>csv_image_col</strong> – Index of image column in csv.</li>
+<li><strong>time_steps</strong> – Number of images to load from each time series sample. Parameter must be provided to load time series data.</li>
 </ul>
 </td>
 </tr>
@@ -80,7 +84,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of images and list of corresponding labels from specified location</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of images and list of corresponding labels from specified location. If loading from directory, also returns label index map (maps emotion label to integer value used during training).</td>
 </tr>
 </tbody>
 </table>

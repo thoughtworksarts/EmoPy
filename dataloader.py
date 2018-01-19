@@ -160,7 +160,9 @@ class DataLoader:
             self._check_directory_arguments()
 
     def _check_csv_arguments(self):
-        # validate arguments for loading from csv file
+        """
+        Validates arguments for loading from csv file.
+        """
         if self.csv_image_col is None or self.csv_label_col is None:
             raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 

@@ -53,12 +53,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads images and labels from dataset path.</span>
 
-<span class="sd">    :param from_csv: if true, images will be extracted from csv file</span>
-<span class="sd">    :param target_labels: list of target label values/strings</span>
-<span class="sd">    :param datapath: location of image dataset</span>
-<span class="sd">    :param image_dimensions: initial dimensions of raw training images</span>
-<span class="sd">    :param csv_label_col: index of label value column in csv</span>
-<span class="sd">    :param csv_image_col: index of image column in csv</span>
+<span class="sd">    The *datapath* argument must be a path to a csv file or a directory containing the image and label data.</span>
+
+<span class="sd">    If a csv_file is provided, user must indicate so by setting the *from_csv* argument to true and must provide values for the *csv_label_col* and *csv_image_col* arguments to indicate the indices of the images and labels in the csv file.</span>
+
+<span class="sd">    If a directory path is provided, the directory must contain emotion label subdirectories containing all image samples pertaining to that label. If the directory contains image time series data, each emotion label subdirectory must contain time series subdirectories, each containing one time series sample. See the sample directories in the folder *examples/image_data*.</span>
+
+<span class="sd">    :param from_csv: If true, images will be extracted from csv file.</span>
+<span class="sd">    :param target_labels: List of target label values/strings.</span>
+<span class="sd">    :param datapath: Location of image dataset.</span>
+<span class="sd">    :param image_dimensions: Initial dimensions of raw training images.</span>
+<span class="sd">    :param csv_label_col: Index of label value column in csv.</span>
+<span class="sd">    :param csv_image_col: Index of image column in csv.</span>
+<span class="sd">    :param time_steps: Number of images to load from each time series sample. Parameter must be provided to load time series data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_csv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span> <span class="o">=</span> <span class="n">from_csv</span>
@@ -69,9 +76,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span> <span class="o">=</span> <span class="n">target_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span> <span class="o">=</span> <span class="n">time_steps</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_arguments</span><span class="p">()</span>
+
 <div class="viewcode-block" id="DataLoader.get_data"><a class="viewcode-back" href="../dataloader.html#dataloader.DataLoader.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: list of images and list of corresponding labels from specified location</span>
+<span class="sd">        :return: List of images and list of corresponding labels from specified location. If loading from directory, also returns label index map (maps emotion label to integer value used during training).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_from_csv</span><span class="p">()</span>
@@ -82,11 +91,11 @@
 
     <span class="k">def</span> <span class="nf">_get_data_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: list of images and list of corresponding labels from specified directory</span>
+<span class="sd">        :return: List of images, list of corresponding labels, and label index map from specified directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">images</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">label_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">label_index_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">label_directories</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dir</span> <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">dir</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">label_directory</span> <span class="ow">in</span> <span class="n">label_directories</span><span class="p">:</span>
             <span class="n">label_directory_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">label_directory</span>
@@ -98,22 +107,24 @@
                 <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">label_directory</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-                    <span class="n">new_label_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-                    <span class="n">label_map</span><span class="p">[</span><span class="n">label_directory</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_index</span>
+                    <span class="n">new_label_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_index_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="n">label_index_map</span><span class="p">[</span><span class="n">label_directory</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_index</span>
                 <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_directory</span><span class="p">)</span>
 
         <span class="n">label_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">label_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">label_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_index_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
             <span class="n">label_value</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">label_count</span>
-            <span class="n">label_value</span><span class="p">[</span><span class="n">label_map</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">label_value</span><span class="p">[</span><span class="n">label_index_map</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">label_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_data_not_empty</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label_values</span><span class="p">),</span> <span class="n">label_index_map</span>
 
     <span class="k">def</span> <span class="nf">_get_data_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return:  list of images and list of labels from csv file</span>
+<span class="sd">        :return:  List of images and list of labels from csv file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting training data from csv...&#39;</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
@@ -138,22 +149,28 @@
         <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training data extraction runtime - &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_data_not_empty</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_image_series_data_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: list of image series data and list of corresponding labels from specified directory</span>
+<span class="sd">        :return: List of image series data, list of corresponding labels, and label index map from specified directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image_series</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">label_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">label_index_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">label_directories</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dir</span> <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">dir</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">label_directory</span> <span class="ow">in</span> <span class="n">label_directories</span><span class="p">:</span>
+
             <span class="n">label_directory_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">label_directory</span>
             <span class="n">series_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">series_directory</span> <span class="k">for</span> <span class="n">series_directory</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">label_directory_path</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">series_directory</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
 
             <span class="k">for</span> <span class="n">series_directory</span> <span class="ow">in</span> <span class="n">series_directories</span><span class="p">:</span>
                 <span class="n">series_directory_path</span> <span class="o">=</span> <span class="n">label_directory_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">series_directory</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_series_directory_size</span><span class="p">(</span><span class="n">series_directory_path</span><span class="p">)</span>
+
                 <span class="n">new_image_series</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
                 <span class="n">image_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_file</span> <span class="k">for</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">series_directory_path</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">image_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
                 <span class="k">for</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
@@ -168,18 +185,79 @@
                 <span class="n">image_series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_image_series</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">label_directory</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-                    <span class="n">new_label_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-                    <span class="n">label_map</span><span class="p">[</span><span class="n">label_directory</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_index</span>
+                    <span class="n">new_label_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_index_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="n">label_index_map</span><span class="p">[</span><span class="n">label_directory</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_index</span>
                 <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_directory</span><span class="p">)</span>
 
         <span class="n">label_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="n">label_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">label_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_index_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
             <span class="n">label_value</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">label_count</span>
-            <span class="n">label_value</span><span class="p">[</span><span class="n">label_map</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">label_value</span><span class="p">[</span><span class="n">label_index_map</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">label_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image_series</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label_values</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_data_not_empty</span><span class="p">(</span><span class="n">image_series</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image_series</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label_values</span><span class="p">),</span> <span class="n">label_index_map</span>
+
+    <span class="k">def</span> <span class="nf">_check_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_csv</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_csv_arguments</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_directory_arguments</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_csv_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates arguments for loading from csv file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must supply target_labels when loading data from csv.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_dimensions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must provide image dimensions when loading data from csv.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># check received valid csv file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+
+            <span class="c1"># check image and label indices are valid</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+            <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span> <span class="o">&gt;=</span> <span class="n">num_cols</span><span class="p">:</span>
+                <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Csv column index for image is out of range: </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span> <span class="o">&gt;=</span> <span class="n">num_cols</span><span class="p">:</span>
+                <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Csv column index for label is out of range: </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">csv_label_col</span><span class="p">))</span>
+
+            <span class="c1"># check image dimensions</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_image_col</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid image dimensions: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_dimensions</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_check_directory_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates arguments for loading from directories, including static image and time series directories.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="p">(</span><span class="ne">NotADirectoryError</span><span class="p">(</span><span class="s1">&#39;Directory does not exist: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Time step argument must be greater than 0, but gave: </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Time step argument must be an integer, but gave: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_check_data_not_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;csv file does not contain samples of specified labels: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_labels</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_check_series_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series_directory_path</span><span class="p">):</span>
+        <span class="n">image_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_file</span> <span class="k">for</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">series_directory_path</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">image_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Time series sample found in path </span><span class="si">%s</span><span class="s1"> does not contain enough images for </span><span class="si">%s</span><span class="s1"> time steps.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">series_directory_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_steps</span><span class="p">)))</span></div>
+
+
+
 </pre></div>
 
           </div>
