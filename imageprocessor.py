@@ -6,9 +6,11 @@ class ImageProcessor:
     """
     Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.
 
-    :param target_dimensions: final dimensions of training images
-    :param rgb: true if raw images are in rgb
-    :param channels: number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input
+    :param images: List of raw image samples.
+    :param target_dimensions: Final dimensions of training images.
+    :param augment_data: If true, will augment data with ImageDataGenerator.
+    :param rgb: True if raw images are in rgb.
+    :param time_series: True if each sample is a series of images.
     """
     def __init__(self, images, target_dimensions=None, augment_data=False, rgb=False, time_series=False):
         self.images = images
@@ -19,7 +21,7 @@ class ImageProcessor:
 
     def process_training_data(self):
         """
-        :return:  list of processed image data
+        :return:  List of processed image data.
         """
         print('Extracting training data from csv...')
         start = datetime.datetime.now()
@@ -41,6 +43,10 @@ class ImageProcessor:
         return np.array(images)
 
     def _resize_image_sample(self, raw_image):
+        """
+        :param raw_image:
+        :return: Resized image sample.
+        """
         if not self.time_series:
             return cv2.resize(raw_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         if self.time_series:
