@@ -79,7 +79,7 @@ class FERModel:
         Extracts training images from csv file found in user-supplied directory path
         :param csv_data_path: path to directory containing image data csv file supplied by user
         """
-        dataLoader = DataLoader(from_csv=True, target_labels=[0,1,2,3,4,5,6,7], datapath=csv_data_path, image_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
+        dataLoader = DataLoader(from_csv=True, target_labels=[0,1,2,3,4,5,6], datapath=csv_data_path, image_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
         images, labels = dataLoader.get_data()
 
         imageProcessor = ImageProcessor(images, target_dimensions=self.target_dimensions, rgb=False, channels=1)

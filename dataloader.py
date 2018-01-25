@@ -84,16 +84,22 @@ class DataLoader:
 
         images = list()
         labels = list()
+        label_count = len(self.target_labels)
+        label_map = dict()
+        print('label_count: ' + str(label_count))
         with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 
             for row in reader:
                 if row[self.csv_label_col] == 'emotion': continue
-                if int(row[self.csv_label_col]) not in self.target_labels:
+                raw_label = int(row[self.csv_label_col])
+                if raw_label not in self.target_labels:
                     continue
+                if raw_label not in label_map.keys():
+                    label_map[raw_label] = len(label_map.keys())
 
-                label = [0]*7
-                label[int(row[self.csv_label_col])] = 1.0
+                label = [0]*label_count
+                label[label_map[raw_label]] = 1.0
                 labels.append(np.array(label))
 
                 image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.image_dimensions)
