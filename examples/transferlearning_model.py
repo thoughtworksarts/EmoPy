@@ -19,7 +19,7 @@ if verbose:
     print('raw image shape: ' + str(images.shape))
 
 print('Processing data...')
-imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions)
+imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, rgb=True)
 images = imageProcessor.process_training_data()
 if verbose:
     print ('processed image shape: ' + str(images.shape))

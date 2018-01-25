@@ -20,7 +20,7 @@ if verbose:
 label_count = len(labels[0])
 
 print('Processing data...')
-imageProcessor = ImageProcessor(image_data, target_dimensions=target_dimensions, rgb=False, channels=1)
+imageProcessor = ImageProcessor(image_data, target_dimensions=target_dimensions)
 image_array = imageProcessor.process_training_data()
 image_data = np.array([[image] for image in image_array])
 if verbose:

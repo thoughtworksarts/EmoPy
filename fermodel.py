@@ -82,7 +82,7 @@ class FERModel:
         dataLoader = DataLoader(from_csv=True, target_labels=[0,1,2,3,4,5,6], datapath=csv_data_path, image_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
         images, labels = dataLoader.get_data()
 
-        imageProcessor = ImageProcessor(images, target_dimensions=self.target_dimensions, rgb=False, channels=1)
+        imageProcessor = ImageProcessor(images, target_dimensions=self.target_dimensions)
         images = imageProcessor.process_training_data()
         self.train_images = images
         self.y_train = labels
