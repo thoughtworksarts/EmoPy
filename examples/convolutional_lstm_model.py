@@ -29,22 +29,15 @@ imageProcessor = ImageProcessor(images, target_dimensions=target_dimensions, rgb
 images = imageProcessor.process_training_data()
 if verbose:
 	print ('processed image shape: ' + str(images.shape))
-
-print('Extracting features...')
-featureExtractor = FeatureExtractor(images, return_2d_array=True)
-featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (16, 16), 'cells_per_block': (1, 1)})
-raw_features = featureExtractor.extract()
 features = list()
-for feature in raw_features:
-   features.append([[feature]])
+for image in images:
+   features.append([[image]])
 features = np.array(features)
 if verbose:
     print('feature shape: ' + str(features.shape))
     print('label shape: ' + str(labels.shape))
 
-print('Creating training/testing data...')
-validation_split = 0.15
-
 print('Training net...')
+validation_split = 0.15
 model = ConvolutionalLstmNN(target_dimensions, channels, target_labels, time_delay=time_delay)
 model.fit(features, labels, validation_split)
