@@ -27,7 +27,7 @@ The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed infor
 
 ## Datasets
 
-As of this moment, in order to use this repository you will have to provide your own labeled facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or a small dataset we have provided in the [image-data](image-data) subdirectory.
+As of this moment, in order to use this repository you will have to provide your own labeled facial expression image dataset. We aim to provide pre-trained prediction models in the near future, but for now you can try out the system using your own dataset or a small dataset we have provided in the [examples/image_data](examples/image_data) subdirectory.
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
@@ -63,8 +63,8 @@ virtualenv -p $(which python3) venv
 source venv/bin/activate
 ```
 
-Your terminal command line should now be prefixed with ```(venv)```. 
-  
+Your terminal command line should now be prefixed with ```(venv)```.
+
 The last step is to install the remaining dependencies using pip.
 
 ```
@@ -129,9 +129,9 @@ Figure from [@vanGent2016]
 
 This model uses a technique known as [Transfer Learning](https://www.analyticsvidhya.com/blog/2017/06/transfer-learning-the-art-of-fine-tuning-a-pre-trained-model/), where pre-trained deep neural net models are used as starting points. The pre-trained models it uses are trained on images to classify objects. The model then retrains the pre-trained models using facial expression images with emotion classifications rather than object classifications. It adds a couple top layers to the original model to match the number of target emotions we want to classify and reruns the training algorithm with a set of facial expression images. It only uses still images, no temporal context.
 
-## Performance 
+## Performance
 
-Currently the ConvolutionalLstmNN model is performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset. 
+Currently the ConvolutionalLstmNN model is performing best with a validation accuracy of 62.7% trained to classify three emotions. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset.
 
 | Neural Net Model    | 7 emotions        |                     | 3 emotions        |                     |
 |---------------------|-------------------|---------------------|-------------------|---------------------|
@@ -153,7 +153,7 @@ These are the principals we use to guide development and contributions to the pr
 
 - __Experimentation to Maximize Performance__. Optimal performance in FER prediction is a primary goal. The deep neural net classes are designed to easily modify training parameters, image pre-processing options, and feature extraction methods in the hopes that experimentation in the open-source community will lead to high-performing FER prediction.
 
-- __Modularity.__ EmoPy contains four base modules (`fermodel`, `neuralnets`, `imageprocessor`, and `featureextractor`) that can be easily used together with minimal restrictions. 
+- __Modularity.__ EmoPy contains four base modules (`fermodel`, `neuralnets`, `imageprocessor`, and `featureextractor`) that can be easily used together with minimal restrictions.
 
 ## Contributing
 
@@ -163,7 +163,7 @@ These are the principals we use to guide development and contributions to the pr
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-This is a new library that has a lot of room for growth. Check out the list of open issues that we need help addressing! 
+This is a new library that has a lot of room for growth. Check out the list of open issues that we need help addressing!
 
 [@Chen2014FacialER]: https://www.semanticscholar.org/paper/Facial-Expression-Recognition-Based-on-Facial-Comp-Chen-Chen/677ebde61ba3936b805357e27fce06c44513a455 "Facial Expression Recognition Based on Facial Components Detection and HOG Features"
 
