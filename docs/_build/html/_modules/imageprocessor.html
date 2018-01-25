@@ -53,39 +53,32 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.</span>
 
-<span class="sd">    :param target_dimensions: final dimensions of training images</span>
-<span class="sd">    :param rgb: true if images are in rgb</span>
-<span class="sd">    :param channels: number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input</span>
+<span class="sd">    :param images: List of raw image samples.</span>
+<span class="sd">    :param target_dimensions: Final dimensions of training images.</span>
+<span class="sd">    :param augment_data: If true, will augment data with ImageDataGenerator.</span>
+<span class="sd">    :param rgb: True if raw images are in rgb.</span>
+<span class="sd">    :param time_series: True if each sample is a series of images.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">augment_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">augment_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">images</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="n">target_dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">augment_data</span> <span class="o">=</span> <span class="n">augment_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_series</span> <span class="o">=</span> <span class="n">time_series</span>
 
 <div class="viewcode-block" id="ImageProcessor.process_training_data"><a class="viewcode-back" href="../imageprocessor.html#imageprocessor.ImageProcessor.process_training_data">[docs]</a>    <span class="k">def</span> <span class="nf">process_training_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return:  list of processed image data</span>
+<span class="sd">        :return:  List of processed image data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting training data from csv...&#39;</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 
         <span class="n">images</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">raw_image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="n">raw_image</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series</span><span class="p">:</span>
-                <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">raw_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series</span><span class="p">:</span>
-                <span class="n">image</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-                <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">raw_image</span><span class="p">:</span>
-                    <span class="n">image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image_sample</span><span class="p">(</span><span class="n">raw_image</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">:</span>
                 <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
-
             <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_data</span><span class="p">:</span>
             <span class="n">data_gen</span> <span class="o">=</span> <span class="n">ImageDataGenerator</span><span class="p">(</span><span class="n">rotation_range</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
             <span class="n">data_gen</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>   <span class="c1"># TODO: functionality: send data_gen new image set to feature extractor</span>
@@ -94,7 +87,20 @@
         <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training data extraction runtime - &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_resize_image_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param raw_image:</span>
+<span class="sd">        :return: Resized image sample.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">raw_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series</span><span class="p">:</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">raw_image</span><span class="p">:</span>
+                <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">sample</span></div>
 </pre></div>
 
           </div>

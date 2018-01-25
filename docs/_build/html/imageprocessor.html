@@ -55,16 +55,18 @@
 <span id="imageprocessor"></span><h1>ImageProcessor<a class="headerlink" href="#module-imageprocessor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="imageprocessor.ImageProcessor">
-<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>images</em>, <em>target_dimensions=None</em>, <em>augment_data=False</em>, <em>rgb=False</em>, <em>channels=3</em>, <em>time_series=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>images</em>, <em>target_dimensions=None</em>, <em>augment_data=False</em>, <em>rgb=False</em>, <em>time_series=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>target_dimensions</strong> – final dimensions of training images</li>
-<li><strong>rgb</strong> – true if images are in rgb</li>
-<li><strong>channels</strong> – number of desired channels. if raw images are grayscale, may still want 3 channels for desired neural net input</li>
+<li><strong>images</strong> – List of raw image samples.</li>
+<li><strong>target_dimensions</strong> – Final dimensions of training images.</li>
+<li><strong>augment_data</strong> – If true, will augment data with ImageDataGenerator.</li>
+<li><strong>rgb</strong> – True if raw images are in rgb.</li>
+<li><strong>time_series</strong> – True if each sample is a series of images.</li>
 </ul>
 </td>
 </tr>
@@ -77,7 +79,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of processed image data</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of processed image data.</td>
 </tr>
 </tbody>
 </table>
