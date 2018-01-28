@@ -21,12 +21,16 @@ class DataGenerator:
         self.images = self._reshape(images)
         self.labels = labels
         self.data_gen.fit(self.images)
+        return self
 
     def get_next_batch(self, batch_size=10):
         for images, labels in self.data_gen.flow(self.images, self.labels, batch_size=batch_size):
             samples, pixels, width, height = images.shape
             images = images.reshape(samples, width, height)
             return images, labels
+
+    def generate(self, batch_size=10):
+        return self.data_gen.flow(self.images, self.labels, batch_size=batch_size)
 
     def _reshape(self, images):
         images = images.astype('float32')
