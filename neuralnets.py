@@ -235,6 +235,11 @@ class ConvolutionalNN(_FERNeuralNet):
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
+    def fit_generator(self, generator, validation_data=None, epochs=50):
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit_generator(generator=generator, validation_data=validation_data, epochs=epochs,
+                                 callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
     def predict(self, images):
         self.model.predict(images)
 
