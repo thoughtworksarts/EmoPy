@@ -45,3 +45,47 @@ class MultipleFrameTransformationTest(unittest.TestCase):
 
         self.assertFalse(np.array_equal(transformed_sample, sample))
         self.assertTrue(np.array_equal(transformed_sample, transformed_frames))
+
+
+def get_next_batch(generator, image):
+    generator.fit(image)
+    for X in generator.flow(image):
+        return X
+
+
+class ImageDataGeneratorTest(unittest.TestCase):
+    def test_should_set_proper_index_for_row_column_channel_and_time_delay(self):
+        generator = ImageDataGenerator(time_delay=None)
+        self.assertEqual(generator.time_delay_axis, None)
+        self.assertEqual(generator.row_axis, 1)
+        self.assertEqual(generator.col_axis, 2)
+        self.assertEqual(generator.channel_axis, 3)
+
+    def test_should_set_proper_index_when_time_delay_has_value(self):
+        generator = ImageDataGenerator(time_delay=3)
+        self.assertEqual(generator.time_delay_axis, 1)
+        self.assertEqual(generator.row_axis, 2)
+        self.assertEqual(generator.col_axis, 3)
+        self.assertEqual(generator.channel_axis, 4)
+
+    def test_should_produce_augmented_sample_without_time_delay(self):
+        generator = ImageDataGenerator(time_delay=3, rotation_range=0.5, horizontal_flip=True)
+        data = np.random.rand(2, 3, 64, 64, 1)
+        augmented_data = get_next_batch(generator, data)
+        self.assertFalse(np.array_equal(data, augmented_data))
+
+    def test_should_produce_transformed_batch_of_images(self):
+        generator = ImageDataGenerator(time_delay=None)
+        data = np.random.rand(2, 64, 64, 3)
+        generator.fit(data)
+        batch = get_next_batch(generator, data)
+        self.assertEqual(data.shape, batch.shape)
+        self.assertTrue((data == batch).all)
+
+    def test_should_produce_transformed_batch_with_time_delay(self):
+        generator = ImageDataGenerator(time_delay=3)
+        data = np.random.rand(2, 3, 64, 64, 3)
+        generator.fit(data)
+        batch = get_next_batch(generator, data)
+        self.assertEqual(data.shape, batch.shape)
+        self.assertTrue((data == batch).all)
