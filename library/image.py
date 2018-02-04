@@ -191,7 +191,23 @@ def transform_matrix_offset_center(matrix, x, y):
     return transform_matrix
 
 
-def apply_transform(x,
+def transform(frame, transform_matrix, channel_axis, fill_mode, cval):
+    final_affine_matrix = transform_matrix[:2, :2]
+    final_offset = transform_matrix[:2, 2]
+
+    frame = np.rollaxis(frame, channel_axis, 0)
+    channel_images = [ndi.interpolation.affine_transform(
+        f_channel,
+        final_affine_matrix,
+        final_offset,
+        order=0,
+        mode=fill_mode,
+        cval=cval) for f_channel in frame]
+    frame = np.stack(channel_images, axis=0)
+    return np.rollaxis(frame, 0, channel_axis + 1)
+
+
+def apply_transform(sample,
                     transform_matrix,
                     channel_axis=0,
                     fill_mode='nearest',
@@ -211,19 +227,13 @@ def apply_transform(x,
     # Returns
         The transformed version of the input.
     """
-    x = np.rollaxis(x, channel_axis, 0)
-    final_affine_matrix = transform_matrix[:2, :2]
-    final_offset = transform_matrix[:2, 2]
-    channel_images = [ndi.interpolation.affine_transform(
-        x_channel,
-        final_affine_matrix,
-        final_offset,
-        order=0,
-        mode=fill_mode,
-        cval=cval) for x_channel in x]
-    x = np.stack(channel_images, axis=0)
-    x = np.rollaxis(x, 0, channel_axis + 1)
-    return x
+    if sample.ndim == 4:
+        channel_axis = channel_axis - 1
+        transformed_frames = [transform(frame, transform_matrix, channel_axis, fill_mode, cval) for frame in sample]
+        return np.stack(transformed_frames, axis=0)
+
+    elif sample.ndim == 3:
+        return transform(sample, transform_matrix, channel_axis, fill_mode, cval)
 
 
 def flip_axis(x, axis):
