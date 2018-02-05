@@ -142,13 +142,13 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         Composes all layers of CNN.
         """
         model = Sequential()
-        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=[self.time_delay]+list(self.image_size)+[self.channels], data_format='channels_last', return_sequences=True))
         model.add(BatchNormalization())
-        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_first', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_last', return_sequences=True))
         model.add(BatchNormalization())
         model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation))
         model.add(BatchNormalization())
-        model.add(Conv2D(filters=1, kernel_size=self.kernel_size, activation="sigmoid", data_format="channels_first"))
+        model.add(Conv2D(filters=1, kernel_size=self.kernel_size, activation="sigmoid", data_format="channels_last"))
         model.add(Flatten())
         model.add(Dense(units=len(self.target_labels), activation="sigmoid"))
         if self.verbose:

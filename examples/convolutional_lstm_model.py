@@ -30,7 +30,7 @@ images = imageProcessor.process_training_data()
 if verbose:
 	print ('processed image shape: ' + str(images.shape))
 features = list()
-features = np.array([[[image]] for image in images])
+features = np.array([[np.array([image]).reshape(list(target_dimensions)+[channels])] for image in images])
 if verbose:
     print('feature shape: ' + str(features.shape))
     print('label shape: ' + str(labels.shape))

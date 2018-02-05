@@ -28,7 +28,7 @@ image_array = imageProcessor.process_training_data()
 image_data = list()
 
 for image in image_array:
-    image_data.append(np.array([image]).reshape((target_dimensions[0], target_dimensions[1], 1)))
+    image_data.append(np.array([image]).reshape((list(target_dimensions)+[channels])))
 image_data = np.array(image_data)
 if verbose:
     print('Processed image data shape: ' + str(image_data.shape))

@@ -109,10 +109,10 @@ class FERModel:
         featureExtractor = FeatureExtractor(self.train_images, return_2d_array=True)
         featureExtractor.add_feature('hog', {'orientations': 8, 'pixels_per_cell': (4, 4), 'cells_per_block': (1, 1)})
         raw_features = featureExtractor.extract()
-        features = list()
-        for feature in raw_features:
-            features.append([[feature]])
-        self.x_train = np.array(features)
+        self.x_train = np.array([[np.array([feature]).reshape(list(self.target_dimensions)+[self.channels])] for feature in raw_features])
+
+        print('Formatting image data...')
+
         if self.verbose:
             print('feature shape: ' + str(self.x_train.shape))
             print('label shape: ' + str(self.y_train.shape))
