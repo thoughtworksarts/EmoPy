@@ -262,7 +262,7 @@ class TimeDelayConvNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1, 4, 4), activation='relu', verbose=False):
+    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1,4,4), activation='relu', verbose=False):
         self.image_size = image_size
         self.time_delay = time_delay
         self.channels = channels
@@ -279,12 +279,12 @@ class TimeDelayConvNN(_FERNeuralNet):
         Composes all layers of 3D CNN.
         """
         model = Sequential()
-        model.add(Conv3D(input_shape=[self.channels, self.time_delay]+list(self.image_size), filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_first'))
+        model.add(Conv3D(input_shape=[self.time_delay]+list(self.image_size)+[self.channels], filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(MaxPooling3D(pool_size=(1,2,2), data_format='channels_last'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(MaxPooling3D(pool_size=(1,2,2), data_format='channels_last'))
 
         model.add(Flatten())
         model.add(Dense(units=self.label_count, activation="relu"))

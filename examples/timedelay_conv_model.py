@@ -23,14 +23,12 @@ label_count = len(labels[0])
 print('Processing data...')
 imageProcessor = ImageProcessor(image_data, target_dimensions=target_dimensions, time_series=True)
 image_array = imageProcessor.process_training_data()
-image_data = np.array([[image] for image in image_array])
+image_data = np.array([np.array([image]).reshape([time_delay]+list(target_dimensions)+[channels]) for image in image_array])
 if verbose:
     print ('processed image data shape: ' + str(image_data.shape))
 
-print('Creating training/testing data...')
-validation_split = 0.15
-
 
 print('Training net...')
+validation_split = 0.15
 model = TimeDelayConvNN(target_dimensions, time_delay, channels, label_count)
 model.fit(image_data, labels, validation_split)
