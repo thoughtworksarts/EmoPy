@@ -207,13 +207,12 @@ class ConvolutionalNN(_FERNeuralNet):
         Composes all layers of 2D CNN.
         """
         model = Sequential()
-        model.add(Conv2D(input_shape=[self.channels]+list(self.image_size), filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv2D(input_shape=list(self.image_size)+[self.channels], filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
         model.add(MaxPooling2D())
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_first'))
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
         model.add(MaxPooling2D())
-        # model.add(Dropout(0.25))
 
         model.add(Flatten())
         model.add(Dense(units=self.label_count, activation="relu"))
