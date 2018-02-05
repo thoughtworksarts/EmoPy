@@ -39,3 +39,6 @@ print('Training net...')
 validation_split = 0.15
 model = ConvolutionalLstmNN(target_dimensions, channels, target_labels, time_delay=time_delay)
 model.fit(features, labels, validation_split)
+
+## if you want to save a graph of your model layers.
+model.save_model_graph()

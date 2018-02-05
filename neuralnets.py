@@ -7,6 +7,7 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout, MaxPooling3D
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
+from keras.utils import plot_model
 
 class _FERNeuralNet(object):
     """
@@ -25,6 +26,9 @@ class _FERNeuralNet(object):
 
     def predict(self, images):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
+
+    def save_model_graph(self):
+        plot_model(self.model, to_file='output/model.png')
 
 class TransferLearningNN(_FERNeuralNet):
     """

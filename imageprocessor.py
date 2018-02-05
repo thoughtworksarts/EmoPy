@@ -23,7 +23,6 @@ class ImageProcessor:
         """
         :return:  List of processed image data.
         """
-        print('Extracting training data from csv...')
         start = datetime.datetime.now()
 
         images = list()
