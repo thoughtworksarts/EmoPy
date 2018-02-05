@@ -52,6 +52,12 @@ Now you can install Python 3.6.3 using Homebrew.
 brew install python3
 ```
 
+GraphViz is required for visualisation functions.
+
+```
+brew install graphviz
+```
+
 The next step is to set up a virtual environment using virtualenv. Install virtualenv with sudo.
 ```
 sudo pip install virtualenv
