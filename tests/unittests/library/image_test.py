@@ -12,7 +12,7 @@ class SingleFrameTransformationTest(unittest.TestCase):
 
     def test_should_generate_non_identity_transformation_matrix(self):
         image = np.zeros((64, 64, 1))
-        generator = ImageDataGenerator(rotation_range=0.2)
+        generator = ImageDataGenerator(rotation_angle=40)
         transformation_matrix = generator.get_random_transform_matrix(image)
         self.assertFalse(np.array_equal(transformation_matrix, np.identity(3)))
 
@@ -31,9 +31,9 @@ class SingleFrameTransformationTest(unittest.TestCase):
 
 class MultipleFrameTransformationTest(unittest.TestCase):
     def test_should_generate_transformation_matrix_with_time_delay(self):
-        image = np.zeros((3, 64, 64, 1))
+        sample = np.zeros((3, 64, 64, 1))
         generator = ImageDataGenerator(height_shift_range=0.2, time_delay=3)
-        transform_matrix = generator.get_random_transform_matrix(image)
+        transform_matrix = generator.get_random_transform_matrix(sample)
         self.assertFalse(np.array_equal(transform_matrix, np.identity(3)))
 
     def test_should_transform_each_frame_identically_with_time_delay(self):
@@ -41,10 +41,10 @@ class MultipleFrameTransformationTest(unittest.TestCase):
         transform_matrix = np.random.rand(3, 3)
         transformed_sample = apply_transform(sample, transform_matrix, channel_axis=3)
         transformed_frames = [apply_transform(frame, transform_matrix, channel_axis=2) for frame in sample]
-        transformed_frames = np.stack(transformed_frames, axis=0)
+        expected = np.stack(transformed_frames, axis=0)
 
         self.assertFalse(np.array_equal(transformed_sample, sample))
-        self.assertTrue(np.array_equal(transformed_sample, transformed_frames))
+        self.assertTrue(np.array_equal(transformed_sample, expected))
 
 
 def get_next_batch(generator, image):
@@ -68,24 +68,20 @@ class ImageDataGeneratorTest(unittest.TestCase):
         self.assertEqual(generator.col_axis, 3)
         self.assertEqual(generator.channel_axis, 4)
 
-    def test_should_produce_augmented_sample_without_time_delay(self):
-        generator = ImageDataGenerator(time_delay=3, rotation_range=0.5, horizontal_flip=True)
-        data = np.random.rand(2, 3, 64, 64, 1)
-        augmented_data = get_next_batch(generator, data)
-        self.assertFalse(np.array_equal(data, augmented_data))
-
     def test_should_produce_transformed_batch_of_images(self):
         generator = ImageDataGenerator(time_delay=None)
         data = np.random.rand(2, 64, 64, 3)
-        generator.fit(data)
         batch = get_next_batch(generator, data)
         self.assertEqual(data.shape, batch.shape)
-        self.assertTrue((data == batch).all)
 
     def test_should_produce_transformed_batch_with_time_delay(self):
         generator = ImageDataGenerator(time_delay=3)
         data = np.random.rand(2, 3, 64, 64, 3)
-        generator.fit(data)
         batch = get_next_batch(generator, data)
         self.assertEqual(data.shape, batch.shape)
-        self.assertTrue((data == batch).all)
+
+    def test_should_produce_augmented_sample_with_time_delay(self):
+        generator = ImageDataGenerator(time_delay=3, rotation_angle=50, horizontal_flip=True)
+        data = np.random.rand(1, 3, 10, 10, 3)
+        augmented_data = get_next_batch(generator, data)
+        self.assertFalse(np.array_equal(data, augmented_data))

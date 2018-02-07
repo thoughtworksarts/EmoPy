@@ -155,7 +155,7 @@ class ImageDataGenerator(object):
                  samplewise_std_normalization=False,
                  zca_whitening=False,
                  zca_epsilon=1e-6,
-                 rotation_range=0.,
+                 rotation_angle=0.,
                  width_shift_range=0.,
                  height_shift_range=0.,
                  shear_range=0.,
@@ -175,7 +175,7 @@ class ImageDataGenerator(object):
         self.samplewise_std_normalization = samplewise_std_normalization
         self.zca_whitening = zca_whitening
         self.zca_epsilon = zca_epsilon
-        self.rotation_range = rotation_range
+        self.rotation_angle = rotation_angle
         self.width_shift_range = width_shift_range
         self.height_shift_range = height_shift_range
         self.shear_range = shear_range
@@ -267,11 +267,11 @@ class ImageDataGenerator(object):
                               'first by calling `.fit(numpy_data)`.')
         return x
 
-    def get_random_transform_matrix(self, x, seed=None):
+    def get_random_transform_matrix(self, sample, seed=None):
         """Randomly augment a single image tensor.
 
         # Arguments
-            x: 3D tensor, single image.
+            sample: 3D or 4D tensor, single sample.
             seed: random seed.
 
         # Returns
@@ -286,18 +286,18 @@ class ImageDataGenerator(object):
 
         # use composition of homographies
         # to generate final transform that needs to be applied
-        if self.rotation_range:
-            theta = np.pi / 180 * np.random.uniform(-self.rotation_range, self.rotation_range)
+        if self.rotation_angle:
+            theta = np.pi / 180 * np.random.uniform(-self.rotation_angle, self.rotation_angle)
         else:
             theta = 0
 
         if self.height_shift_range:
-            tx = np.random.uniform(-self.height_shift_range, self.height_shift_range) * x.shape[img_row_axis]
+            tx = np.random.uniform(-self.height_shift_range, self.height_shift_range) * sample.shape[img_row_axis]
         else:
             tx = 0
 
         if self.width_shift_range:
-            ty = np.random.uniform(-self.width_shift_range, self.width_shift_range) * x.shape[img_col_axis]
+            ty = np.random.uniform(-self.width_shift_range, self.width_shift_range) * sample.shape[img_col_axis]
         else:
             ty = 0
 
