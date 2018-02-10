@@ -28,6 +28,17 @@ class SingleFrameTransformationTest(unittest.TestCase):
         transformed_image = apply_transform(image, transform_matrix, channel_axis=2)
         self.assertFalse(np.array_equal(transformed_image, image))
 
+    def test_should_resize_image(self):
+        image = np.random.rand(64, 64, 3)
+        target_dimensions = (10, 10)
+        resized_image = resize_sample(image, target_dimensions)
+        self.assertEqual(resized_image.shape, (10, 10, 3))
+
+    def test_should_not_resize_when_target_dimension_is_not_given(self):
+        image = np.random.rand(64, 64, 3)
+        resized_image = resize_sample(image)
+        self.assertEqual(resized_image.shape, (64, 64, 3))
+
 
 class MultipleFrameTransformationTest(unittest.TestCase):
     def test_should_generate_transformation_matrix_with_time_delay(self):
@@ -45,6 +56,12 @@ class MultipleFrameTransformationTest(unittest.TestCase):
 
         self.assertFalse(np.array_equal(transformed_sample, sample))
         self.assertTrue(np.array_equal(transformed_sample, expected))
+
+    def test_should_resize_sample_with_time_delay(self):
+        sample = np.random.rand(3, 64, 64, 1)
+        target_dimensions = (28, 28)
+        resized_sample = resize_sample(sample, target_dimensions)
+        self.assertEqual(resized_sample.shape, (3, 28, 28, 1))
 
 
 def get_next_batch(generator, image):
@@ -85,3 +102,10 @@ class ImageDataGeneratorTest(unittest.TestCase):
         data = np.random.rand(1, 3, 10, 10, 3)
         augmented_data = get_next_batch(generator, data)
         self.assertFalse(np.array_equal(data, augmented_data))
+
+    def test_should_resize_all_samples_given_target_dimensions(self):
+        data = np.random.rand(10, 3, 64, 64, 3)
+        target_dimensions = (10, 10)
+        generator = ImageDataGenerator(time_delay=3, rotation_angle=50, horizontal_flip=True, target_dimensions=target_dimensions)
+        augmented_data = get_next_batch(generator, data)
+        self.assertEqual(augmented_data.shape, (10, 3, 10, 10, 3))

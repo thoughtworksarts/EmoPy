@@ -8,6 +8,7 @@ from __future__ import print_function
 import threading
 import warnings
 
+import cv2
 import numpy as np
 import scipy.ndimage as ndi
 from keras import backend as K
@@ -96,7 +97,7 @@ def apply_transform(sample,
         transformed_frames = [transform(frame, transform_matrix, channel_axis, fill_mode, cval) for frame in sample]
         return np.stack(transformed_frames, axis=0)
 
-    elif sample.ndim == 3:
+    if sample.ndim == 3:
         return transform(sample, transform_matrix, channel_axis, fill_mode, cval)
 
 
@@ -105,6 +106,24 @@ def flip_axis(x, axis):
     x = x[::-1, ...]
     x = x.swapaxes(0, axis)
     return x
+
+
+def resize(image, target_dimensions):
+    channels = image.shape[-1]
+    return cv2.resize(image, target_dimensions, interpolation=cv2.INTER_CUBIC)\
+        .reshape(list(target_dimensions) + [channels])
+
+
+def resize_sample(sample, target_dimensions=None):
+    if target_dimensions is None:
+        return sample
+
+    if sample.ndim == 4:
+        resized_images = [resize(frame, target_dimensions) for frame in sample]
+        return np.stack(resized_images, axis=0)
+
+    if sample.ndim == 3:
+        return resize(sample, target_dimensions)
 
 
 class ImageDataGenerator(object):
@@ -168,7 +187,8 @@ class ImageDataGenerator(object):
                  rescale=None,
                  preprocessing_function=None,
                  data_format="channels_last",
-                 time_delay=None):
+                 time_delay=None,
+                 target_dimensions=None):
         self.featurewise_center = featurewise_center
         self.samplewise_center = samplewise_center
         self.featurewise_std_normalization = featurewise_std_normalization
@@ -187,8 +207,9 @@ class ImageDataGenerator(object):
         self.vertical_flip = vertical_flip
         self.rescale = rescale
         self.preprocessing_function = preprocessing_function
-        self.time_delay = time_delay
         self.data_format = data_format
+        self.time_delay = time_delay
+        self.target_dimesions = target_dimensions
 
         if data_format == 'channels_last':
             if time_delay is None:
@@ -266,6 +287,9 @@ class ImageDataGenerator(object):
                               'been fit on any training data. Fit it '
                               'first by calling `.fit(numpy_data)`.')
         return x
+
+    def resize(self, sample):
+        return resize_sample(sample, self.target_dimesions)
 
     def get_random_transform_matrix(self, sample, seed=None):
         """Randomly augment a single image tensor.
@@ -588,13 +612,15 @@ class NumpyArrayIterator(Iterator):
         super(NumpyArrayIterator, self).__init__(x.shape[0], batch_size, shuffle, seed)
 
     def _get_batches_of_transformed_samples(self, index_array):
-        batch_x = np.zeros(tuple([len(index_array)] + list(self.x.shape)[1:]),
-                           dtype=K.floatx())
+        batch_x = list()
         for i, j in enumerate(index_array):
             x = self.x[j]
             x = self.image_data_generator.random_transform(x.astype(K.floatx()))
             x = self.image_data_generator.standardize(x)
-            batch_x[i] = x
+            x = self.image_data_generator.resize(x)
+            batch_x.append(x)
+
+        batch_x = np.array(batch_x)
         if self.y is None:
             return batch_x
         batch_y = self.y[index_array]
