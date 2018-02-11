@@ -37,10 +37,11 @@ class DataLoader:
         """
         if self.from_csv:
             return self._get_data_from_csv()
-        elif self.time_steps is None:
-            return self._get_data_from_directory()
-        else:
+
+        if self.time_steps:
             return self._get_image_series_data_from_directory()
+
+        return self._get_data_from_directory()
 
     def _get_data_from_directory(self):
         """
@@ -57,6 +58,7 @@ class DataLoader:
                 image_file_path = label_directory_path + '/' + image_file
                 image = io.imread(image_file_path)
                 image = color.rgb2gray(image)
+                image = self._reshape(image)
                 images.append(image)
 
                 if label_directory not in labels:
@@ -103,6 +105,7 @@ class DataLoader:
                 labels.append(np.array(label))
 
                 image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.image_dimensions)
+                image = self._reshape(image)
                 images.append(image)
 
         end = datetime.datetime.now()
@@ -136,6 +139,7 @@ class DataLoader:
                     image_file_path = series_directory_path + '/' + image_file
                     image = io.imread(image_file_path)
                     image = color.rgb2gray(image)
+                    image = self._reshape(image)
                     new_image_series.append(image)
 
                 start_idx = len(new_image_series) - self.time_steps
@@ -200,7 +204,7 @@ class DataLoader:
         """
         if not os.path.isdir(self.datapath):
             raise (NotADirectoryError('Directory does not exist: %s' % self.datapath))
-        if self.time_steps is not None:
+        if self.time_steps:
             if self.time_steps < 1:
                 raise ValueError('Time step argument must be greater than 0, but gave: %i' % self.time_steps)
             if not isinstance(self.time_steps, int):
@@ -214,6 +218,12 @@ class DataLoader:
         image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
         if len(image_files) < self.time_steps:
             raise ValueError('Time series sample found in path %s does not contain enough images for %s time steps.' % (series_directory_path, str(self.time_steps)))
+
+    def _reshape(self, image):
+        if image.ndim == 2:
+            return np.expand_dims(image, axis=2)
+
+        return image
 
 
 
