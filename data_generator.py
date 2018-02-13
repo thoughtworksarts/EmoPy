@@ -1,24 +1,28 @@
 from keras import backend as K
-from keras.preprocessing.image import ImageDataGenerator
+
+from library.image import ImageDataGenerator
 
 K.set_image_dim_ordering('th')
 
 
 class DataGenerator:
-    def __init__(self):
-        self.config_augmentation()
+    def __init__(self, time_delay=None):
+        self.config_augmentation(time_delay=time_delay)
 
-    def config_augmentation(self, zca_whitening=False, rotation_range=90, shift_range=0.2, horizontal_flip=True):
+    def config_augmentation(self, zca_whitening=False, rotation_angle=90, shift_range=0.2, horizontal_flip=True,
+                            time_delay=None):
         self.data_gen = ImageDataGenerator(featurewise_center=True,
                                            featurewise_std_normalization=True,
                                            zca_whitening=zca_whitening,
-                                           rotation_range=rotation_range,
+                                           rotation_angle=rotation_angle,
                                            width_shift_range=shift_range,
                                            height_shift_range=shift_range,
-                                           horizontal_flip=horizontal_flip)
+                                           horizontal_flip=horizontal_flip,
+                                           time_delay=time_delay)
+        return self
 
     def fit(self, images, labels):
-        self.images = self._reshape(images)
+        self.images = images
         self.labels = labels
         self.data_gen.fit(self.images)
         return self
@@ -29,10 +33,5 @@ class DataGenerator:
             images = images.reshape(samples, width, height)
             return images, labels
 
-    def generate(self, batch_size=10):
-        return self.data_gen.flow(self.images, self.labels, batch_size=batch_size)
-
-    def _reshape(self, images):
-        images = images.astype('float32')
-        samples, width, height = images.shape
-        return images.reshape(samples, 1, width, height)
+    def generate(self, target_dimensions=None, batch_size=10):
+        return self.data_gen.flow(self.images, self.labels, batch_size=batch_size, target_dimension=target_dimensions)

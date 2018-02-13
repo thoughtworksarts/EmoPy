@@ -209,7 +209,7 @@ class ImageDataGenerator(object):
         self.preprocessing_function = preprocessing_function
         self.data_format = data_format
         self.time_delay = time_delay
-        self.target_dimesions = target_dimensions
+        self.target_dimensions = target_dimensions
 
         if data_format == 'channels_last':
             if time_delay is None:
@@ -231,7 +231,9 @@ class ImageDataGenerator(object):
                              'Received arg: ', zoom_range)
 
     def flow(self, x, y=None, batch_size=32, shuffle=True, seed=None,
-             save_to_dir=None, save_prefix='', save_format='png'):
+             save_to_dir=None, save_prefix='', save_format='png', target_dimension=None):
+        if target_dimension:
+            self.target_dimensions = target_dimension
         return NumpyArrayIterator(
             x, y, self,
             batch_size=batch_size,
@@ -289,7 +291,7 @@ class ImageDataGenerator(object):
         return x
 
     def resize(self, sample):
-        return resize_sample(sample, self.target_dimesions)
+        return resize_sample(sample, self.target_dimensions)
 
     def get_random_transform_matrix(self, sample, seed=None):
         """Randomly augment a single image tensor.
@@ -445,17 +447,11 @@ class ImageDataGenerator(object):
             x = ax
 
         if self.featurewise_center:
-            self.mean = np.mean(x, axis=(0, self.row_axis, self.col_axis))
-            broadcast_shape = [1, 1, 1]
-            broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-            self.mean = np.reshape(self.mean, broadcast_shape)
+            self.mean = np.mean(x, axis=0)
             x -= self.mean
 
         if self.featurewise_std_normalization:
-            self.std = np.std(x, axis=(0, self.row_axis, self.col_axis))
-            broadcast_shape = [1, 1, 1]
-            broadcast_shape[self.channel_axis - 1] = x.shape[self.channel_axis]
-            self.std = np.reshape(self.std, broadcast_shape)
+            self.std = np.std(x, axis=0)
             x /= (self.std + K.epsilon())
 
         if self.zca_whitening:

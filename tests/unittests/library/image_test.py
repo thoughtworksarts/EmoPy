@@ -86,13 +86,13 @@ class ImageDataGeneratorTest(unittest.TestCase):
         self.assertEqual(generator.channel_axis, 4)
 
     def test_should_produce_transformed_batch_of_images(self):
-        generator = ImageDataGenerator(time_delay=None)
+        generator = ImageDataGenerator(time_delay=None, featurewise_center=True)
         data = np.random.rand(2, 64, 64, 3)
         batch = get_next_batch(generator, data)
         self.assertEqual(data.shape, batch.shape)
 
     def test_should_produce_transformed_batch_with_time_delay(self):
-        generator = ImageDataGenerator(time_delay=3)
+        generator = ImageDataGenerator(time_delay=3, featurewise_center=True)
         data = np.random.rand(2, 3, 64, 64, 3)
         batch = get_next_batch(generator, data)
         self.assertEqual(data.shape, batch.shape)
