@@ -4,10 +4,12 @@ from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.resnet50 import ResNet50
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout, MaxPooling3D
+from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout, \
+    MaxPooling3D
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
 from keras.utils import plot_model
+
 
 class _FERNeuralNet(object):
     """
@@ -29,6 +31,7 @@ class _FERNeuralNet(object):
 
     def save_model_graph(self):
         plot_model(self.model, to_file='output/model.png')
+
 
 class TransferLearningNN(_FERNeuralNet):
     """
@@ -96,7 +99,9 @@ class TransferLearningNN(_FERNeuralNet):
         :param validation_split: Float between 0 and 1. Percentage of training data to use for validation
         :param epochs: Max number of times to train over dataset.
         """
-        self.model.fit(x=features, y=labels, epochs=epochs, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
+        self.model.fit(x=features, y=labels, epochs=epochs, verbose=1,
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split,
+                       shuffle=True)
 
         for layer in self.model.layers[:self._NUM_BOTTOM_LAYERS_TO_RETRAIN]:
             layer.trainable = False
@@ -104,10 +109,13 @@ class TransferLearningNN(_FERNeuralNet):
             layer.trainable = True
 
         self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
-        self.model.fit(x=features, y=labels, epochs=50, verbose=1, callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split, shuffle=True)
+        self.model.fit(x=features, y=labels, epochs=50, verbose=1,
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split,
+                       shuffle=True)
 
     def predict(self, images):
         self.model.predict(images)
+
 
 class ConvolutionalLstmNN(_FERNeuralNet):
     """
@@ -129,7 +137,8 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, channels, target_labels, time_delay=2, filters=10, kernel_size=(4,4), activation='sigmoid', verbose=False):
+    def __init__(self, image_size, channels, target_labels, time_delay=2, filters=10, kernel_size=(4, 4),
+                 activation='sigmoid', verbose=False):
         self.time_delay = time_delay
         self.channels = channels
         self.image_size = image_size
@@ -146,9 +155,13 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         Composes all layers of CNN.
         """
         model = Sequential()
-        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=[self.time_delay]+list(self.image_size)+[self.channels], data_format='channels_last', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation,
+                             input_shape=[self.time_delay] + list(self.image_size) + [self.channels],
+                             data_format='channels_last', return_sequences=True))
         model.add(BatchNormalization())
-        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation, input_shape=(self.time_delay, self.channels)+self.image_size, data_format='channels_last', return_sequences=True))
+        model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation,
+                             input_shape=(self.time_delay, self.channels) + self.image_size,
+                             data_format='channels_last', return_sequences=True))
         model.add(BatchNormalization())
         model.add(ConvLSTM2D(filters=self.filters, kernel_size=self.kernel_size, activation=self.activation))
         model.add(BatchNormalization())
@@ -171,10 +184,16 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         """
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split,
-            callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def fit_generator(self, generator, validation_data=None, epochs=50):
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit_generator(generator=generator, validation_data=validation_data, epochs=epochs,
+                                 callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
     def predict(self, images):
         self.model.predict(images)
+
 
 class ConvolutionalNN(_FERNeuralNet):
     """
@@ -195,7 +214,8 @@ class ConvolutionalNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, channels, label_count, filters=10, kernel_size=(4, 4), activation='relu', verbose=False):
+    def __init__(self, image_size, channels, label_count, filters=10, kernel_size=(4, 4), activation='relu',
+                 verbose=False):
         self.channels = channels
         self.image_size = image_size
         self.label_count = label_count
@@ -211,11 +231,15 @@ class ConvolutionalNN(_FERNeuralNet):
         Composes all layers of 2D CNN.
         """
         model = Sequential()
-        model.add(Conv2D(input_shape=list(self.image_size)+[self.channels], filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(Conv2D(input_shape=list(self.image_size) + [self.channels], filters=self.filters,
+                         kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(
+            Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
         model.add(MaxPooling2D())
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(
+            Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(
+            Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
         model.add(MaxPooling2D())
 
         model.add(Flatten())
@@ -246,6 +270,7 @@ class ConvolutionalNN(_FERNeuralNet):
     def predict(self, images):
         self.model.predict(images)
 
+
 class TimeDelayConvNN(_FERNeuralNet):
     """
     The Time-Delayed Convolutional Neural Network model is a 3D-Convolutional network that trains on 3-dimensional temporal image data. One training sample will contain n number of images from a series and its emotion label will be that of the most recent image.
@@ -266,7 +291,8 @@ class TimeDelayConvNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1,4,4), activation='relu', verbose=False):
+    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1, 4, 4),
+                 activation='relu', verbose=False):
         self.image_size = image_size
         self.time_delay = time_delay
         self.channels = channels
@@ -283,12 +309,16 @@ class TimeDelayConvNN(_FERNeuralNet):
         Composes all layers of 3D CNN.
         """
         model = Sequential()
-        model.add(Conv3D(input_shape=[self.time_delay]+list(self.image_size)+[self.channels], filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(MaxPooling3D(pool_size=(1,2,2), data_format='channels_last'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
-        model.add(MaxPooling3D(pool_size=(1,2,2), data_format='channels_last'))
+        model.add(Conv3D(input_shape=[self.time_delay] + list(self.image_size) + [self.channels], filters=self.filters,
+                         kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(
+            Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_last'))
+        model.add(
+            Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(
+            Conv3D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last'))
+        model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_last'))
 
         model.add(Flatten())
         model.add(Dense(units=self.label_count, activation="relu"))
@@ -309,6 +339,11 @@ class TimeDelayConvNN(_FERNeuralNet):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+    def fit_generator(self, generator, validation_data=None, epochs=50):
+        self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
+        self.model.fit_generator(generator=generator, validation_data=validation_data, epochs=epochs,
+                                 callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
     def predict(self, images):
         self.model.predict(images)
