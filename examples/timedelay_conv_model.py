@@ -1,10 +1,9 @@
 import sys
+sys.path.append('../')
 
 from sklearn.model_selection import train_test_split
 
 from data_generator import DataGenerator
-
-sys.path.append('../')
 from dataloader import DataLoader
 from neuralnets import TimeDelayConvNN
 
