@@ -30,8 +30,6 @@ test_gen = DataGenerator(time_delay=time_delay).fit(X_test, y_test)
 
 print('Training net...')
 model = TimeDelayConvNN(target_dimensions, time_delay, channels, label_count)
-
-# model.fit(image_data, labels, validation_split)
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=10),
                     test_gen.generate(target_dimensions, batch_size=10),
                     epochs=10)

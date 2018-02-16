@@ -28,7 +28,6 @@ train_gen = DataGenerator().fit(X_train, y_train)
 test_gen = DataGenerator().fit(X_test, y_test)
 print('Training net...')
 model = ConvolutionalNN(target_dimensions, channels, label_count)
-# model.fit(image_data, labels, validation_split)
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=5),
                     test_gen.generate(target_dimensions, batch_size=5),
                     epochs=10)
