@@ -1,19 +1,21 @@
-import pytest
 import sys
 
+import pytest
+
 sys.path.append('../../')
-from dataloader import DataLoader
+from src.dataloader import DataLoader
+
+valid_csv_file_path = '../../examples/image_data/sample.csv'
+valid_image_dimensions = (48, 48)
+csv_label_col = 0
+csv_image_col = 1
+valid_target_labels = [0, 1, 2, 3, 4, 5, 6]
 
 
 def test_load_csv_data():
-    valid_csv_file_path = '../../examples/image_data/sample.csv'
     invalid_csv_file_path = 'invalid_csv_file_path'
-    valid_image_dimensions = (48, 48)
     channels = 1
     invalid_image_dimensions = (50, 77)
-    csv_label_col = 0
-    csv_image_col = 1
-    valid_target_labels = [0, 1, 2, 3, 4, 5, 6]
     invalid_target_labels = [8, 9, 10]
 
     # should raise error when not given csv column indices for images and labels
@@ -67,8 +69,8 @@ def test_load_csv_data():
 
 def test_load_directory_data():
     invalid_directory_path = 'invalid_directory_path'
-    valid_dummy_directory = '../resources/dummy_data_directory'
-    empty_dummy_directory = '../resources/dummy_empty_data_directory'
+    valid_dummy_directory = './resources/dummy_data_directory'
+    empty_dummy_directory = './resources/dummy_empty_data_directory'
     channels = 1
 
     # should raise error when receives an invalid directory path
@@ -100,8 +102,8 @@ def test_load_directory_data():
 
 def test_load_time_series_directory_data():
     invalid_directory_path = 'invalid_directory_path'
-    valid_dummy_directory = '../resources/dummy_time_series_data_directory'
-    empty_dummy_directory = '../resources/dummy_empty_data_directory'
+    valid_dummy_directory = './resources/dummy_time_series_data_directory'
+    empty_dummy_directory = './resources/dummy_empty_data_directory'
     valid_time_steps = 4
     channels = 1
 
@@ -146,6 +148,28 @@ def test_load_time_series_directory_data():
     assert samples.shape[1] == valid_time_steps
     # should reshape image to contain channel_axis in channel_last format
     assert samples.shape[-1] == channels
+
+
+def test_should_generate_images_based_on_out_channels_parameter():
+    with pytest.raises(ValueError) as e:
+        DataLoader(out_channels=0)
+    assert "Out put channel should be either 3(RGB) or 1(Grey) but got 0" == str(e.value)
+
+    # Should generate images with single channel
+    channels = 1
+    data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path,
+                             image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
+                             csv_image_col=csv_image_col, out_channels=channels)
+    images, labels = data_loader.get_data()
+    assert list(images.shape[1:]) == list(valid_image_dimensions) + [channels]
+
+    # Should generate images with 3 channel
+    channels = 3
+    data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path,
+                             image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
+                             csv_image_col=csv_image_col, out_channels=channels)
+    images, labels = data_loader.get_data()
+    assert list(images.shape[1:]) == list(valid_image_dimensions) + [channels]
 
 
 if __name__ == '__main__':

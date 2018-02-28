@@ -1,9 +1,9 @@
 import sys
 
 sys.path.append('../')
-from data_generator import DataGenerator
-from dataloader import DataLoader
-from neuralnets import ConvolutionalNN
+from src.data_generator import DataGenerator
+from src.dataloader import DataLoader
+from src.neuralnets import ConvolutionalNN
 from sklearn.model_selection import train_test_split
 
 target_dimensions = (64, 64)

@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../')
 
-from data_generator import DataGenerator
-from dataloader import DataLoader
-from neuralnets import ConvolutionalLstmNN
+from src.data_generator import DataGenerator
+from src.dataloader import DataLoader
+from src.neuralnets import ConvolutionalLstmNN
 from sklearn.model_selection import train_test_split
 
-time_delay = 1
+time_delay = 2
 raw_dimensions = (48, 48)
 target_dimensions = (64, 64)
 channels = 1

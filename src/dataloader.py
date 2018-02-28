@@ -2,6 +2,7 @@ import os, csv, cv2, datetime
 from skimage import color, io
 import numpy as np
 
+
 class DataLoader:
     """
     Loads images and labels from dataset path.
@@ -20,7 +21,9 @@ class DataLoader:
     :param csv_image_col: Index of image column in csv.
     :param time_steps: Number of images to load from each time series sample. Parameter must be provided to load time series data.
     """
-    def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None, csv_image_col=None, time_steps=None):
+
+    def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None,
+                 csv_image_col=None, time_steps=None, out_channels=1):
         self.from_csv = from_csv
         self.datapath = datapath
         self.image_dimensions = image_dimensions
@@ -28,6 +31,7 @@ class DataLoader:
         self.csv_image_col = csv_image_col
         self.target_labels = target_labels
         self.time_steps = time_steps
+        self.out_channels = out_channels
 
         self._check_arguments()
 
@@ -53,11 +57,11 @@ class DataLoader:
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
             label_directory_path = self.datapath + '/' + label_directory
-            image_files = [image_file for image_file in os.listdir(label_directory_path) if not image_file.startswith('.')]
+            image_files = [image_file for image_file in os.listdir(label_directory_path) if
+                           not image_file.startswith('.')]
             for image_file in image_files:
                 image_file_path = label_directory_path + '/' + image_file
-                image = io.imread(image_file_path)
-                image = color.rgb2gray(image)
+                image = cv2.imread(image_file_path)
                 image = self._reshape(image)
                 images.append(image)
 
@@ -69,7 +73,7 @@ class DataLoader:
         label_values = list()
         label_count = len(label_index_map.keys())
         for label in labels:
-            label_value = [0]*label_count
+            label_value = [0] * label_count
             label_value[label_index_map[label]] = 1.0
             label_values.append(label_value)
 
@@ -100,16 +104,17 @@ class DataLoader:
                 if raw_label not in label_map.keys():
                     label_map[raw_label] = len(label_map.keys())
 
-                label = [0]*label_count
+                label = [0] * label_count
                 label[label_map[raw_label]] = 1.0
                 labels.append(np.array(label))
 
-                image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.image_dimensions)
+                image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')],
+                                   dtype=np.uint8).reshape(self.image_dimensions)
                 image = self._reshape(image)
                 images.append(image)
 
         end = datetime.datetime.now()
-        print('Training data extraction runtime - ' + str(end-start))
+        print('Training data extraction runtime - ' + str(end - start))
 
         self._check_data_not_empty(images)
 
@@ -126,7 +131,8 @@ class DataLoader:
         for label_directory in label_directories:
 
             label_directory_path = self.datapath + '/' + label_directory
-            series_directories = [series_directory for series_directory in os.listdir(label_directory_path) if not series_directory.startswith('.')]
+            series_directories = [series_directory for series_directory in os.listdir(label_directory_path) if
+                                  not series_directory.startswith('.')]
 
             for series_directory in series_directories:
                 series_directory_path = label_directory_path + '/' + series_directory
@@ -134,11 +140,11 @@ class DataLoader:
                 self._check_series_directory_size(series_directory_path)
 
                 new_image_series = list()
-                image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
+                image_files = [image_file for image_file in os.listdir(series_directory_path) if
+                               not image_file.startswith('.')]
                 for image_file in image_files:
                     image_file_path = series_directory_path + '/' + image_file
-                    image = io.imread(image_file_path)
-                    image = color.rgb2gray(image)
+                    image = cv2.imread(image_file_path)
                     image = self._reshape(image)
                     new_image_series.append(image)
 
@@ -155,7 +161,7 @@ class DataLoader:
         label_values = list()
         label_count = len(label_index_map.keys())
         for label in labels:
-            label_value = [0]*label_count
+            label_value = [0] * label_count
             label_value[label_index_map[label]] = 1.0
             label_values.append(label_value)
 
@@ -164,6 +170,8 @@ class DataLoader:
         return np.array(image_series), np.array(label_values), label_index_map
 
     def _check_arguments(self):
+        if self.out_channels not in (1, 3):
+            raise ValueError("Out put channel should be either 3(RGB) or 1(Grey) but got {channels}".format(channels=self.out_channels))
         if self.from_csv:
             self._check_csv_arguments()
         else:
@@ -174,7 +182,8 @@ class DataLoader:
         Validates arguments for loading from csv file.
         """
         if self.csv_image_col is None or self.csv_label_col is None:
-            raise ValueError('Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
+            raise ValueError(
+                'Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 
         if self.target_labels is None:
             raise ValueError('Must supply target_labels when loading data from csv.')
@@ -189,9 +198,9 @@ class DataLoader:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
             num_cols = len(next(reader))
             if self.csv_image_col >= num_cols:
-                raise(ValueError('Csv column index for image is out of range: %i' % self.csv_image_col))
+                raise (ValueError('Csv column index for image is out of range: %i' % self.csv_image_col))
             if self.csv_label_col >= num_cols:
-                raise(ValueError('Csv column index for label is out of range: %i' % self.csv_label_col))
+                raise (ValueError('Csv column index for label is out of range: %i' % self.csv_label_col))
 
             # check image dimensions
             pixels = next(reader)[self.csv_image_col].split(' ')
@@ -217,13 +226,17 @@ class DataLoader:
     def _check_series_directory_size(self, series_directory_path):
         image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
         if len(image_files) < self.time_steps:
-            raise ValueError('Time series sample found in path %s does not contain enough images for %s time steps.' % (series_directory_path, str(self.time_steps)))
+            raise ValueError('Time series sample found in path %s does not contain enough images for %s time steps.' % (
+            series_directory_path, str(self.time_steps)))
 
     def _reshape(self, image):
         if image.ndim == 2:
-            return np.expand_dims(image, axis=2)
+            image = np.expand_dims(image, axis=2)
+        channels = image.shape[-1]
 
+        if channels == 3 and self.out_channels == 1:
+            gray = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+            return np.expand_dims(gray, axis=2)
+        if channels == 1 and self.out_channels == 3:
+            return np.repeat(image, repeats=3, axis=2)
         return image
-
-
-

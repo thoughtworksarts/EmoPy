@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../')
-from dataloader import DataLoader
+from src.dataloader import DataLoader
 from imageprocessor import ImageProcessor
-from neuralnets import TransferLearningNN
+from src.neuralnets import TransferLearningNN
 
 verbose = True
 target_dimensions = (128, 128)
