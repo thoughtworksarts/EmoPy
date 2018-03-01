@@ -1,7 +1,8 @@
 import unittest
+
 import numpy as np
 
-from data_generator import DataGenerator
+from src.data_generator import DataGenerator
 
 
 class DataGeneratorTest(unittest.TestCase):

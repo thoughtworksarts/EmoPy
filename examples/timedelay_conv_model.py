@@ -3,9 +3,9 @@ sys.path.append('../')
 
 from sklearn.model_selection import train_test_split
 
-from data_generator import DataGenerator
-from dataloader import DataLoader
-from neuralnets import TimeDelayConvNN
+from src.data_generator import DataGenerator
+from src.dataloader import DataLoader
+from src.neuralnets import TimeDelayConvNN
 
 print('--------------- Time-Delay Convolutional Model -------------------')
 print('Loading data...')

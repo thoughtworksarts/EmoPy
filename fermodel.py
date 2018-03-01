@@ -1,8 +1,9 @@
-from neuralnets import *
-from imageprocessor import ImageProcessor
-from dataloader import DataLoader
-from featureextractor import FeatureExtractor
 import numpy as np
+
+from featureextractor import FeatureExtractor
+from imageprocessor import ImageProcessor
+from src.dataloader import DataLoader
+from src.neuralnets import *
 
 
 class FERModel:
