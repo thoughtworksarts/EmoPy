@@ -10,7 +10,7 @@ class FERModel:
     """
     Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.
 
-    :param target_emotions: set of target emotions to classify
+    :param emotion_map: set of target emotions to classify
     :param train_images: numpy array of training images
     :param csv_data_path: local path to directory containing csv with image pixel values
     :param verbose: if true, will print out extra process information
@@ -26,14 +26,14 @@ class FERModel:
 
     """
 
-    POSSIBLE_EMOTIONS = ['anger', 'fear', 'neutral', 'sad', 'happy', 'surprise', 'disgust']
+    POSSIBLE_EMOTIONS = ['anger', 'fear', 'neutral', 'sadness', 'happiness', 'surprise', 'disgust']
 
-    def __init__(self, target_emotions, train_images=None, train_labels=None, csv_data_path=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, verbose=False):
-        if not self._emotions_are_valid(target_emotions):
+    def __init__(self, emotion_map, train_images=None, train_labels=None, csv_data_path=None, raw_dimensions=None, csv_label_col=None, csv_image_col=None, verbose=False):
+        self.emotion_map = emotion_map
+        if not self._emotions_are_valid():
             raise ValueError('Target emotions must be subset of %s.' % self.POSSIBLE_EMOTIONS)
         if not train_images and not csv_data_path:
             raise ValueError('Must supply training images or datapath containing training images.')
-        self.target_emotions = target_emotions
         self.train_images = train_images
         self.x_train = train_images
         self.y_train = train_labels
@@ -48,7 +48,7 @@ class FERModel:
         self._initialize_model()
 
     def _initialize_model(self):
-        print('Initializing FER model parameters for target emotions: %s' % self.target_emotions)
+        print('Initializing FER model parameters for target emotions: %s' % self.emotion_map.keys())
         self.model = self._choose_model_from_target_emotions()
 
     def train(self):
@@ -67,21 +67,21 @@ class FERModel:
         """
         pass
 
-    def _emotions_are_valid(self, emotions):
+    def _emotions_are_valid(self):
         """
         Validates set of user-supplied target emotions
         :param emotions: list of emotions supplied by user
         :return: true if emotion set is valid, false otherwise
         """
-        return set(emotions).issubset(set(self.POSSIBLE_EMOTIONS))
+        return set(self.emotion_map.values()).issubset(set(self.POSSIBLE_EMOTIONS))
 
     def _extract_training_images_from_path(self, csv_data_path, raw_dimensions, csv_image_col, csv_label_col):
         """
         Extracts training images from csv file found in user-supplied directory path
         :param csv_data_path: path to directory containing image data csv file supplied by user
         """
-        dataLoader = DataLoader(from_csv=True, target_labels=[0,1,2,3,4,5,6], datapath=csv_data_path, image_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
-        images, labels = dataLoader.get_data()
+        dataLoader = DataLoader(from_csv=True, emotion_map=self.emotion_map, datapath=csv_data_path, image_dimensions=raw_dimensions, csv_label_col=csv_label_col, csv_image_col=csv_image_col)
+        images, labels, self.emotion_map= dataLoader.get_data()
 
         imageProcessor = ImageProcessor(images, target_dimensions=self.target_dimensions)
         images = imageProcessor.process_training_data()
@@ -99,7 +99,7 @@ class FERModel:
         """
         print('Creating FER model...')
         self._extract_features()    # TODO: call _extract_features for appropriate models
-        return ConvolutionalLstmNN(self.target_dimensions, self.channels, target_labels=range(len(self.target_emotions)), time_delay=self.time_delay, verbose=self.verbose)
+        return ConvolutionalLstmNN(self.target_dimensions, self.channels, emotion_map=self.emotion_map, time_delay=self.time_delay, verbose=self.verbose)
         # TODO: add conditionals to choose best models for all emotion subsets
 
     def _extract_features(self):

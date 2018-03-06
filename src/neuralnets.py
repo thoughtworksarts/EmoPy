@@ -48,14 +48,14 @@ class _FERNeuralNet(object):
 
         with open(emotion_map_filepath, 'w') as fp:
             json.dump(emotion_map, fp)
-            
+
 
 class TransferLearningNN(_FERNeuralNet):
     """
     Transfer Learning Convolutional Neural Network initialized with pretrained weights.
 
     :param model_name: name of pretrained model to use for initial weights. Options: ['Xception', 'VGG16', 'VGG19', 'ResNet50', 'InceptionV3', 'InceptionResNetV2']
-    :param target_labels: list of target emotion labels
+    :param emotion_map: dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array
 
     **Example**::
 
@@ -65,9 +65,9 @@ class TransferLearningNN(_FERNeuralNet):
     """
     _NUM_BOTTOM_LAYERS_TO_RETRAIN = 249
 
-    def __init__(self, model_name, target_labels):
+    def __init__(self, model_name, emotion_map):
         self.model_name = model_name
-        self.target_labels = target_labels
+        self.emotion_map = emotion_map
         super().__init__()
 
     def _init_model(self):
@@ -80,7 +80,7 @@ class TransferLearningNN(_FERNeuralNet):
         top_layer_model = base_model.output
         top_layer_model = GlobalAveragePooling2D()(top_layer_model)
         top_layer_model = Dense(1024, activation='relu')(top_layer_model)
-        prediction_layer = Dense(output_dim=len(self.target_labels), activation='softmax')(top_layer_model)
+        prediction_layer = Dense(output_dim=len(self.emotion_map.keys()), activation='softmax')(top_layer_model)
 
         model = Model(input=base_model.input, output=prediction_layer)
         print(model.summary())
@@ -140,7 +140,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
     :param image_size: dimensions of input images
     :param channels: number of image channels
-    :param target_labels: list of target emotion labels
+    :param emotion_map: dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array
     :param time_delay: number of time steps for lookback
     :param filters: number of filters/nodes per layer in CNN
     :param kernel_size: size of sliding window for each layer of CNN
@@ -154,12 +154,12 @@ class ConvolutionalLstmNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, channels, target_labels, time_delay=2, filters=10, kernel_size=(4, 4),
+    def __init__(self, image_size, channels, emotion_map, time_delay=2, filters=10, kernel_size=(4, 4),
                  activation='sigmoid', verbose=False):
         self.time_delay = time_delay
         self.channels = channels
         self.image_size = image_size
-        self.target_labels = target_labels
+        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
@@ -184,7 +184,7 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         model.add(BatchNormalization())
         model.add(Conv2D(filters=1, kernel_size=self.kernel_size, activation="sigmoid", data_format="channels_last"))
         model.add(Flatten())
-        model.add(Dense(units=len(self.target_labels), activation="sigmoid"))
+        model.add(Dense(units=len(self.emotion_map.keys()), activation="sigmoid"))
         if self.verbose:
             model.summary()
         self.model = model
@@ -213,7 +213,7 @@ class ConvolutionalNN(_FERNeuralNet):
 
     :param image_size: dimensions of input images
     :param channels: number of image channels
-    :param label_count: total number of target emotion labels
+    :param emotion_map: dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array
     :param filters: number of filters/nodes per layer in CNN
     :param kernel_size: size of sliding window for each layer of CNN
     :param activation: name of activation function for CNN
@@ -226,11 +226,11 @@ class ConvolutionalNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, channels, label_count, filters=10, kernel_size=(4, 4), activation='relu',
+    def __init__(self, image_size, channels, emotion_map, filters=10, kernel_size=(4, 4), activation='relu',
                  verbose=False):
         self.channels = channels
         self.image_size = image_size
-        self.label_count = label_count
+        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
@@ -255,7 +255,7 @@ class ConvolutionalNN(_FERNeuralNet):
         model.add(MaxPooling2D())
 
         model.add(Flatten())
-        model.add(Dense(units=self.label_count, activation="relu"))
+        model.add(Dense(units=len(self.emotion_map.keys()), activation="relu"))
         if self.verbose:
             model.summary()
         self.model = model
@@ -285,7 +285,7 @@ class TimeDelayConvNN(_FERNeuralNet):
     :param image_size: dimensions of input images
     :param time_delay: number of past time steps included in each training sample
     :param channels: number of image channels
-    :param label_count: total number of target emotion labels
+    :param emotion_map: dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array
     :param filters: number of filters/nodes per layer in CNN
     :param kernel_size: size of sliding window for each layer of CNN
     :param activation: name of activation function for CNN
@@ -298,12 +298,12 @@ class TimeDelayConvNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, time_delay, channels, label_count, filters=32, kernel_size=(1, 4, 4),
+    def __init__(self, image_size, time_delay, channels, emotion_map, filters=32, kernel_size=(1, 4, 4),
                  activation='relu', verbose=False):
         self.image_size = image_size
         self.time_delay = time_delay
         self.channels = channels
-        self.label_count = label_count
+        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
@@ -328,7 +328,7 @@ class TimeDelayConvNN(_FERNeuralNet):
         model.add(MaxPooling3D(pool_size=(1, 2, 2), data_format='channels_last'))
 
         model.add(Flatten())
-        model.add(Dense(units=self.label_count, activation="relu"))
+        model.add(Dense(units=len(self.emotion_map.keys()), activation="relu"))
         if self.verbose:
             model.summary()
         self.model = model

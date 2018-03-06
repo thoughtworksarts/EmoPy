@@ -14,7 +14,7 @@ class DataLoader:
     If a directory path is provided, the directory must contain emotion label subdirectories containing all image samples pertaining to that label. If the directory contains image time series data, each emotion label subdirectory must contain time series subdirectories, each containing one time series sample. See the sample directories in the folder *examples/image_data*.
 
     :param from_csv: If true, images will be extracted from csv file.
-    :param target_labels: List of target label values/strings.
+    :param label_map: Optional list of target label values/strings and their corresponding class names.
     :param datapath: Location of image dataset.
     :param image_dimensions: Initial dimensions of raw training images.
     :param csv_label_col: Index of label value column in csv.
@@ -22,14 +22,14 @@ class DataLoader:
     :param time_steps: Number of images to load from each time series sample. Parameter must be provided to load time series data.
     """
 
-    def __init__(self, from_csv=None, target_labels=None, datapath=None, image_dimensions=None, csv_label_col=None,
+    def __init__(self, emotion_map=None, from_csv=None, datapath=None, image_dimensions=None, csv_label_col=None,
                  csv_image_col=None, time_steps=None, out_channels=1):
         self.from_csv = from_csv
         self.datapath = datapath
         self.image_dimensions = image_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
-        self.target_labels = target_labels
+        self.label_map = emotion_map
         self.time_steps = time_steps
         self.out_channels = out_channels
 
@@ -41,7 +41,6 @@ class DataLoader:
         """
         if self.from_csv:
             return self._get_data_from_csv()
-
         if self.time_steps:
             return self._get_image_series_data_from_directory()
 
@@ -56,6 +55,8 @@ class DataLoader:
         label_index_map = dict()
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
+            if self.label_map:
+                if label_directory not in self.label_map.keys():    continue
             label_directory_path = self.datapath + '/' + label_directory
             image_files = [image_file for image_file in os.listdir(label_directory_path) if
                            not image_file.startswith('.')]
@@ -90,22 +91,23 @@ class DataLoader:
 
         images = list()
         labels = list()
-        label_count = len(self.target_labels)
-        label_map = dict()
+        label_count = len(self.label_map.keys())
+        emotion_map = dict()
         print('label_count: ' + str(label_count))
         with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 
             for row in reader:
                 if row[self.csv_label_col] == 'emotion': continue
-                raw_label = int(row[self.csv_label_col])
-                if raw_label not in self.target_labels:
+                label_class = row[self.csv_label_col]
+                if label_class not in self.label_map.keys():
                     continue
-                if raw_label not in label_map.keys():
-                    label_map[raw_label] = len(label_map.keys())
+                label_class = self.label_map[label_class]
+                if label_class not in emotion_map.keys():
+                    emotion_map[label_class] = len(emotion_map.keys())
 
                 label = [0] * label_count
-                label[label_map[raw_label]] = 1.0
+                label[emotion_map[label_class]] = 1.0
                 labels.append(np.array(label))
 
                 image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')],
@@ -118,7 +120,7 @@ class DataLoader:
 
         self._check_data_not_empty(images)
 
-        return np.array(images), np.array(labels)
+        return np.array(images), np.array(labels), emotion_map
 
     def _get_image_series_data_from_directory(self):
         """
@@ -129,7 +131,8 @@ class DataLoader:
         label_index_map = dict()
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
-
+            if self.label_map:
+                if label_directory not in self.label_map.keys():    continue
             label_directory_path = self.datapath + '/' + label_directory
             series_directories = [series_directory for series_directory in os.listdir(label_directory_path) if
                                   not series_directory.startswith('.')]
@@ -185,7 +188,7 @@ class DataLoader:
             raise ValueError(
                 'Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 
-        if self.target_labels is None:
+        if self.label_map is None:
             raise ValueError('Must supply target_labels when loading data from csv.')
 
         if self.image_dimensions is None:
@@ -221,7 +224,7 @@ class DataLoader:
 
     def _check_data_not_empty(self, images):
         if len(images) == 0:
-            raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.target_labels))
+            raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.label_map.keys()))
 
     def _check_series_directory_size(self, series_directory_path):
         image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]

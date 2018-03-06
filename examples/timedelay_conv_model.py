@@ -16,7 +16,7 @@ channels = 1
 verbose = True
 
 dataLoader = DataLoader(from_csv=False, datapath=directory_path, time_steps=3)
-image_data, labels, label_map = dataLoader.get_data()
+image_data, labels, emotion_map = dataLoader.get_data()
 if verbose:
     print('raw image data shape: ' + str(image_data.shape))
 label_count = len(labels[0])
@@ -29,7 +29,10 @@ train_gen = DataGenerator(time_delay=time_delay).fit(X_train, y_train)
 test_gen = DataGenerator(time_delay=time_delay).fit(X_test, y_test)
 
 print('Training net...')
-model = TimeDelayConvNN(target_dimensions, time_delay, channels, label_count)
+model = TimeDelayConvNN(target_dimensions, time_delay, channels, emotion_map=emotion_map)
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=10),
                     test_gen.generate(target_dimensions, batch_size=10),
                     epochs=10)
+
+# Save model configuration
+# model.export_model('output/time_delay_model.json','output/time_delay_weights.h5',"output/time_delay_emotion_map.json", emotion_map)
