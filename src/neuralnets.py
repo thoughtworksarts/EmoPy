@@ -9,6 +9,7 @@ from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLST
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
 from keras.utils import plot_model
+import json
 
 
 class _FERNeuralNet(object):
@@ -37,6 +38,17 @@ class _FERNeuralNet(object):
     def save_model_graph(self):
         plot_model(self.model, to_file='output/model.png')
 
+    def export_model(self, model_filepath, weights_filepath, emotion_map_filepath, emotion_map):
+        self.model.save_weights(weights_filepath)
+
+        model_json_string = self.model.to_json()
+        model_json_file = open(model_filepath, 'w')
+        model_json_file.write(model_json_string)
+        model_json_file.close()
+
+        with open(emotion_map_filepath, 'w') as fp:
+            json.dump(emotion_map, fp)
+            
 
 class TransferLearningNN(_FERNeuralNet):
     """
