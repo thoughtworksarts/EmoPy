@@ -11,7 +11,6 @@ raw_dimensions = (48, 48)
 target_dimensions = (64, 64)
 channels = 1
 verbose = True
-using_feature_extraction = True
 
 print('--------------- Convolutional LSTM Model -------------------')
 print('Loading data...')
