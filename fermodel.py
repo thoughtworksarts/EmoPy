@@ -4,21 +4,17 @@ from keras.models import model_from_json, Model
 
 class FERModel:
     """
-    Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.
+    Pretrained deep learning model for facial expression recognition.
 
     :param target_emotions: set of target emotions to classify
-    :param train_images: numpy array of training images
-    :param csv_data_path: local path to directory containing csv with image pixel values
     :param verbose: if true, will print out extra process information
 
     **Example**::
 
         from fermodel import FERModel
 
-        target_emotions = ['anger', 'fear', 'calm', 'sad', 'happy', 'surprise']
-        csv_file_path = "<your local csv file path>"
-        model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(48,48), csv_image_col=1, csv_label_col=0, verbose=True)
-        model.train()
+        target_emotions = ['happiness', 'disgust', 'surprise']
+        model = FERModel(target_emotions, verbose=True)
 
     """
 
@@ -54,9 +50,7 @@ class FERModel:
 
     def _check_emotion_set_is_supported(self):
         """
-        Validates set of user-supplied target emotions
-        :param emotions: list of emotions supplied by user
-        :return: true if emotion set is valid, false otherwise
+        Validates set of user-supplied target emotions.
         """
         supported_emotion_subsets = [
             set(['anger', 'fear', 'surprise', 'calm']),
@@ -86,8 +80,7 @@ class FERModel:
 
     def _choose_model_from_target_emotions(self):
         """
-        Chooses best-performing deep learning model for the set of target emotions supplied by user.
-        :return: One of deep learning models from neuralnets.py
+        Initializes pre-trained deep learning model for the set of target emotions supplied by user.
         """
         print('Initializing FER model...')
 
