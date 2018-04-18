@@ -29,7 +29,7 @@ train_gen = DataGenerator(time_delay=time_delay).fit(X_train, y_train)
 test_gen = DataGenerator(time_delay=time_delay).fit(X_test, y_test)
 
 print('Training net...')
-model = TimeDelayConvNN(target_dimensions, time_delay, channels, emotion_map=emotion_map)
+model = TimeDelayConvNN(target_dimensions, channels, emotion_map=emotion_map, time_delay=time_delay)
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=10),
                     test_gen.generate(target_dimensions, batch_size=10),
                     epochs=10)

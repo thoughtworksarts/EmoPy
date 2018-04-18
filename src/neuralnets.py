@@ -19,8 +19,8 @@ class _FERNeuralNet(object):
     Interface for all FER deep neural net classes.
     """
 
-    def __init__(self):
-        self.model = None
+    def __init__(self, emotion_map):
+        self.emotion_map = emotion_map
         self._init_model()
 
     def _init_model(self):
@@ -69,8 +69,7 @@ class TransferLearningNN(_FERNeuralNet):
 
     def __init__(self, model_name, emotion_map):
         self.model_name = model_name
-        self.emotion_map = emotion_map
-        super().__init__()
+        super().__init__(emotion_map)
 
     def _init_model(self):
         """
@@ -161,13 +160,12 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         self.time_delay = time_delay
         self.channels = channels
         self.image_size = image_size
-        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
         self.kernel_size = kernel_size
         self.activation = activation
-        super().__init__()
+        super().__init__(emotion_map)
 
     def _init_model(self):
         """
@@ -232,13 +230,12 @@ class ConvolutionalNN(_FERNeuralNet):
                  verbose=False):
         self.channels = channels
         self.image_size = image_size
-        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
         self.kernel_size = kernel_size
         self.activation = activation
-        super().__init__()
+        super().__init__(emotion_map)
 
     def _init_model(self):
         """
@@ -300,18 +297,17 @@ class TimeDelayConvNN(_FERNeuralNet):
 
     """
 
-    def __init__(self, image_size, time_delay, channels, emotion_map, filters=32, kernel_size=(1, 4, 4),
+    def __init__(self, image_size, channels, emotion_map, time_delay, filters=32, kernel_size=(1, 4, 4),
                  activation='relu', verbose=False):
         self.image_size = image_size
         self.time_delay = time_delay
         self.channels = channels
-        self.emotion_map = emotion_map
         self.verbose = verbose
 
         self.filters = filters
         self.kernel_size = kernel_size
         self.activation = activation
-        super().__init__()
+        super().__init__(emotion_map)
 
     def _init_model(self):
         """
