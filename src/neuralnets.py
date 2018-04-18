@@ -11,6 +11,8 @@ from keras.models import Model, Sequential
 from keras.utils import plot_model
 import json
 
+from src.callback import PlotLosses
+
 
 class _FERNeuralNet(object):
     """
@@ -30,7 +32,7 @@ class _FERNeuralNet(object):
     def fit_generator(self, generator, validation_data=None, epochs=50):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit_generator(generator=generator, validation_data=validation_data, epochs=epochs,
-                                 callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+                                 callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3), PlotLosses()])
 
     def predict(self, images):
         raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
