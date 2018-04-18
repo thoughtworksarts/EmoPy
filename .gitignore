@@ -11,3 +11,4 @@ build/
 data/
 trained_models/
 venv/
+output/*
