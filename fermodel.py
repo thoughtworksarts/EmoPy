@@ -1,6 +1,8 @@
-from src.neuralnets import *
-
-from keras.models import model_from_json, Model
+from keras.models import load_model
+import cv2
+from scipy import misc
+import numpy as np
+import json
 
 class FERModel:
     """
@@ -29,24 +31,30 @@ class FERModel:
             'happiness': 3,
             'sadness': 4,
             'surprise': 5,
-            'neutral': 6
+            'calm': 6
         }
         self._check_emotion_set_is_supported()
         self.verbose = verbose
         self.target_dimensions = (48, 48)
+        self.channels = 1
         self._initialize_model()
 
     def _initialize_model(self):
         print('Initializing FER model parameters for target emotions: %s' % self.target_emotions)
-        self.model = self._choose_model_from_target_emotions()
+        self.model, self.emotion_map = self._choose_model_from_target_emotions()
 
-    def predict(self, images):
+    def predict(self, image_file):
         """
-        Predicts discrete emotions for given images.
+        Predicts discrete emotion for given image.
 
-        :param images: list of images
+        :param images: image file (jpg or png format)
         """
-        pass
+        image = misc.imread(image_file)
+        gray_image = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+        resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
+        final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
+        prediction = self.model.predict(final_image)
+        self._print_prediction(prediction[0])
 
     def _check_emotion_set_is_supported(self):
         """
@@ -83,13 +91,23 @@ class FERModel:
         Initializes pre-trained deep learning model for the set of target emotions supplied by user.
         """
         print('Initializing FER model...')
-
         model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
         sorted_indices = [str(idx) for idx in sorted(model_indices)]
         model_suffix = ''.join(sorted_indices)
+        model_file = '../models/conv_model_%s.hdf5' % model_suffix
+        emotion_map_file = '../models/conv_emotion_map_%s.json' % model_suffix
+        emotion_map = json.loads(open(emotion_map_file).read())
+        return load_model(model_file), emotion_map
 
-        model_file = open('../models/conv_model_%s.json' % model_suffix,'r')
-        weights_file = '../models/conv_weights_%s.h5' % model_suffix
-
-        self.model = model_from_json(model_file.read())
-        self.model.load_weights(weights_file)
+    def _print_prediction(self, prediction):
+        normalized_prediction = [x/sum(prediction) for x in prediction]
+        print()
+        for emotion in self.emotion_map.keys():
+            print('%s: %.1f%%' % (emotion, normalized_prediction[self.emotion_map[emotion]]*100))
+        dominant_emotion_index = np.argmax(prediction)
+        for emotion in self.emotion_map.keys():
+            if dominant_emotion_index == self.emotion_map[emotion]:
+                dominant_emotion = emotion
+                break
+        print('Dominant emotion: %s' % dominant_emotion)
+        print()
