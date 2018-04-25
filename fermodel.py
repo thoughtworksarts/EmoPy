@@ -50,7 +50,9 @@ class FERModel:
         :param images: image file (jpg or png format)
         """
         image = misc.imread(image_file)
-        gray_image = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+        gray_image = image
+        if len(image.shape) > 2:
+            gray_image = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
         resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
@@ -62,19 +64,14 @@ class FERModel:
         """
         supported_emotion_subsets = [
             set(['anger', 'fear', 'surprise', 'calm']),
+            set(['happiness', 'disgust', 'surprise']),
+            set(['anger', 'fear', 'surprise']),
             set(['anger', 'fear', 'calm']),
             set(['anger', 'happiness', 'calm']),
-            set(['anger', 'fear', 'surprise']),
             set(['anger', 'fear', 'disgust']),
-            set(['anger', 'fear', 'sadness']),
-            set(['happiness', 'disgust', 'surprise']),
-            set(['anger', 'surprise']),
-            set(['fear', 'surprise']),
             set(['calm', 'disgust', 'surprise']),
             set(['sadness', 'disgust', 'surprise']),
-            set(['anger', 'disgust']),
-            set(['anger', 'fear']),
-            set(['disgust', 'surprise'])
+            set(['anger', 'happiness'])
         ]
         if not set(self.target_emotions) in supported_emotion_subsets:
             error_string = 'Target emotions must be a supported subset. '
@@ -101,7 +98,6 @@ class FERModel:
 
     def _print_prediction(self, prediction):
         normalized_prediction = [x/sum(prediction) for x in prediction]
-        print()
         for emotion in self.emotion_map.keys():
             print('%s: %.1f%%' % (emotion, normalized_prediction[self.emotion_map[emotion]]*100))
         dominant_emotion_index = np.argmax(prediction)

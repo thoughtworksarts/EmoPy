@@ -2,7 +2,14 @@ import sys
 sys.path.append('../')
 from fermodel import FERModel
 
-target_emotions = ['anger', 'fear', 'surprise', 'calm']
+target_emotions = ['calm', 'anger', 'happiness']
 model = FERModel(target_emotions, verbose=True)
 
-model.predict('image_data/sample_image.jpg')
+print('Predicting on happy image...')
+model.predict('image_data/sample_happy_image.png')
+
+print('Predicting on disgust image...')
+model.predict('image_data/sample_disgust_image.png')
+
+print('Predicting on anger image...')
+model.predict('image_data/sample_anger_image2.png')
