@@ -1,8 +1,10 @@
 import os, csv, cv2, datetime
 from skimage import color, io
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 from src.dataset import Dataset
+
 
 class DataLoader:
     """
@@ -23,10 +25,11 @@ class DataLoader:
     :param time_steps: Number of images to load from each time series sample. Parameter must be provided to load time series data.
     """
 
-    def __init__(self, emotion_map=None, from_csv=None, datapath=None, image_dimensions=None, csv_label_col=None,
+    def __init__(self, emotion_map=None, from_csv=None, datapath=None, validation_split=0.2, image_dimensions=None, csv_label_col=None,
                  csv_image_col=None, time_delay=None, out_channels=1):
         self.from_csv = from_csv
         self.datapath = datapath
+        self.validation_split = validation_split
         self.image_dimensions = image_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
@@ -36,7 +39,7 @@ class DataLoader:
 
         self._check_arguments()
 
-    def get_data(self):
+    def load_data(self):
         """
         :return: List of images and list of corresponding labels from specified location. If loading from directory, also returns label index map (maps emotion label to integer value used during training).
         """
@@ -174,12 +177,15 @@ class DataLoader:
         return self._load_dataset(np.array(image_series), np.array(label_values), label_index_map)
 
     def _load_dataset(self, images, labels, emotion_index_map):
-        dataset = Dataset(images, labels, emotion_index_map, self.time_delay)
+        train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=self.validation_split, random_state=42, stratify=labels)
+        dataset = Dataset(train_images, test_images, train_labels, test_labels, emotion_index_map, self.time_delay)
         return dataset
 
     def _check_arguments(self):
         if self.out_channels not in (1, 3):
             raise ValueError("Out put channel should be either 3(RGB) or 1(Grey) but got {channels}".format(channels=self.out_channels))
+        if self.validation_split < 0 or self.validation_split > 1:
+            raise ValueError("validation_split must be a float between 0 and 1")
         if self.from_csv:
             self._check_csv_arguments()
         else:

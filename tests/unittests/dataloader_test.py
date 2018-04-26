@@ -53,12 +53,12 @@ def test_load_csv_data():
         data_loader = DataLoader(from_csv=True, target_labels=invalid_target_labels, datapath=valid_csv_file_path,
                                  image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
                                  csv_image_col=csv_image_col)
-        data_loader.get_data()
+        data_loader.load_data()
 
     data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path,
                              image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
                              csv_image_col=csv_image_col)
-    images, labels = data_loader.get_data()
+    images, labels = data_loader.load_data()
     # should return non-empty image and label arrays when given valid arguments
     assert len(images) > 0 and len(labels) > 0
     # should return same number of labels and images when given valid arguments
@@ -80,18 +80,18 @@ def test_load_directory_data():
     # should raise error when tries to load empty directory
     data_loader = DataLoader(from_csv=False, datapath=empty_dummy_directory)
     with pytest.raises(AssertionError):
-        data_loader.get_data()
+        data_loader.load_data()
 
     # should assign an image's parent directory name as its label
     data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory)
-    images, labels, label_index_map = data_loader.get_data()
+    images, labels, label_index_map = data_loader.load_data()
     label_count = len(label_index_map.keys())
     label = [0] * label_count
     label[label_index_map['happiness']] = 1
     assert label == labels[0]
 
     data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory)
-    images, labels, label_index_map = data_loader.get_data()
+    images, labels, label_index_map = data_loader.load_data()
     # should return non-empty image and label arrays when given valid arguments
     assert len(images) > 0 and len(labels) > 0
     # should return same number of labels and images when given valid arguments
@@ -114,7 +114,7 @@ def test_load_time_series_directory_data():
     # should raise error when tries to load empty directory
     data_loader = DataLoader(from_csv=False, datapath=empty_dummy_directory, time_steps=4)
     with pytest.raises(AssertionError):
-        data_loader.get_data()
+        data_loader.load_data()
 
     # should raise error when given time_step argument that is less than 1
     with pytest.raises(ValueError):
@@ -128,18 +128,18 @@ def test_load_time_series_directory_data():
     # containing a quantity of images less than the time_steps argument
     with pytest.raises(ValueError):
         data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory, time_steps=10)
-        data_loader.get_data()
+        data_loader.load_data()
 
     # should assign an image's parent directory name as its label
     data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory, time_steps=valid_time_steps)
-    samples, labels, label_index_map = data_loader.get_data()
+    samples, labels, label_index_map = data_loader.load_data()
     label_count = len(label_index_map.keys())
     label = [0] * label_count
     label[label_index_map['happiness']] = 1
     assert label == labels[0]
 
     data_loader = DataLoader(from_csv=False, datapath=valid_dummy_directory, time_steps=valid_time_steps)
-    samples, labels, label_index_map = data_loader.get_data()
+    samples, labels, label_index_map = data_loader.load_data()
     # should return non-empty image and label arrays when given valid arguments
     assert len(samples) > 0 and len(labels) > 0
     # should return same number of labels and images when given valid arguments
@@ -160,7 +160,7 @@ def test_should_generate_images_based_on_out_channels_parameter():
     data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path,
                              image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
                              csv_image_col=csv_image_col, out_channels=channels)
-    images, labels = data_loader.get_data()
+    images, labels = data_loader.load_data()
     assert list(images.shape[1:]) == list(valid_image_dimensions) + [channels]
 
     # Should generate images with 3 channel
@@ -168,7 +168,7 @@ def test_should_generate_images_based_on_out_channels_parameter():
     data_loader = DataLoader(from_csv=True, target_labels=valid_target_labels, datapath=valid_csv_file_path,
                              image_dimensions=valid_image_dimensions, csv_label_col=csv_label_col,
                              csv_image_col=csv_image_col, out_channels=channels)
-    images, labels = data_loader.get_data()
+    images, labels = data_loader.load_data()
     assert list(images.shape[1:]) == list(valid_image_dimensions) + [channels]
 
 
