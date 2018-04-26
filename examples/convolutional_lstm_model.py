@@ -6,7 +6,6 @@ from src.dataloader import DataLoader
 from src.neuralnets import ConvolutionalLstmNN
 from sklearn.model_selection import train_test_split
 
-time_delay = 2
 raw_dimensions = (48, 48)
 target_dimensions = (64, 64)
 channels = 1
@@ -15,21 +14,23 @@ verbose = True
 print('--------------- Convolutional LSTM Model -------------------')
 print('Loading data...')
 directory_path = "image_data/sample_image_series_directory"
-data_loader = DataLoader(from_csv=False, datapath=directory_path, time_steps=time_delay)
-image_data, labels, emotion_map = data_loader.get_data()
+data_loader = DataLoader(from_csv=False, datapath=directory_path, time_delay=2)
+dataset = data_loader.get_data()
+labels = dataset.get_labels()
+images = dataset.get_images()
 
 if verbose:
-    print('raw image data shape: ' + str(image_data.shape))
+    print('raw image data shape: ' + str(images.shape))
 label_count = len(labels[0])
 
 print('Training net...')
 validation_split = 0.15
-X_train, X_test, y_train, y_test = train_test_split(image_data, labels,
+X_train, X_test, y_train, y_test = train_test_split(images, labels,
                                                     test_size=validation_split, random_state=42, stratify=labels)
-train_gen = DataGenerator(time_delay=time_delay).fit(X_train, y_train)
-test_gen = DataGenerator(time_delay=time_delay).fit(X_test, y_test)
+train_gen = DataGenerator(time_delay=dataset.get_time_delay()).fit(X_train, y_train)
+test_gen = DataGenerator(time_delay=dataset.get_time_delay()).fit(X_test, y_test)
 
-model = ConvolutionalLstmNN(target_dimensions, channels, emotion_map, time_delay=time_delay)
+model = ConvolutionalLstmNN(target_dimensions, channels, dataset.get_emotion_index_map(), time_delay=dataset.get_time_delay())
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=5),
                     test_gen.generate(target_dimensions, batch_size=5),
                     epochs=10)

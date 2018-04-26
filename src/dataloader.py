@@ -24,14 +24,14 @@ class DataLoader:
     """
 
     def __init__(self, emotion_map=None, from_csv=None, datapath=None, image_dimensions=None, csv_label_col=None,
-                 csv_image_col=None, time_steps=None, out_channels=1):
+                 csv_image_col=None, time_delay=None, out_channels=1):
         self.from_csv = from_csv
         self.datapath = datapath
         self.image_dimensions = image_dimensions
         self.csv_label_col = csv_label_col
         self.csv_image_col = csv_image_col
         self.label_map = emotion_map
-        self.time_steps = time_steps
+        self.time_delay = time_delay
         self.out_channels = out_channels
 
         self._check_arguments()
@@ -42,7 +42,7 @@ class DataLoader:
         """
         if self.from_csv:
             return self._get_data_from_csv()
-        if self.time_steps:
+        if self.time_delay:
             return self._get_image_series_data_from_directory()
 
         return self._get_data_from_directory()
@@ -152,7 +152,7 @@ class DataLoader:
                     image = self._reshape(image)
                     new_image_series.append(image)
 
-                start_idx = len(new_image_series) - self.time_steps
+                start_idx = len(new_image_series) - self.time_delay
                 end_idx = len(new_image_series)
                 new_image_series = new_image_series[start_idx:end_idx]
                 image_series.append(new_image_series)
@@ -171,10 +171,10 @@ class DataLoader:
 
         self._check_data_not_empty(image_series)
 
-        return np.array(image_series), np.array(label_values), label_index_map
+        return self._load_dataset(np.array(image_series), np.array(label_values), label_index_map)
 
     def _load_dataset(self, images, labels, emotion_index_map):
-        dataset = Dataset(images, labels, emotion_index_map)
+        dataset = Dataset(images, labels, emotion_index_map, self.time_delay)
         return dataset
 
     def _check_arguments(self):
@@ -221,11 +221,11 @@ class DataLoader:
         """
         if not os.path.isdir(self.datapath):
             raise (NotADirectoryError('Directory does not exist: %s' % self.datapath))
-        if self.time_steps:
-            if self.time_steps < 1:
-                raise ValueError('Time step argument must be greater than 0, but gave: %i' % self.time_steps)
-            if not isinstance(self.time_steps, int):
-                raise ValueError('Time step argument must be an integer, but gave: %s' % str(self.time_steps))
+        if self.time_delay:
+            if self.time_delay < 1:
+                raise ValueError('Time step argument must be greater than 0, but gave: %i' % self.time_delay)
+            if not isinstance(self.time_delay, int):
+                raise ValueError('Time step argument must be an integer, but gave: %s' % str(self.time_delay))
 
     def _check_data_not_empty(self, images):
         if len(images) == 0:
@@ -233,9 +233,9 @@ class DataLoader:
 
     def _check_series_directory_size(self, series_directory_path):
         image_files = [image_file for image_file in os.listdir(series_directory_path) if not image_file.startswith('.')]
-        if len(image_files) < self.time_steps:
+        if len(image_files) < self.time_delay:
             raise ValueError('Time series sample found in path %s does not contain enough images for %s time steps.' % (
-            series_directory_path, str(self.time_steps)))
+            series_directory_path, str(self.time_delay)))
 
     def _reshape(self, image):
         if image.ndim == 2:

@@ -14,8 +14,8 @@ print('--------------- Convolutional Model -------------------')
 print('Loading data...')
 directory_path = "image_data/sample_image_directory"
 
-dataLoader = DataLoader(from_csv=False, datapath=directory_path)
-dataset = dataLoader.get_data()
+data_loader = DataLoader(from_csv=False, datapath=directory_path)
+dataset = data_loader.get_data()
 labels = dataset.get_labels()
 images = dataset.get_images()
 
