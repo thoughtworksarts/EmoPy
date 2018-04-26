@@ -31,10 +31,10 @@ class DataGenerator:
         self.data_gen.fit(self.images)
         return self
 
-    def get_next_batch(self, batch_size=10, target_dimension=None):
+    def get_next_batch(self, batch_size=10, target_dimensions=None):
         self._check_model_has_been_fit()
         for images, labels in self.data_gen.flow(self.images, self.labels, batch_size=batch_size,
-                                                 target_dimension=target_dimension):
+                                                 target_dimensions=target_dimensions):
             return images, labels
 
     def generate(self, target_dimensions=None, batch_size=10):
@@ -45,7 +45,7 @@ class DataGenerator:
         if len(images) != len(labels):
             raise ValueError("Samples are not labeled properly")
         if images.ndim < 4:
-            raise ValueError("Channel Axis should have vale")
+            raise ValueError("Channel Axis should have value")
         if self.time_delay:
             if images.ndim != 5:
                 raise ValueError("Time_delay parameter was set but Images say otherwise")

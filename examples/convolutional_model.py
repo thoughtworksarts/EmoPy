@@ -32,7 +32,7 @@ print('Training net...')
 model = ConvolutionalNN(target_dimensions, channels, dataset.get_emotion_index_map())
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=5),
                     test_gen.generate(target_dimensions, batch_size=5),
-                    epochs=10)
+                    epochs=5)
 
 # Save model configuration
 # model.export_model('output/conv2d_model.json','output/conv2d_weights.h5',"output/conv2d_emotion_map.json", emotion_map)

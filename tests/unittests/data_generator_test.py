@@ -19,7 +19,7 @@ class DataGeneratorTest(unittest.TestCase):
         images = np.random.rand(20, 64, 64, 3)
         labels = np.random.rand(20)
         generator = DataGenerator().fit(images, labels)
-        batch, _ = generator.get_next_batch(10, target_dimension=(28, 28))
+        batch, _ = generator.get_next_batch(10, target_dimensions=(28, 28))
         self.assertEqual(batch.shape, (10, 28, 28, 3))
 
     def test_should_raise_error_when_labels_and_samples_are_mis_matched(self):

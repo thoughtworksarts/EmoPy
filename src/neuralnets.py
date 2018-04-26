@@ -35,7 +35,7 @@ class _FERNeuralNet(object):
                                  callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3), PlotLosses()])
 
     def predict(self, images):
-        raise NotImplementedError("Class %s doesn't implement predict()" % self.__class__.__name__)
+        self.model.predict(images)
 
     def save_model_graph(self):
         plot_model(self.model, to_file='output/model.png')
@@ -131,10 +131,6 @@ class TransferLearningNN(_FERNeuralNet):
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], validation_split=validation_split,
                        shuffle=True)
 
-    def predict(self, images):
-        self.model.predict(images)
-
-
 class ConvolutionalLstmNN(_FERNeuralNet):
     """
     Convolutional Long Short Term Memory Neural Network.
@@ -203,10 +199,6 @@ class ConvolutionalLstmNN(_FERNeuralNet):
         self.model.fit(features, labels, batch_size=batch_size, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
 
-    def predict(self, images):
-        self.model.predict(images)
-
-
 class ConvolutionalNN(_FERNeuralNet):
     """
     2D Convolutional Neural Network
@@ -272,10 +264,6 @@ class ConvolutionalNN(_FERNeuralNet):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
-
-    def predict(self, images):
-        self.model.predict(images)
-
 
 class TimeDelayConvNN(_FERNeuralNet):
     """
@@ -344,6 +332,3 @@ class TimeDelayConvNN(_FERNeuralNet):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
-
-    def predict(self, images):
-        self.model.predict(images)
