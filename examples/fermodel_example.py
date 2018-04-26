@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../')
-from fermodel import FERModel
+from src.fermodel import FERModel
 
 target_emotions = ['calm', 'anger', 'happiness']
 model = FERModel(target_emotions, verbose=True)
