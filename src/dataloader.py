@@ -2,6 +2,7 @@ import os, csv, cv2, datetime
 from skimage import color, io
 import numpy as np
 
+from src.dataset import Dataset
 
 class DataLoader:
     """
@@ -80,7 +81,7 @@ class DataLoader:
 
         self._check_data_not_empty(images)
 
-        return np.array(images), np.array(label_values), label_index_map
+        return self._load_dataset(np.array(images), np.array(label_values), label_index_map)
 
     def _get_data_from_csv(self):
         """
@@ -171,6 +172,10 @@ class DataLoader:
         self._check_data_not_empty(image_series)
 
         return np.array(image_series), np.array(label_values), label_index_map
+
+    def _load_dataset(self, images, labels, emotion_index_map):
+        dataset = Dataset(images, labels, emotion_index_map)
+        return dataset
 
     def _check_arguments(self):
         if self.out_channels not in (1, 3):
