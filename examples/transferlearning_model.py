@@ -19,7 +19,10 @@ csv_file_path = "image_data/sample.csv"
 
 data_loader = DataLoader(from_csv=True, emotion_map=fer_dataset_label_map, datapath=csv_file_path,
                          image_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1, out_channels=3)
-images, labels, emotion_map = data_loader.get_data()
+dataset = data_loader.get_data()
+labels = dataset.get_labels()
+images = dataset.get_images()
+
 if verbose:
     print('raw image shape: ' + str(images.shape))
 
@@ -32,7 +35,7 @@ test_gen = DataGenerator().fit(X_test, y_test)
 
 print('--------------- Inception-V3 Model -------------------')
 print('Initializing neural network with InceptionV3 base model...')
-model = TransferLearningNN(model_name=model_name, emotion_map=emotion_map)
+model = TransferLearningNN(model_name=model_name, emotion_map=dataset.get_emotion_index_map())
 
 print('Training model...')
 print('numLayers: ' + str(len(model.model.layers)))

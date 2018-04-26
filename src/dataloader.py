@@ -121,7 +121,7 @@ class DataLoader:
 
         self._check_data_not_empty(images)
 
-        return np.array(images), np.array(labels), emotion_map
+        return self._load_dataset(np.array(images), np.array(labels), emotion_map)
 
     def _get_image_series_data_from_directory(self):
         """
