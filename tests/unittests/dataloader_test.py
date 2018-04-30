@@ -3,7 +3,7 @@ import sys
 import pytest
 
 sys.path.append('../../')
-from src.dataloader import DataLoader
+from src.data_loader import DataLoader
 
 valid_csv_file_path = '../../examples/image_data/sample.csv'
 valid_image_dimensions = (48, 48)

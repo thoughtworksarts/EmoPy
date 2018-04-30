@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../')
+from src.directory_data_loader import DirectoryDataLoader
 from src.data_generator import DataGenerator
-from src.dataloader import DataLoader
 from src.neuralnets import ConvolutionalNN
 
 validation_split = 0.15
@@ -13,7 +13,7 @@ verbose = True
 print('--------------- Convolutional Model -------------------')
 print('Loading data...')
 directory_path = "image_data/sample_image_directory"
-data_loader = DataLoader(from_csv=False, datapath=directory_path, validation_split=validation_split)
+data_loader = DirectoryDataLoader(datapath=directory_path, validation_split=validation_split)
 dataset = data_loader.load_data()
 
 if verbose:
