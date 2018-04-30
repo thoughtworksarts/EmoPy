@@ -1,0 +1,13 @@
+keras
+lasagne
+matplotlib>=2.1.0
+numpy>=1.13.3
+scikit-image>=0.13.1
+scikit-learn>=0.19.1
+scikit-neuralnetwork>=0.7
+scipy>=0.19.1
+tensorflow==1.4.0
+opencv-python
+h5py
+pydot
+graphviz
