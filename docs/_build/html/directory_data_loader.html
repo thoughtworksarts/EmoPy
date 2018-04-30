@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ImageProcessor &#8212; EmoPy 1.0 documentation</title>
+    <title>DirectoryDataLoader &#8212; EmoPy 1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="FeatureExtractor" href="featureextractor.html" />
-    <link rel="prev" title="DataLoader" href="dataloader.html" /> 
+    <link rel="next" title="DataGenerator" href="data_generator.html" />
+    <link rel="prev" title="CSVDataLoader" href="csv_data_loader.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,10 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="data_generator.html" title="DataGenerator"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="DataLoader"
+          <a href="csv_data_loader.html" title="CSVDataLoader"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">EmoPy 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -51,35 +51,36 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-imageprocessor">
-<span id="imageprocessor"></span><h1>ImageProcessor<a class="headerlink" href="#module-imageprocessor" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-directory_data_loader">
+<span id="directorydataloader"></span><h1>DirectoryDataLoader<a class="headerlink" href="#module-directory_data_loader" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="imageprocessor.ImageProcessor">
-<em class="property">class </em><code class="descclassname">imageprocessor.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>images</em>, <em>target_dimensions=None</em>, <em>augment_data=False</em>, <em>rgb=False</em>, <em>time_series=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs image dataset pre-processing such as resizing, augmenting the dataset, etc.</p>
+<dt id="directory_data_loader.DirectoryDataLoader">
+<em class="property">class </em><code class="descclassname">directory_data_loader.</code><code class="descname">DirectoryDataLoader</code><span class="sig-paren">(</span><em>target_emotion_map=None</em>, <em>datapath=None</em>, <em>validation_split=0.2</em>, <em>out_channels=1</em>, <em>time_delay=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/directory_data_loader.html#DirectoryDataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#directory_data_loader.DirectoryDataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataLoader subclass loads image and label data from directory.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>images</strong> – List of raw image samples.</li>
-<li><strong>target_dimensions</strong> – Final dimensions of training images.</li>
-<li><strong>augment_data</strong> – If true, will augment data with ImageDataGenerator.</li>
-<li><strong>rgb</strong> – True if raw images are in rgb.</li>
-<li><strong>time_series</strong> – True if each sample is a series of images.</li>
+<li><strong>target_emotion_map</strong> – Optional dict of target emotion label values/strings and their corresponding label vector index values.</li>
+<li><strong>datapath</strong> – Location of image dataset.</li>
+<li><strong>validation_split</strong> – Float percentage of data to use as validation set.</li>
+<li><strong>out_channels</strong> – Number of image channels.</li>
+<li><strong>time_delay</strong> – Number of images to load from each time series sample. Parameter must be provided to load time series data and unspecified if using static image data.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="imageprocessor.ImageProcessor.process_training_data">
-<code class="descname">process_training_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/imageprocessor.html#ImageProcessor.process_training_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imageprocessor.ImageProcessor.process_training_data" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dt id="directory_data_loader.DirectoryDataLoader.load_data">
+<code class="descname">load_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/directory_data_loader.html#DirectoryDataLoader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#directory_data_loader.DirectoryDataLoader.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads image and label data from specified directory path.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of processed image data.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dataset object containing image and label data.</td>
 </tr>
 </tbody>
 </table>
@@ -96,11 +97,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dataloader.html"
-                        title="previous chapter">DataLoader</a></p>
+  <p class="topless"><a href="csv_data_loader.html"
+                        title="previous chapter">CSVDataLoader</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="featureextractor.html"
-                        title="next chapter">FeatureExtractor</a></p>
+  <p class="topless"><a href="data_generator.html"
+                        title="next chapter">DataGenerator</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -125,10 +126,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="featureextractor.html" title="FeatureExtractor"
+          <a href="data_generator.html" title="DataGenerator"
              >next</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="DataLoader"
+          <a href="csv_data_loader.html" title="CSVDataLoader"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">EmoPy 1.0 documentation</a> &#187;</li> 
       </ul>

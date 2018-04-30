@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>DataLoader &#8212; EmoPy 1.0 documentation</title>
+    <title>CSVDataLoader &#8212; EmoPy 1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ImageProcessor" href="imageprocessor.html" />
+    <link rel="next" title="DirectoryDataLoader" href="directory_data_loader.html" />
     <link rel="prev" title="FERNeuralNets" href="neuralnets.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="imageprocessor.html" title="ImageProcessor"
+          <a href="directory_data_loader.html" title="DirectoryDataLoader"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="neuralnets.html" title="FERNeuralNets"
@@ -51,40 +51,38 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-dataloader">
-<span id="dataloader"></span><h1>DataLoader<a class="headerlink" href="#module-dataloader" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-csv_data_loader">
+<span id="csvdataloader"></span><h1>CSVDataLoader<a class="headerlink" href="#module-csv_data_loader" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="dataloader.DataLoader">
-<em class="property">class </em><code class="descclassname">dataloader.</code><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>from_csv=None</em>, <em>target_labels=None</em>, <em>datapath=None</em>, <em>image_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em>, <em>time_steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads images and labels from dataset path.</p>
-<p>The <em>datapath</em> argument must be a path to a csv file or a directory containing the image and label data.</p>
-<p>If a csv_file is provided, user must indicate so by setting the <em>from_csv</em> argument to true and must provide values for the <em>csv_label_col</em> and <em>csv_image_col</em> arguments to indicate the indices of the images and labels in the csv file.</p>
-<p>If a directory path is provided, the directory must contain emotion label subdirectories containing all image samples pertaining to that label. If the directory contains image time series data, each emotion label subdirectory must contain time series subdirectories, each containing one time series sample. See the sample directories in the folder <em>examples/image_data</em>.</p>
+<dt id="csv_data_loader.CSVDataLoader">
+<em class="property">class </em><code class="descclassname">csv_data_loader.</code><code class="descname">CSVDataLoader</code><span class="sig-paren">(</span><em>target_emotion_map</em>, <em>datapath=None</em>, <em>validation_split=0.2</em>, <em>image_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em>, <em>out_channels=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csv_data_loader.html#CSVDataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csv_data_loader.CSVDataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataLoader subclass loads image and label data from csv file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>from_csv</strong> – If true, images will be extracted from csv file.</li>
-<li><strong>target_labels</strong> – List of target label values/strings.</li>
+<li><strong>emotion_map</strong> – Dict of target emotion label values and their corresponding label vector index values.</li>
 <li><strong>datapath</strong> – Location of image dataset.</li>
-<li><strong>image_dimensions</strong> – Initial dimensions of raw training images.</li>
+<li><strong>validation_split</strong> – Float percentage of data to use as validation set.</li>
+<li><strong>image_dimensions</strong> – Dimensions of sample images (height, width).</li>
 <li><strong>csv_label_col</strong> – Index of label value column in csv.</li>
 <li><strong>csv_image_col</strong> – Index of image column in csv.</li>
-<li><strong>time_steps</strong> – Number of images to load from each time series sample. Parameter must be provided to load time series data.</li>
+<li><strong>out_channels</strong> – Number of image channels.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="dataloader.DataLoader.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataloader.html#DataLoader.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataloader.DataLoader.get_data" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dt id="csv_data_loader.CSVDataLoader.load_data">
+<code class="descname">load_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/csv_data_loader.html#CSVDataLoader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csv_data_loader.CSVDataLoader.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads image and label data from specified csv file path.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of images and list of corresponding labels from specified location. If loading from directory, also returns label index map (maps emotion label to integer value used during training).</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dataset object containing image and label data.</td>
 </tr>
 </tbody>
 </table>
@@ -104,8 +102,8 @@
   <p class="topless"><a href="neuralnets.html"
                         title="previous chapter">FERNeuralNets</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="imageprocessor.html"
-                        title="next chapter">ImageProcessor</a></p>
+  <p class="topless"><a href="directory_data_loader.html"
+                        title="next chapter">DirectoryDataLoader</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -130,7 +128,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="imageprocessor.html" title="ImageProcessor"
+          <a href="directory_data_loader.html" title="DirectoryDataLoader"
              >next</a> |</li>
         <li class="right" >
           <a href="neuralnets.html" title="FERNeuralNets"

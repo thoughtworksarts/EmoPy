@@ -45,124 +45,115 @@
           <div class="body" role="main">
             
   <h1>Source code for fermodel</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">neuralnets</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">imageprocessor</span> <span class="k">import</span> <span class="n">ImageProcessor</span>
-<span class="kn">from</span> <span class="nn">dataloader</span> <span class="k">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">featureextractor</span> <span class="k">import</span> <span class="n">FeatureExtractor</span>
+<span></span><span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">load_model</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">misc</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
+<span class="kn">import</span> <span class="nn">json</span>
 
 <div class="viewcode-block" id="FERModel"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel">[docs]</a><span class="k">class</span> <span class="nc">FERModel</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.</span>
+<span class="sd">    Pretrained deep learning model for facial expression recognition.</span>
 
 <span class="sd">    :param target_emotions: set of target emotions to classify</span>
-<span class="sd">    :param train_images: numpy array of training images</span>
-<span class="sd">    :param csv_data_path: local path to directory containing csv with image pixel values</span>
 <span class="sd">    :param verbose: if true, will print out extra process information</span>
 
 <span class="sd">    **Example**::</span>
 
 <span class="sd">        from fermodel import FERModel</span>
 
-<span class="sd">        target_emotions = [&#39;anger&#39;, &#39;fear&#39;, &#39;calm&#39;, &#39;sad&#39;, &#39;happy&#39;, &#39;surprise&#39;]</span>
-<span class="sd">        csv_file_path = &quot;&lt;your local csv file path&gt;&quot;</span>
-<span class="sd">        model = FERModel(target_emotions, csv_data_path=csv_file_path, raw_dimensions=(48,48), csv_image_col=1, csv_label_col=0, verbose=True)</span>
-<span class="sd">        model.train()</span>
+<span class="sd">        target_emotions = [&#39;happiness&#39;, &#39;disgust&#39;, &#39;surprise&#39;]</span>
+<span class="sd">        model = FERModel(target_emotions, verbose=True)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">POSSIBLE_EMOTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;neutral&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">]</span>
+    <span class="n">POSSIBLE_EMOTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sadness&#39;</span><span class="p">,</span> <span class="s1">&#39;happiness&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">train_images</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emotions_are_valid</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Target emotions must be subset of </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">train_images</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">csv_data_path</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must supply training images or datapath containing training images.&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_emotions</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span> <span class="o">=</span> <span class="n">target_emotions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">train_images</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span> <span class="o">=</span> <span class="n">train_images</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">train_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emotion_index_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;anger&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;disgust&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;fear&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;happiness&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;sadness&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;surprise&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;calm&#39;</span><span class="p">:</span> <span class="mi">6</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_emotion_set_is_supported</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="k">if</span> <span class="n">csv_data_path</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_training_images_from_path</span><span class="p">(</span><span class="n">csv_data_path</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_model</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing FER model parameters for target emotions: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choose_model_from_target_emotions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choose_model_from_target_emotions</span><span class="p">()</span>
 
-<div class="viewcode-block" id="FERModel.train"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FERModel.predict"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Trains FERModel on supplied image data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training FERModel...&#39;</span><span class="p">)</span>
-        <span class="n">validation_split</span> <span class="o">=</span> <span class="mf">0.15</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="n">validation_split</span><span class="p">)</span></div>
+<span class="sd">        Predicts discrete emotion for given image.</span>
 
-<div class="viewcode-block" id="FERModel.predict"><a class="viewcode-back" href="../fermodel.html#fermodel.FERModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+<span class="sd">        :param images: image file (jpg or png format)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image_file</span><span class="p">)</span>
+        <span class="n">gray_image</span> <span class="o">=</span> <span class="n">image</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">gray_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="n">resized_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">gray_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">)</span>
+        <span class="n">final_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">resized_image</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">])])</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">final_image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_prediction</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_check_emotion_set_is_supported</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predicts discrete emotions for given images.</span>
-
-<span class="sd">        :param images: list of images</span>
+<span class="sd">        Validates set of user-supplied target emotions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
-
-    <span class="k">def</span> <span class="nf">_emotions_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emotions</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validates set of user-supplied target emotions</span>
-<span class="sd">        :param emotions: list of emotions supplied by user</span>
-<span class="sd">        :return: true if emotion set is valid, false otherwise</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">emotions</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POSSIBLE_EMOTIONS</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">_extract_training_images_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extracts training images from csv file found in user-supplied directory path</span>
-<span class="sd">        :param csv_data_path: path to directory containing image data csv file supplied by user</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dataLoader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">from_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="n">datapath</span><span class="o">=</span><span class="n">csv_data_path</span><span class="p">,</span> <span class="n">image_dimensions</span><span class="o">=</span><span class="n">raw_dimensions</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="n">csv_label_col</span><span class="p">,</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="n">csv_image_col</span><span class="p">)</span>
-        <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataLoader</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-
-        <span class="n">imageProcessor</span> <span class="o">=</span> <span class="n">ImageProcessor</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">target_dimensions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">)</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="n">imageProcessor</span><span class="o">.</span><span class="n">process_training_data</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_images</span> <span class="o">=</span> <span class="n">images</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">labels</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">supported_emotion_subsets</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;happiness&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;happiness&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;sadness&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]),</span>
+            <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;happiness&#39;</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">)</span> <span class="ow">in</span> <span class="n">supported_emotion_subsets</span><span class="p">:</span>
+            <span class="n">error_string</span> <span class="o">=</span> <span class="s1">&#39;Target emotions must be a supported subset. &#39;</span>
+            <span class="n">error_string</span> <span class="o">+=</span> <span class="s1">&#39;Choose from one of the following emotion subset: </span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">possible_subset_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">emotion_set</span> <span class="ow">in</span> <span class="n">supported_emotion_subsets</span><span class="p">:</span>
+                <span class="n">possible_subset_string</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">emotion_set</span><span class="p">)</span>
+                <span class="n">possible_subset_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">error_string</span> <span class="o">+=</span> <span class="n">possible_subset_string</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_string</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_choose_model_from_target_emotions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Chooses best-performing deep learning model for the set of target emotions supplied by user.</span>
-<span class="sd">        :return: One of deep learning models from neuralnets.py</span>
+<span class="sd">        Initializes pre-trained deep learning model for the set of target emotions supplied by user.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating FER model...&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_features</span><span class="p">()</span>    <span class="c1"># TODO: call _extract_features for appropriate models</span>
-        <span class="k">return</span> <span class="n">ConvolutionalLstmNN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dimensions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="n">target_labels</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">)),</span> <span class="n">time_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_delay</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="c1"># TODO: add conditionals to choose best models for all emotion subsets</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing FER model...&#39;</span><span class="p">)</span>
+        <span class="n">model_indices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">emotion_index_map</span><span class="p">[</span><span class="n">emotion</span><span class="p">]</span> <span class="k">for</span> <span class="n">emotion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_emotions</span><span class="p">]</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model_indices</span><span class="p">)]</span>
+        <span class="n">model_suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span>
+        <span class="n">model_file</span> <span class="o">=</span> <span class="s1">&#39;../models/conv_model_</span><span class="si">%s</span><span class="s1">.hdf5&#39;</span> <span class="o">%</span> <span class="n">model_suffix</span>
+        <span class="n">emotion_map_file</span> <span class="o">=</span> <span class="s1">&#39;../models/conv_emotion_map_</span><span class="si">%s</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="n">model_suffix</span>
+        <span class="n">emotion_map</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">emotion_map_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">load_model</span><span class="p">(</span><span class="n">model_file</span><span class="p">),</span> <span class="n">emotion_map</span>
 
-    <span class="k">def</span> <span class="nf">_extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extract best-performing features from images for model. If called, features will be used for training rather than the raw images.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting features from training images...&#39;</span><span class="p">)</span>
-        <span class="n">featureExtractor</span> <span class="o">=</span> <span class="n">FeatureExtractor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_images</span><span class="p">,</span> <span class="n">return_2d_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">featureExtractor</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="s1">&#39;hog&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;orientations&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;pixels_per_cell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;cells_per_block&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
-        <span class="n">raw_features</span> <span class="o">=</span> <span class="n">featureExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">raw_features</span><span class="p">:</span>
-            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">feature</span><span class="p">]])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;feature shape: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;label shape: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span></div>
+    <span class="k">def</span> <span class="nf">_print_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">):</span>
+        <span class="n">normalized_prediction</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prediction</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">emotion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.1f%%</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">emotion</span><span class="p">,</span> <span class="n">normalized_prediction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">emotion_map</span><span class="p">[</span><span class="n">emotion</span><span class="p">]]</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+        <span class="n">dominant_emotion_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">emotion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dominant_emotion_index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_map</span><span class="p">[</span><span class="n">emotion</span><span class="p">]:</span>
+                <span class="n">dominant_emotion</span> <span class="o">=</span> <span class="n">emotion</span>
+                <span class="k">break</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dominant emotion: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">dominant_emotion</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span></div>
 </pre></div>
 
           </div>

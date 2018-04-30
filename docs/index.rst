@@ -12,9 +12,10 @@ Welcome to EmoPy's documentation!
 
    fermodel
    neuralnets
-   dataloader
-   imageprocessor
-   featureextractor
+   csv_data_loader
+   directory_data_loader
+   data_generator
+   dataset
 
 Indices and tables
 ==================

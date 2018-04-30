@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="DataLoader" href="dataloader.html" />
+    <link rel="next" title="CSVDataLoader" href="csv_data_loader.html" />
     <link rel="prev" title="FERModel" href="fermodel.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="DataLoader"
+          <a href="csv_data_loader.html" title="CSVDataLoader"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fermodel.html" title="FERModel"
@@ -55,7 +55,7 @@
 <span id="ferneuralnets"></span><h1>FERNeuralNets<a class="headerlink" href="#module-neuralnets" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="neuralnets.ConvolutionalLstmNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalLstmNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>target_labels</em>, <em>time_delay=2</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='sigmoid'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalLstmNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>emotion_map</em>, <em>time_delay=2</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='sigmoid'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolutional Long Short Term Memory Neural Network.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -64,7 +64,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>image_size</strong> – dimensions of input images</li>
 <li><strong>channels</strong> – number of image channels</li>
-<li><strong>target_labels</strong> – list of target emotion labels</li>
+<li><strong>emotion_map</strong> – dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array</li>
 <li><strong>time_delay</strong> – number of time steps for lookback</li>
 <li><strong>filters</strong> – number of filters/nodes per layer in CNN</li>
 <li><strong>kernel_size</strong> – size of sliding window for each layer of CNN</li>
@@ -101,16 +101,11 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="neuralnets.ConvolutionalLstmNN.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalLstmNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalLstmNN.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="neuralnets.ConvolutionalNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>label_count</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='relu'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">ConvolutionalNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>emotion_map</em>, <em>filters=10</em>, <em>kernel_size=(4</em>, <em>4)</em>, <em>activation='relu'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>2D Convolutional Neural Network</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -119,7 +114,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>image_size</strong> – dimensions of input images</li>
 <li><strong>channels</strong> – number of image channels</li>
-<li><strong>label_count</strong> – total number of target emotion labels</li>
+<li><strong>emotion_map</strong> – dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array</li>
 <li><strong>filters</strong> – number of filters/nodes per layer in CNN</li>
 <li><strong>kernel_size</strong> – size of sliding window for each layer of CNN</li>
 <li><strong>activation</strong> – name of activation function for CNN</li>
@@ -155,16 +150,11 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="neuralnets.ConvolutionalNN.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#ConvolutionalNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.ConvolutionalNN.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="neuralnets.TimeDelayConvNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TimeDelayConvNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>time_delay</em>, <em>channels</em>, <em>label_count</em>, <em>filters=32</em>, <em>kernel_size=(1</em>, <em>4</em>, <em>4)</em>, <em>activation='relu'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayConvNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayConvNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TimeDelayConvNN</code><span class="sig-paren">(</span><em>image_size</em>, <em>channels</em>, <em>emotion_map</em>, <em>time_delay</em>, <em>filters=32</em>, <em>kernel_size=(1</em>, <em>4</em>, <em>4)</em>, <em>activation='relu'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayConvNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayConvNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Time-Delayed Convolutional Neural Network model is a 3D-Convolutional network that trains on 3-dimensional temporal image data. One training sample will contain n number of images from a series and its emotion label will be that of the most recent image.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -174,7 +164,7 @@
 <li><strong>image_size</strong> – dimensions of input images</li>
 <li><strong>time_delay</strong> – number of past time steps included in each training sample</li>
 <li><strong>channels</strong> – number of image channels</li>
-<li><strong>label_count</strong> – total number of target emotion labels</li>
+<li><strong>emotion_map</strong> – dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array</li>
 <li><strong>filters</strong> – number of filters/nodes per layer in CNN</li>
 <li><strong>kernel_size</strong> – size of sliding window for each layer of CNN</li>
 <li><strong>activation</strong> – name of activation function for CNN</li>
@@ -210,16 +200,11 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="neuralnets.TimeDelayConvNN.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TimeDelayConvNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TimeDelayConvNN.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="neuralnets.TransferLearningNN">
-<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TransferLearningNN</code><span class="sig-paren">(</span><em>model_name</em>, <em>target_labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">neuralnets.</code><code class="descname">TransferLearningNN</code><span class="sig-paren">(</span><em>model_name</em>, <em>emotion_map</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transfer Learning Convolutional Neural Network initialized with pretrained weights.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -227,7 +212,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>model_name</strong> – name of pretrained model to use for initial weights. Options: [‘Xception’, ‘VGG16’, ‘VGG19’, ‘ResNet50’, ‘InceptionV3’, ‘InceptionResNetV2’]</li>
-<li><strong>target_labels</strong> – list of target emotion labels</li>
+<li><strong>emotion_map</strong> – dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array</li>
 </ul>
 </td>
 </tr>
@@ -258,11 +243,6 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="neuralnets.TransferLearningNN.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neuralnets.html#TransferLearningNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neuralnets.TransferLearningNN.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -277,8 +257,8 @@
   <p class="topless"><a href="fermodel.html"
                         title="previous chapter">FERModel</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="dataloader.html"
-                        title="next chapter">DataLoader</a></p>
+  <p class="topless"><a href="csv_data_loader.html"
+                        title="next chapter">CSVDataLoader</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -303,7 +283,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataloader.html" title="DataLoader"
+          <a href="csv_data_loader.html" title="CSVDataLoader"
              >next</a> |</li>
         <li class="right" >
           <a href="fermodel.html" title="FERModel"

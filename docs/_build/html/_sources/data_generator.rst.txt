@@ -1,7 +1,7 @@
-DataLoader
+DataGenerator
 ***************
 
-.. automodule:: dataloader
+.. automodule:: data_generator
     :members:
     :undoc-members:
 

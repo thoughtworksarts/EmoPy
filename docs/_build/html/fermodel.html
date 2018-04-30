@@ -55,16 +55,14 @@
 <span id="fermodel"></span><h1>FERModel<a class="headerlink" href="#module-fermodel" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="fermodel.FERModel">
-<em class="property">class </em><code class="descclassname">fermodel.</code><code class="descname">FERModel</code><span class="sig-paren">(</span><em>target_emotions</em>, <em>train_images=None</em>, <em>train_labels=None</em>, <em>csv_data_path=None</em>, <em>raw_dimensions=None</em>, <em>csv_label_col=None</em>, <em>csv_image_col=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deep learning model for facial expression recognition. Model chosen dependent on set of target emotions supplied by user.</p>
+<em class="property">class </em><code class="descclassname">fermodel.</code><code class="descname">FERModel</code><span class="sig-paren">(</span><em>target_emotions</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretrained deep learning model for facial expression recognition.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>target_emotions</strong> – set of target emotions to classify</li>
-<li><strong>train_images</strong> – numpy array of training images</li>
-<li><strong>csv_data_path</strong> – local path to directory containing csv with image pixel values</li>
 <li><strong>verbose</strong> – if true, will print out extra process information</li>
 </ul>
 </td>
@@ -74,35 +72,27 @@
 <p><strong>Example</strong>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fermodel</span> <span class="k">import</span> <span class="n">FERModel</span>
 
-<span class="n">target_emotions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;anger&#39;</span><span class="p">,</span> <span class="s1">&#39;fear&#39;</span><span class="p">,</span> <span class="s1">&#39;calm&#39;</span><span class="p">,</span> <span class="s1">&#39;sad&#39;</span><span class="p">,</span> <span class="s1">&#39;happy&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
-<span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;your local csv file path&gt;&quot;</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">FERModel</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">,</span> <span class="n">csv_data_path</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span> <span class="n">raw_dimensions</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">48</span><span class="p">),</span> <span class="n">csv_image_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">csv_label_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">target_emotions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;happiness&#39;</span><span class="p">,</span> <span class="s1">&#39;disgust&#39;</span><span class="p">,</span> <span class="s1">&#39;surprise&#39;</span><span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FERModel</span><span class="p">(</span><span class="n">target_emotions</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="attribute">
 <dt id="fermodel.FERModel.POSSIBLE_EMOTIONS">
-<code class="descname">POSSIBLE_EMOTIONS</code><em class="property"> = ['anger', 'fear', 'neutral', 'sad', 'happy', 'surprise', 'disgust']</em><a class="headerlink" href="#fermodel.FERModel.POSSIBLE_EMOTIONS" title="Permalink to this definition">¶</a></dt>
+<code class="descname">POSSIBLE_EMOTIONS</code><em class="property"> = ['anger', 'fear', 'calm', 'sadness', 'happiness', 'surprise', 'disgust']</em><a class="headerlink" href="#fermodel.FERModel.POSSIBLE_EMOTIONS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="fermodel.FERModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predicts discrete emotions for given images.</p>
+<code class="descname">predict</code><span class="sig-paren">(</span><em>image_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts discrete emotion for given image.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>images</strong> – list of images</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>images</strong> – image file (jpg or png format)</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fermodel.FERModel.train">
-<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fermodel.html#FERModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fermodel.FERModel.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trains FERModel on supplied image data.</p>
 </dd></dl>
 
 </dd></dl>
