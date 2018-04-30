@@ -1,5 +1,4 @@
-import os, csv, cv2, datetime
-from skimage import color, io
+import csv, cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -62,3 +61,11 @@ class _DataLoader(object):
         if len(images) == 0:
             raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.label_map.keys()))
 
+    def _vectorize_labels(self, label_index_map, labels):
+        label_values = list()
+        label_count = len(label_index_map.keys())
+        for label in labels:
+            label_value = [0] * label_count
+            label_value[label_index_map[label]] = 1.0
+            label_values.append(label_value)
+        return label_values

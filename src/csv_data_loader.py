@@ -1,5 +1,5 @@
 from src.data_loader import _DataLoader
-import csv, cv2, datetime
+import csv, cv2
 import numpy as np
 
 class CSVDataLoader(_DataLoader):
@@ -14,8 +14,8 @@ class CSVDataLoader(_DataLoader):
     :param csv_image_col: Index of image column in csv.
     :param out_channels: Number of image channels.
     """
-    def __init__(self, emotion_map, datapath=None, validation_split=0.2, image_dimensions=None, csv_label_col=None, csv_image_col=None, out_channels=1):
-        self.label_map = emotion_map
+    def __init__(self, target_emotion_map, datapath=None, validation_split=0.2, image_dimensions=None, csv_label_col=None, csv_image_col=None, out_channels=1):
+        self.target_emotion_map = target_emotion_map
         self.datapath = datapath
         self.image_dimensions = image_dimensions
         self.csv_image_col = csv_image_col
@@ -30,47 +30,35 @@ class CSVDataLoader(_DataLoader):
         :return: Dataset object containing image and label data.
         """
         print('Extracting training data from csv...')
-        start = datetime.datetime.now()
-
         images = list()
         labels = list()
-        label_count = len(self.label_map.keys())
-        emotion_map = dict()
-        print('label_count: ' + str(label_count))
+        emotion_index_map = dict()
         with open(self.datapath) as csv_file:
             reader = csv.reader(csv_file, delimiter=',', quotechar='"')
-
             for row in reader:
-                if row[self.csv_label_col] == 'emotion': continue
                 label_class = row[self.csv_label_col]
-                if label_class not in self.label_map.keys():
+                if label_class not in self.target_emotion_map.keys():
                     continue
-                label_class = self.label_map[label_class]
-                if label_class not in emotion_map.keys():
-                    emotion_map[label_class] = len(emotion_map.keys())
+                label_class = self.target_emotion_map[label_class]
+                if label_class not in emotion_index_map.keys():
+                    emotion_index_map[label_class] = len(emotion_index_map.keys())
+                labels.append(label_class)
 
-                label = [0] * label_count
-                label[emotion_map[label_class]] = 1.0
-                labels.append(np.array(label))
-
-                image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')],
-                                   dtype=np.uint8).reshape(self.image_dimensions)
+                image = np.asarray([int(pixel) for pixel in row[self.csv_image_col].split(' ')], dtype=np.uint8).reshape(self.image_dimensions)
                 image = self._reshape(image)
                 images.append(image)
 
-        end = datetime.datetime.now()
-        print('Training data extraction runtime - ' + str(end - start))
-
+        vectorized_labels = self._vectorize_labels(emotion_index_map, labels)
         self._check_data_not_empty(images)
 
-        return self._load_dataset(np.array(images), np.array(labels), emotion_map)
+        return self._load_dataset(np.array(images), np.array(vectorized_labels), emotion_index_map)
 
     def _validate_arguments(self):
         if self.csv_image_col is None or self.csv_label_col is None:
             raise ValueError(
                 'Must provide image and label indices to extract data from csv. csv_label_col and csv_image_col arguments not provided during DataLoader initialization.')
 
-        if self.label_map is None:
+        if self.target_emotion_map is None:
             raise ValueError('Must supply target_labels when loading data from csv.')
 
         if self.image_dimensions is None:

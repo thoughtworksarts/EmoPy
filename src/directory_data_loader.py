@@ -7,16 +7,16 @@ class DirectoryDataLoader(_DataLoader):
     """
     DataLoader subclass loads image and label data from directory.
 
-    :param emotion_map: Optional dict of target emotion label values/strings and their corresponding label vector index values.
+    :param target_emotion_map: Optional dict of target emotion label values/strings and their corresponding label vector index values.
     :param datapath: Location of image dataset.
     :param validation_split: Float percentage of data to use as validation set.
     :param out_channels: Number of image channels.
     :param time_delay: Number of images to load from each time series sample. Parameter must be provided to load time series data and unspecified if using static image data.
     """
 
-    def __init__(self, emotion_map=None, datapath=None, validation_split=0.2, out_channels=1, time_delay=None):
+    def __init__(self, target_emotion_map=None, datapath=None, validation_split=0.2, out_channels=1, time_delay=None):
         self.datapath = datapath
-        self.label_map = emotion_map
+        self.target_emotion_map = target_emotion_map
         self.out_channels = out_channels
         super().__init__(validation_split, time_delay)
 
@@ -28,12 +28,12 @@ class DirectoryDataLoader(_DataLoader):
         """
         images = list()
         labels = list()
-        label_index_map = dict()
+        emotion_index_map = dict()
         label_directories = [dir for dir in os.listdir(self.datapath) if not dir.startswith('.')]
         for label_directory in label_directories:
-            if self.label_map:
-                if label_directory not in self.label_map.keys():    continue
-            self._add_new_label_to_map(label_directory, label_index_map)
+            if self.target_emotion_map:
+                if label_directory not in self.target_emotion_map.keys():    continue
+            self._add_new_label_to_map(label_directory, emotion_index_map)
             label_directory_path = self.datapath + '/' + label_directory
 
             if self.time_delay:
@@ -42,9 +42,9 @@ class DirectoryDataLoader(_DataLoader):
                 image_files = [image_file for image_file in os.listdir(label_directory_path) if not image_file.startswith('.')]
                 self._load_images_from_directory_to_array(image_files, images, label_directory, label_directory_path, labels)
 
-        vectorized_labels = self._vectorize_labels(label_index_map, labels)
+        vectorized_labels = self._vectorize_labels(emotion_index_map, labels)
         self._check_data_not_empty(images)
-        return self._load_dataset(np.array(images), np.array(vectorized_labels), label_index_map)
+        return self._load_dataset(np.array(images), np.array(vectorized_labels), emotion_index_map)
 
     def _load_series_for_single_emotion_directory(self, images, label_directory, label_directory_path, labels):
         series_directories = [series_directory for series_directory in os.listdir(label_directory_path) if not series_directory.startswith('.')]
@@ -68,15 +68,6 @@ class DirectoryDataLoader(_DataLoader):
             images.append(self._load_image(image_file, directory_path))
             if not self.time_delay:
                 labels.append(label)
-
-    def _vectorize_labels(self, label_index_map, labels):
-        label_values = list()
-        label_count = len(label_index_map.keys())
-        for label in labels:
-            label_value = [0] * label_count
-            label_value[label_index_map[label]] = 1.0
-            label_values.append(label_value)
-        return label_values
 
     def _add_new_label_to_map(self, label_directory, label_index_map):
         new_label_index = len(label_index_map.keys())

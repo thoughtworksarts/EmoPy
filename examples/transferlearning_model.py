@@ -19,7 +19,7 @@ fer_dataset_label_map = {'0': 'anger', '2': 'fear'}
 print('--------------- Inception-V3 Model -------------------')
 print('Loading data...')
 csv_file_path = "image_data/sample.csv"
-data_loader = CSVDataLoader(emotion_map=fer_dataset_label_map, datapath=csv_file_path, validation_split=validation_split, image_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1, out_channels=3)
+data_loader = CSVDataLoader(target_emotion_map=fer_dataset_label_map, datapath=csv_file_path, validation_split=validation_split, image_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1, out_channels=3)
 dataset = data_loader.load_data()
 
 if verbose:
