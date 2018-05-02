@@ -26,7 +26,7 @@ test_images, test_labels = dataset.get_test_data()
 test_gen = DataGenerator().fit(test_images, test_labels)
 
 print('Training net...')
-model = ConvolutionalNN(target_dimensions, channels, dataset.get_emotion_index_map())
+model = ConvolutionalNN(target_dimensions, channels, dataset.get_emotion_index_map(), verbose=True)
 model.fit_generator(train_gen.generate(target_dimensions, batch_size=5),
                     test_gen.generate(target_dimensions, batch_size=5),
                     epochs=5)

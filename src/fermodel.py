@@ -87,7 +87,6 @@ class FERModel:
         """
         Initializes pre-trained deep learning model for the set of target emotions supplied by user.
         """
-        print('Initializing FER model...')
         model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
         sorted_indices = [str(idx) for idx in sorted(model_indices)]
         model_suffix = ''.join(sorted_indices)

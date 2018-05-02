@@ -96,7 +96,7 @@ print('Predicting on happy image...')
 model.predict('image_data/sample_happy_image.png')
 ```
 
-The code above initializes and trains an FER deep neural net model for the target emotions listed using the sample images from the a small [csv dataset](examples/image_data/sample.csv). As you can see, all you have to supply with this example is a set of target emotions and a data path.
+The code above loads a pre-trained model and then predicts an emotion on a sample image. As you can see, all you have to supply with this example is a set of target emotions and a sample image.
 
 Once you have completed the installation, you can run this example by moving into the examples folder and running the example script.
 
@@ -105,13 +105,24 @@ cd examples
 python fermodel_example.py
 ```
 
-The first thing the example does is initialize the model. A summary of the model architecture will be printed out. This includes a list of all the neural net layers and the shape of their output. Our models are built using the Keras framework, which offers this visualization function.
+The first thing the example does is load and initialize the model. Next it prints out emotion probabilities for each sample image its given. It should look like this:
 
-![ConvLstmNN Architecture](readme_docs/convlstm-layers-print-statement.png "ConvLstmNN Architecture")
+![FERModel Training Output](readme_docs/sample-fermodel-predictions.png "FERModel Training Output")
+
+To train your own neural net, use one of our FER neural net classes to get started. You can try the convolutional_model.py example:
+
+```
+cd examples
+python convolutional_example.py
+```
+
+The example first initializes the model. A summary of the model architecture will be printed out. This includes a list of all the neural net layers and the shape of their output. Our models are built using the Keras framework, which offers this visualization function.
+
+![Convolutional Example Output Part 1](readme_docs/convolutional_example_output1.png "Convolutional Example Output Part 1")
 
 You will see the training and validation accuracies of the model being updated as it is trained on each sample image. The validation accuracy will be very low since we are only using three images for training and validation. It should look something like this:
 
-![FERModel Training Output](readme_docs/sample-fermodel-output.png "FERModel Training Output")
+![Convolutional Example Output Part 2](readme_docs/convolutional_example_output2.png "Convolutional Example Output Part 2")
 
 ## Comparison of neural network models
 
