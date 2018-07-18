@@ -1,7 +1,7 @@
 # EmoPy
 EmoPy is a python toolkit with deep neural net classes which accurately predict emotions given images of people's faces.
 
-![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")
+![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
 The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects. We also aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
@@ -130,7 +130,7 @@ You will see the training and validation accuracies of the model being updated a
 
 The Time-Delayed 3D-Convolutional Neural Network model is inspired by the work described in [this paper](http://ieeexplore.ieee.org/document/7090979/?part=1) written by Dr. Hongying Meng of Brunel University, London. It uses temporal information as part of its training samples. Instead of using still images as training samples, it uses past images from a series for additional context. One training sample will contain *n* number of images from a series and its emotion label will be that of the most recent image. The idea is to capture the progression of a facial expression leading up to a peak emotion.
 
-![Facial Expression Image Sequence](readme_docs/progression-example.png "Facial expression image sequence")
+![Facial Expression Image Sequence](readme_docs/progression-example.png "Facial expression image sequence")  
 Facial expression image sequence in Cohn-Kanade database from [@Jia2014]
 
 #### ConvolutionalLstmNN
@@ -139,7 +139,7 @@ The Convolutional Long Short Term Memory neural net is a convolutional and recur
 
 The Time-Delay model and this model differ in how they use temporal context. The former only takes context from within video clips of a single face as shown in the figure above. The ConvolutionLstmNN is given still images that have no relation to each other. It looks for pattern differences between past image samples and the current sample as well as their labels. It isn’t necessary to have a progression of the same face, simply different faces to compare.
 
-![7 Standard Facial Expressions](readme_docs/seven-expression-examples.jpg "7 Standard Facial Expressions")
+![7 Standard Facial Expressions](readme_docs/seven-expression-examples.jpg "7 Standard Facial Expressions")  
 Figure from [@vanGent2016]
 
 #### TransferLearningNN
