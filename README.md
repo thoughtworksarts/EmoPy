@@ -39,7 +39,11 @@ git clone https://github.com/thoughtworksarts/EmoPy.git
 cd EmoPy
 ```
 
-You will need to install Python 3.6.3 using Homebrew. If you do not have Homebrew installed run this command to install:
+> You will need to install [Python 3.6.3](https://www.python.org/downloads/release/python-363/) from the Python website.
+>
+> Please note that this is not the most current version of Python (but the TensorFlow package doesn't work with Python 3.7 yet).
+
+If you do not have Homebrew installed run this command to install:
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -64,7 +68,7 @@ sudo pip install virtualenv
 
 To create and activate the virtual environment, make sure you are in the ```EmoPy``` directory and run:
 ```
-virtualenv -p $(which python3) venv
+python3.6 -m venv venv
 source venv/bin/activate
 ```
 
