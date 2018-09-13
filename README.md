@@ -49,12 +49,6 @@ If you do not have Homebrew installed run this command to install:
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-Now you can install Python 3.6.3 using Homebrew.
-
-```
-brew install python3
-```
-
 GraphViz is required for visualisation functions.
 
 ```
