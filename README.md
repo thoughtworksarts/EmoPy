@@ -30,6 +30,12 @@ Try out the system using your own dataset or a small dataset we have provided in
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
+## Requirements
+
+EmoPy runs using Python 3, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.3 on OSX.
+
+Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
+
 ## Installation
 
 To get started, clone the directory and open it in your terminal.
@@ -39,13 +45,13 @@ git clone https://github.com/thoughtworksarts/EmoPy.git
 cd EmoPy
 ```
 
-You will need to install Python 3.6.3 using Homebrew. If you do not have Homebrew installed run this command to install:
+We suggest installing Python using Homebrew. If you do not have Homebrew installed run this command to install:
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-Now you can install Python 3.6.3 using Homebrew.
+Now you can install Python using Homebrew.
 
 ```
 brew install python3
