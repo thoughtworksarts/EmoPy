@@ -1,1 +1,2 @@
-include ../models/*
+include models/*
+include README.md
