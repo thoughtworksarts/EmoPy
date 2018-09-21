@@ -18,6 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    include_package_data=True,
     python_requires='>=3.6.3,<3.7',
     install_requires=[
        'keras>=2.2.0',
