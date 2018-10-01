@@ -85,16 +85,6 @@ class FERModel:
             raise ValueError(error_string)
 
     def _choose_model_from_target_emotions(self):
-
-        if(resource_exists('EmoPy','models/conv_model_036.hdf5')):
-            print('hello')
-        else:
-            print('goodbye')
-
-        if(resource_exists('EmoPy.models','conv_model_036.hdf5')):
-            print('hello')
-        else:
-            print('goodbye')
         """
         Initializes pre-trained deep learning model for the set of target emotions supplied by user.
         """
