@@ -12,3 +12,4 @@ data/
 trained_models/
 venv/
 output/
+emopy_venv/
