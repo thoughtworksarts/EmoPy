@@ -2,7 +2,7 @@ import csv, cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-from src.dataset import Dataset
+from EmoPy.src.dataset import Dataset
 
 
 class _DataLoader(object):

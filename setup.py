@@ -21,7 +21,7 @@ setuptools.setup(
     include_package_data=True,
     python_requires='>=3.6.3,<3.7',
     install_requires=[
-       'keras>=2.2.0',
+       'keras>=2.2.0,<=2.2.2',
        'lasagne',
        'matplotlib>2.1.0',
        'numpy<=1.14.5,>=1.13.3',

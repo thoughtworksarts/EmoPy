@@ -3,7 +3,7 @@ import cv2
 from scipy import misc
 import numpy as np
 import json
-from pkg_resources import resource_exists,resource_filename
+from pkg_resources import resource_filename
 
 class FERModel:
     """

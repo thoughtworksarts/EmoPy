@@ -1,7 +1,7 @@
 import os, cv2
 import numpy as np
 
-from src.data_loader import _DataLoader
+from EmoPy.src.data_loader import _DataLoader
 
 class DirectoryDataLoader(_DataLoader):
     """
