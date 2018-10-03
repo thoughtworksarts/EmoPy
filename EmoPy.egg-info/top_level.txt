@@ -1,4 +1,0 @@
-examples
-library
-models
-src
