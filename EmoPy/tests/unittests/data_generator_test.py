@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from src.data_generator import DataGenerator
+from EmoPy.src.data_generator import DataGenerator
 
 
 class DataGeneratorTest(unittest.TestCase):

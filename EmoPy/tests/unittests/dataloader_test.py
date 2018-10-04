@@ -2,10 +2,10 @@ import sys
 
 import pytest
 
-sys.path.append('../../')
-from src.data_loader import DataLoader
+from EmoPy.src.data_loader import DataLoader
+from pkg_resources import resource_filename
 
-valid_csv_file_path = '../../examples/image_data/sample.csv'
+valid_csv_file_path = resource_filename('EmoPy.examples','image_data/sample.csv')
 valid_image_dimensions = (48, 48)
 csv_label_col = 0
 csv_image_col = 1
@@ -69,8 +69,8 @@ def test_load_csv_data():
 
 def test_load_directory_data():
     invalid_directory_path = 'invalid_directory_path'
-    valid_dummy_directory = './resources/dummy_data_directory'
-    empty_dummy_directory = './resources/dummy_empty_data_directory'
+    valid_dummy_directory = resource_filename('EmoPy','tests/unittests/resources/dummy_data_directory')
+    empty_dummy_directory = resource_filename('EmoPy','tests/unittests/resources/dummy_empty_data_directory')
     channels = 1
 
     # should raise error when receives an invalid directory path
@@ -102,8 +102,8 @@ def test_load_directory_data():
 
 def test_load_time_series_directory_data():
     invalid_directory_path = 'invalid_directory_path'
-    valid_dummy_directory = './resources/dummy_time_series_data_directory'
-    empty_dummy_directory = './resources/dummy_empty_data_directory'
+    valid_dummy_directory = resource_filename('EmoPy','tests/unittests/resources/dummy_time_series_data_directory')
+    empty_dummy_directory = resource_filename('EmoPy','tests/unittests/resources/dummy_empty_data_directory')
     valid_time_steps = 4
     channels = 1
 
