@@ -66,7 +66,7 @@ Your terminal command line should now be prefixed with ```(venv)```.
 
 ## Installation
 
-### Using pip
+### From PyPi
 Once the virtual environment is activated, you may install EmoPy using
 ```
 pip install EmoPy
