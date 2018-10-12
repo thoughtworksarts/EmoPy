@@ -1,0 +1,4 @@
+# requirements defined in setup.py
+--index-url https://pypi.python.org/simple/
+
+-e .
