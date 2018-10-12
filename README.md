@@ -30,18 +30,10 @@ Try out the system using your own dataset or a small dataset we have provided in
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
-## Installation
+## Environment Setup
+You will need to install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
 
-To get started, clone the directory and open it in your terminal.
-
-```
-git clone https://github.com/thoughtworksarts/EmoPy.git
-cd EmoPy
-```
-
-> You will need to install [Python 3.6.3](https://www.python.org/downloads/release/python-363/) from the Python website.
->
-> Please note that this is not the most current version of Python (but the TensorFlow package doesn't work with Python 3.7 yet).
+Please note that this is not the most current version of Python, but the TensorFlow package doesn't work with Python 3.7 yet, so EmoPy cannot run with Python 3.7.
 
 If you do not have Homebrew installed run this command to install:
 
@@ -60,15 +52,38 @@ The next step is to set up a virtual environment using virtualenv. Install virtu
 sudo pip install virtualenv
 ```
 
-To create and activate the virtual environment, make sure you are in the ```EmoPy``` directory and run:
+Create and activate the virtual environment. Run:
 ```
 python3.6 -m venv venv
+```
+where the second `venv` is the name of your virtual environment. To activate, run from the same directory: 
+```
 source venv/bin/activate
 ```
-
 Your terminal command line should now be prefixed with ```(venv)```.
 
-The last step is to install the remaining dependencies using pip.
+(To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.)
+
+## Installation
+
+<!--
+### From PyPi
+Once the virtual environment is activated, you may install EmoPy using
+```
+pip install EmoPy
+```
+-->
+
+### From the source
+
+Clone the directory and open it in your terminal.
+
+```
+git clone https://github.com/thoughtworksarts/EmoPy.git
+cd EmoPy
+```
+
+Install the remaining dependencies using pip.
 
 ```
 pip install -r requirements.txt
@@ -76,7 +91,6 @@ pip install -r requirements.txt
 
 Now you're ready to go!
 
-To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.
 
 ## Running the examples
 
