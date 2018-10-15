@@ -1,9 +1,9 @@
-import sys
-sys.path.append('../')
 
-from src.csv_data_loader import CSVDataLoader
-from src.neuralnets import TransferLearningNN
-from src.data_generator import DataGenerator
+from EmoPy.src.csv_data_loader import CSVDataLoader
+from EmoPy.src.neuralnets import TransferLearningNN
+from EmoPy.src.data_generator import DataGenerator
+
+from pkg_resources import resource_filename
 
 from keras import backend as K
 K.set_image_data_format("channels_last")
@@ -18,7 +18,7 @@ fer_dataset_label_map = {'0': 'anger', '2': 'fear'}
 
 print('--------------- Inception-V3 Model -------------------')
 print('Loading data...')
-csv_file_path = "image_data/sample.csv"
+csv_file_path = resource_filename('EmoPy.examples','image_data/sample.csv')
 data_loader = CSVDataLoader(target_emotion_map=fer_dataset_label_map, datapath=csv_file_path, validation_split=validation_split, image_dimensions=raw_dimensions, csv_label_col=0, csv_image_col=1, out_channels=3)
 dataset = data_loader.load_data()
 

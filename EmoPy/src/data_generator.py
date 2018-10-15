@@ -1,6 +1,6 @@
 from keras import backend as K
 
-from library.image import ImageDataGenerator
+from EmoPy.library.image import ImageDataGenerator
 
 K.set_image_dim_ordering('th')
 

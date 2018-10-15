@@ -11,7 +11,7 @@ from keras.models import Model, Sequential
 from keras.utils import plot_model
 import json
 
-from src.callback import PlotLosses
+from EmoPy.src.callback import PlotLosses
 
 
 class _FERNeuralNet(object):

@@ -1,8 +1,7 @@
-import sys
-sys.path.append('../')
-from src.data_generator import DataGenerator
-from src.directory_data_loader import DirectoryDataLoader
-from src.neuralnets import TimeDelayConvNN
+from EmoPy.src.data_generator import DataGenerator
+from EmoPy.src.directory_data_loader import DirectoryDataLoader
+from EmoPy.src.neuralnets import TimeDelayConvNN
+from pkg_resources import resource_filename
 
 validation_split = 0.25
 
@@ -12,7 +11,7 @@ verbose = True
 
 print('--------------- Time-Delay Convolutional Model -------------------')
 print('Loading data...')
-directory_path = "image_data/sample_image_series_directory"
+directory_path = resource_filename('EmoPy.examples',"image_data/sample_image_series_directory")
 data_loader = DirectoryDataLoader(datapath=directory_path, validation_split=validation_split, time_delay=2)
 dataset = data_loader.load_data()
 

@@ -1,4 +1,4 @@
-from src.data_loader import _DataLoader
+from EmoPy.src.data_loader import _DataLoader
 import csv, cv2
 import numpy as np
 

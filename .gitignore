@@ -11,4 +11,5 @@ build/
 data/
 trained_models/
 venv/
-output/*
+output/
+emopy_venv/

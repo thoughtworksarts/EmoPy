@@ -36,31 +36,20 @@ Try out the system using your own dataset or a small dataset we have provided in
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
-## Requirements
+## Environment Setup
 
-EmoPy runs using Python 3, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.3 on OSX.
+EmoPy runs using Python 3.6, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
+
+Please note that this is not the most current version of Python, but the TensorFlow package doesn't work with Python 3.7 yet, so EmoPy cannot run with Python 3.7.
 
 Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
 
-## Installation
 
-To get started, clone the directory and open it in your terminal.
 
-```
-git clone https://github.com/thoughtworksarts/EmoPy.git
-cd EmoPy
-```
-
-We suggest installing Python using Homebrew. If you do not have Homebrew installed run this command to install:
+If you do not have Homebrew installed run this command to install:
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-Now you can install Python using Homebrew.
-
-```
-brew install python3
 ```
 
 GraphViz is required for visualisation functions.
@@ -74,15 +63,38 @@ The next step is to set up a virtual environment using virtualenv. Install virtu
 sudo pip install virtualenv
 ```
 
-To create and activate the virtual environment, make sure you are in the ```EmoPy``` directory and run:
+Create and activate the virtual environment. Run:
 ```
-virtualenv -p $(which python3) venv
+python3.6 -m venv venv
+```
+where the second `venv` is the name of your virtual environment. To activate, run from the same directory: 
+```
 source venv/bin/activate
 ```
-
 Your terminal command line should now be prefixed with ```(venv)```.
 
-The last step is to install the remaining dependencies using pip.
+(To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.)
+
+## Installation
+
+<!--
+### From PyPi
+Once the virtual environment is activated, you may install EmoPy using
+```
+pip install EmoPy
+```
+-->
+
+### From the source
+
+Clone the directory and open it in your terminal.
+
+```
+git clone https://github.com/thoughtworksarts/EmoPy.git
+cd EmoPy
+```
+
+Install the remaining dependencies using pip.
 
 ```
 pip install -r requirements.txt
@@ -90,7 +102,6 @@ pip install -r requirements.txt
 
 Now you're ready to go!
 
-To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.
 
 ## Running the examples
 

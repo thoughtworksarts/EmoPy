@@ -1,0 +1,5 @@
+include README.md
+include EmoPy/models/*
+recursive-include EmoPy/examples/image_data *
+recursive-include EmoPy/tests/unittests/resources *
+include EmoPy/tests/library/*
