@@ -108,15 +108,20 @@ Now you're ready to go!
 You can find example code to run each of the current neural net classes in [examples](examples). The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
 
 ```python
-import sys
-sys.path.append('../')
-from fermodel import FERModel
+from EmoPy.src.fermodel import FERModel
+from pkg_resources import resource_filename
 
 target_emotions = ['calm', 'anger', 'happiness']
 model = FERModel(target_emotions, verbose=True)
 
 print('Predicting on happy image...')
-model.predict('image_data/sample_happy_image.png')
+model.predict(resource_filename('EmoPy.examples','image_data/sample_happy_image.png'))
+
+print('Predicting on disgust image...')
+model.predict(resource_filename('EmoPy.examples','image_data/sample_disgust_image.png'))
+
+print('Predicting on anger image...')
+model.predict(resource_filename('EmoPy.examples','image_data/sample_anger_image2.png'))
 ```
 
 The code above loads a pre-trained model and then predicts an emotion on a sample image. As you can see, all you have to supply with this example is a set of target emotions and a sample image.
