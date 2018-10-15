@@ -4,7 +4,13 @@ EmoPy is a python toolkit with deep neural net classes which accurately predict 
 ![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
-The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects. We also aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
+The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects.
+
+The developers of EmoPy have written two guides you may find useful:
+* [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
+* [EmoPy: a machine learning toolkit for emotional expression](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression)
+
+We aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
 
 ## Overview
 
@@ -31,9 +37,14 @@ Try out the system using your own dataset or a small dataset we have provided in
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
 ## Environment Setup
-You will need to install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
+
+EmoPy runs using Python 3.6, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
 
 Please note that this is not the most current version of Python, but the TensorFlow package doesn't work with Python 3.7 yet, so EmoPy cannot run with Python 3.7.
+
+Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
+
+
 
 If you do not have Homebrew installed run this command to install:
 
