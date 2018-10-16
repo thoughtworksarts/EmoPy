@@ -7,13 +7,17 @@ setuptools.setup(
     name="EmoPy",
     version="0.0.2",
     author="ThoughtWorks Arts",
-    author_email="andy@thoughtworks.io",
+    author_email="info@thoughtworksarts.io",
     description="A deep neural net toolkit for emotion analysis via Facial Expression Recognition (FER)",
     long_description=long_description,
     long_description_content_type = "text/markdown",
     url="https://github.com/thoughtworksarts/EmoPy",
     packages=setuptools.find_packages(),
     include_package_data=True,
+    classifiers=[
+        "Programming Language :: Python :: 3.6",
+        "Operating System :: MacOS :: MacOS X"
+    ],
     python_requires='>=3.6.3,<3.7',
     install_requires=[
        'keras>=2.2.0',
