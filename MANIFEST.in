@@ -1,5 +1,13 @@
 include README.md
 include EmoPy/models/*
-recursive-include EmoPy/examples/image_data *
-recursive-include EmoPy/tests/unittests/resources *
+prune EmoPy/examples/image_data
+
+recursive-include EmoPy/examples/image_data sample_*_image*.png sample.csv
+
+recursive-include EmoPy/examples/image_data/sample_image_series_directory *00[12].png
+
+recursive-include EmoPy/examples/image_data/sample_image_directory/anger S074_004_00000010.png S074_004_00000018.png S113_008_00000016.png S113_008_00000019.png S125_008_00000009.png S125_008_00000010.png
+recursive-include EmoPy/examples/image_data/sample_image_directory/happiness S052_004_00000022.png S052_004_00000033.png S055_005_00000030.png S055_005_00000043.png S074_005_00000034.png S074_005_00000043.png
+recursive-include EmoPy/examples/image_data/sample_image_directory/surprise S052_001_00000010.png S052_001_00000015.png S055_001_00000007.png S055_001_00000009.png S074_002_00000010.png S074_002_00000016.png
+
 include EmoPy/tests/library/*
