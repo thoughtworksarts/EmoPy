@@ -5,7 +5,7 @@ with open("README.md","r") as fh:
 
 setuptools.setup(
     name="EmoPy",
-    version="0.0.3",
+    version="0.0.4",
     author="ThoughtWorks Arts",
     author_email="info@thoughtworksarts.io",
     description="A deep neural net toolkit for emotion analysis via Facial Expression Recognition (FER)",
