@@ -108,7 +108,7 @@ You can find example code to run each of the current neural net classes in [exam
 
 If you choose to use the installed package, you can find the examples directory by starting in the virtual environment directory you created and typing:
 ```
-cd cd lib/python3.6/site-packages/EmoPy/examples
+cd lib/python3.6/site-packages/EmoPy/examples
 ```
 
 
