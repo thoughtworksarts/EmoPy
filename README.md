@@ -77,13 +77,12 @@ Your terminal command line should now be prefixed with ```(venv)```.
 
 ## Installation
 
-<!--
+
 ### From PyPi
 Once the virtual environment is activated, you may install EmoPy using
 ```
 pip install EmoPy
 ```
--->
 
 ### From the source
 
@@ -105,7 +104,15 @@ Now you're ready to go!
 
 ## Running the examples
 
-You can find example code to run each of the current neural net classes in [examples](examples). The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
+You can find example code to run each of the current neural net classes in [examples](examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
+
+If you choose to use the installed package, you can find the examples directory by starting in the virtual environment directory you created and typing:
+```
+cd cd lib/python3.6/site-packages/EmoPy/examples
+```
+
+
+The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
 
 ```python
 from EmoPy.src.fermodel import FERModel
@@ -126,10 +133,9 @@ model.predict(resource_filename('EmoPy.examples','image_data/sample_anger_image2
 
 The code above loads a pre-trained model and then predicts an emotion on a sample image. As you can see, all you have to supply with this example is a set of target emotions and a sample image.
 
-Once you have completed the installation, you can run this example by moving into the examples folder and running the example script.
+Once you have completed the installation, you can run this example from the examples folder by running the example script.
 
 ```
-cd examples
 python fermodel_example.py
 ```
 
@@ -140,7 +146,6 @@ The first thing the example does is load and initialize the model. Next it print
 To train your own neural net, use one of our FER neural net classes to get started. You can try the convolutional_model.py example:
 
 ```
-cd examples
 python convolutional_example.py
 ```
 
