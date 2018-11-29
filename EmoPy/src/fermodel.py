@@ -3,7 +3,6 @@ import cv2
 from scipy import misc
 import numpy as np
 import json
-from pkg_resources import resource_filename
 
 class FERModel:
     """
@@ -57,7 +56,9 @@ class FERModel:
         resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
-        self._print_prediction(prediction[0])
+        ### Return the dominant expression
+        dominant_expression = self._print_prediction(prediction[0])
+        return dominant_expression
 
     def _check_emotion_set_is_supported(self):
         """
@@ -91,10 +92,11 @@ class FERModel:
         model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
         sorted_indices = [str(idx) for idx in sorted(model_indices)]
         model_suffix = ''.join(sorted_indices)
-        model_file = 'models/conv_model_%s.hdf5' % model_suffix
-        emotion_map_file = 'models/conv_emotion_map_%s.json' % model_suffix
-        emotion_map = json.loads(open(resource_filename('EmoPy',emotion_map_file)).read())
-        return load_model(resource_filename('EmoPy',model_file)), emotion_map
+        #Modify the path to choose the model file and the emotion map that you want to use
+        model_file = '~/EmoPy/models/conv_model_%s.hdf5' % model_suffix
+        emotion_map_file = '~/EmoPy/models/conv_emotion_map_%s.json' % model_suffix
+        emotion_map = json.loads(open(emotion_map_file).read())
+        return load_model(model_file), emotion_map
 
     def _print_prediction(self, prediction):
         normalized_prediction = [x/sum(prediction) for x in prediction]
@@ -105,5 +107,7 @@ class FERModel:
             if dominant_emotion_index == self.emotion_map[emotion]:
                 dominant_emotion = emotion
                 break
-        print('Dominant emotion: %s' % dominant_emotion)
-        print()
+        # print('Dominant emotion: %s' % dominant_emotion)
+        # print()
+        return dominant_emotion
+
