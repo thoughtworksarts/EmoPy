@@ -104,7 +104,7 @@ Now you're ready to go!
 
 ## Running the examples
 
-You can find example code to run each of the current neural net classes in [examples](examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
+You can find example code to run each of the current neural net classes in [examples](EmoPy/examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
 
 If you choose to use the installed package, you can find the examples directory by starting in the virtual environment directory you created and typing:
 ```
@@ -112,7 +112,7 @@ cd lib/python3.6/site-packages/EmoPy/examples
 ```
 
 
-The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
+The best place to start is the [FERModel example](EmoPy/examples/fermodel_example.py). Here is a listing of that code:
 
 ```python
 from EmoPy.src.fermodel import FERModel
