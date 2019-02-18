@@ -15,6 +15,7 @@ EmoPy/examples/__init__.py
 EmoPy/examples/convolutional_lstm_model.py
 EmoPy/examples/convolutional_model.py
 EmoPy/examples/fermodel_example.py
+EmoPy/examples/fermodel_example_webcam.py
 EmoPy/examples/timedelay_conv_model.py
 EmoPy/examples/transferlearning_model.py
 EmoPy/examples/image_data/sample.csv

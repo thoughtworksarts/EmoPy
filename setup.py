@@ -18,7 +18,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Operating System :: MacOS :: MacOS X"
     ],
-    python_requires='>=3.6.3,<3.7',
+    python_requires='>=3.6.3',
     install_requires=[
        'keras>=2.2.0',
        'lasagne',
