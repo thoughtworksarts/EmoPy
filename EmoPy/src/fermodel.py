@@ -3,6 +3,7 @@ import cv2
 from scipy import misc
 import numpy as np
 import json
+from pkg_resources import resource_filename
 
 class FERModel:
     """
@@ -56,7 +57,7 @@ class FERModel:
         resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
-        ### Return the dominant expression
+        # Return the dominant expression
         dominant_expression = self._print_prediction(prediction[0])
         return dominant_expression
 
