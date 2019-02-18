@@ -5,7 +5,7 @@ with open("README.md","r") as fh:
 
 setuptools.setup(
     name="EmoPy",
-    version="0.0.4",
+    version="0.0.5",
     author="ThoughtWorks Arts",
     author_email="info@thoughtworksarts.io",
     description="A deep neural net toolkit for emotion analysis via Facial Expression Recognition (FER)",
@@ -18,7 +18,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Operating System :: MacOS :: MacOS X"
     ],
-    python_requires='>=3.6.3,<3.7',
+    python_requires='>=3.6.3',
     install_requires=[
        'keras>=2.2.0',
        'lasagne',

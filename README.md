@@ -38,13 +38,9 @@ Predictions ideally perform well on a diversity of datasets, illumination condit
 
 ## Environment Setup
 
-EmoPy runs using Python 3.6, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
-
-Please note that this is not the most current version of Python, but the TensorFlow package doesn't work with Python 3.7 yet, so EmoPy cannot run with Python 3.7.
+EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
 
 Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
-
-
 
 If you do not have Homebrew installed run this command to install:
 
@@ -67,7 +63,7 @@ Create and activate the virtual environment. Run:
 ```
 python3.6 -m venv venv
 ```
-where the second `venv` is the name of your virtual environment. To activate, run from the same directory: 
+where the second `venv` is the name of your virtual environment. To activate, run from the same directory:
 ```
 source venv/bin/activate
 ```
