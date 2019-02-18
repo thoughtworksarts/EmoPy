@@ -4,13 +4,13 @@ EmoPy is a python toolkit with deep neural net classes which accurately predict 
 ![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
-The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects.
+The aim of this project is, using existing public datasets, to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects.
 
 The developers of EmoPy have written two guides you may find useful:
 * [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
 * [EmoPy: a machine learning toolkit for emotional expression](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression)
 
-We aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
+We aim to expand our development community, and we are open to suggestions and contributions. Usually these type of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
 
 ## Overview
 
@@ -24,7 +24,7 @@ EmoPy includes several modules that are plugged together to build a trained FER 
 - `directory_data_loader.py`
 - `data_generator.py`
 
-The `fermodel.py` module uses pretrained models for FER prediction, making it the easiest entry point to get a trained model up and running quickly.
+The `fermodel.py` module uses pre-trained models for FER prediction, making it the easiest entry point to get a trained model up and running quickly.
 
 Each of the modules contains one class, except for `neuralnets.py`, which has one interface and four subclasses. Each of these subclasses implements a different neural net architecture using the Keras framework with Tensorflow backend, allowing you to experiment and see which one performs best for your needs.
 
@@ -32,7 +32,7 @@ The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed infor
 
 ## Datasets
 
-Try out the system using your own dataset or a small dataset we have provided in the [examples/image_data](examples/image_data) subdirectory. The sample datasets we provide will not yield good results due to their small size, but they serve as a great way to get started.
+Try out the system using your own dataset or a small dataset we have provided in the [Emopy/examples/image_data](Emopy/examples/image_data) subdirectory. The sample datasets we provide will not yield good results due to their small size, but they serve as a great way to get started.
 
 Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
 
