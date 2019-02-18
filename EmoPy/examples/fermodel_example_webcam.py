@@ -36,8 +36,10 @@ while True:
 	cv2.putText(frame, frameString, (10, 35), fontFace, fontScale, (255, 255, 255), thickness, cv2.LINE_AA)
 	cv2.imshow('Video', frame)
 	cv2.waitKey(1)
+  
 	#Press Esc to exit the window
 	if cv2.waitKey(1) & 0xFF == 27:
 		break
 #Closes all windows
 cv2.destroyAllWindows()
+
