@@ -220,3 +220,14 @@ This is a new library that has a lot of room for growth. Check out the list of o
 [@Jia2014]: https://www.researchgate.net/figure/Fig-2-Facial-expression-image-sequence-in-Cohn-Kanade-database_257627744_fig1 "Head and facial gestures synthesis using PAD model for an expressive talking avatar"
 
 [@vanGent2016]: http://www.paulvangent.com/2016/04/01/emotion-recognition-with-python-opencv-and-a-face-dataset/ "Emotion Recognition With Python, OpenCV and a Face Dataset. A tech blog about fun things with Python and embedded electronics."
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table><tr><td align="center"><a href="https://github.com/angelicaperez37"><img src="https://avatars1.githubusercontent.com/u/11094785?v=4" width="100px;" alt="angelicaperez37"/><br /><sub><b>angelicaperez37</b></sub></a><br /><a href="https://github.com/thoughtworksarts/EmoPy/commits?author=angelicaperez37" title="Code">💻</a></td></tr></table>
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
