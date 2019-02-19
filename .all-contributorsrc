@@ -35,6 +35,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "microcosm",
+      "name": "Andrew McWilliams",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/756527?v=4",
+      "profile": "https://jahya.net",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
