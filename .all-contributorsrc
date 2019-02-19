@@ -65,6 +65,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "meganesu",
+      "name": "Megan Sullivan",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3609989?v=4",
+      "profile": "http://www.linkedin.com/in/meganesu",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
