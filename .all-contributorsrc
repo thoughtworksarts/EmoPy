@@ -47,6 +47,15 @@
         "doc",
         "ideas"
       ]
+    },
+    {
+      "login": "weberswords",
+      "name": "Webs",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10860893?v=4",
+      "profile": "http://www.websonthewebs.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
