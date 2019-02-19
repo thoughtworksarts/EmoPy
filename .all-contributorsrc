@@ -84,6 +84,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "xuv",
+      "name": "Julien Deswaef",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/192539?v=4",
+      "profile": "http://xuv.be",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
