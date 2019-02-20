@@ -104,6 +104,15 @@
         "code",
         "example"
       ]
+    },
+    {
+      "login": "linas",
+      "name": "Linas Vepštas",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/94368?v=4",
+      "profile": "http://linas.org",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "contributorsPerLine": 7
