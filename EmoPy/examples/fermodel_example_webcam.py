@@ -24,11 +24,9 @@ model = FERModel(target_emotions, verbose=True)
 while True:
 	#Capture frame-by-frame
 	ret, frame = video_capture.read()
-	#Save the captured frame on disk
-	file = 'image_data/image.jpg'
-	cv2.imwrite(file, frame)
 
-	frameString = model.predict(file)
+	#Passing the frame to the predictor
+	frameString = model.predict_from_ndarray(frame)
 
 	#Display emotion
 	retval, baseline = cv2.getTextSize(frameString, fontFace, fontScale, thickness)

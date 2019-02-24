@@ -51,9 +51,17 @@ class FERModel:
         :param images: image file (jpg or png format)
         """
         image = misc.imread(image_file)
-        gray_image = image
-        if len(image.shape) > 2:
-            gray_image = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+        self.predict_from_ndarray(image)
+
+    def predict_from_ndarray(self, image_array):
+        """
+        Predicts discrete emotion for given image.
+
+        :param image_array: a n dimensional array representing an image
+        """
+        gray_image = image_array
+        if len(image_array.shape) > 2:
+            gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
         resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
