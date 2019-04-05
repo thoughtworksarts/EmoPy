@@ -14,10 +14,11 @@ class DirectoryDataLoader(_DataLoader):
     :param time_delay: Number of images to load from each time series sample. Parameter must be provided to load time series data and unspecified if using static image data.
     """
 
-    def __init__(self, target_emotion_map=None, datapath=None, validation_split=0.2, out_channels=1, time_delay=None):
+    def __init__(self, target_emotion_map=None, datapath=None, validation_split=0.2, out_channels=1, time_delay=None, faceDetector=FaceDetector()):
         self.datapath = datapath
         self.target_emotion_map = target_emotion_map
         self.out_channels = out_channels
+        self.faceDetector = faceDetector
         super().__init__(validation_split, time_delay)
 
     def load_data(self):
@@ -77,6 +78,7 @@ class DirectoryDataLoader(_DataLoader):
         image_file_path = directory_path + '/' + image_file
         image = cv2.imread(image_file_path)
         image = self._reshape(image)
+        image = self.faceDetector.crop_face(image, False)
         return image
 
     def _validate_arguments(self):

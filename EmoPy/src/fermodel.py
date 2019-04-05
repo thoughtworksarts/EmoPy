@@ -23,7 +23,7 @@ class FERModel:
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sadness', 'happiness', 'surprise', 'disgust']
 
-    def __init__(self, target_emotions, verbose=False):
+    def __init__(self, target_emotions, verbose=False, faceDetector=FaceDetector()):
         self.target_emotions = target_emotions
         self.emotion_index_map = {
             'anger': 0,
@@ -38,6 +38,7 @@ class FERModel:
         self.verbose = verbose
         self.target_dimensions = (48, 48)
         self.channels = 1
+        self.faceDetector = faceDetector
         self._initialize_model()
 
     def _initialize_model(self):
@@ -62,7 +63,8 @@ class FERModel:
         gray_image = image_array
         if len(image_array.shape) > 2:
             gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
-        resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
+        cropped_image = self.faceDetector.crop_face(gray_image)
+        resized_image = cv2.resize(cropped_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
         # Return the dominant expression
