@@ -2,6 +2,7 @@ import os, cv2
 import numpy as np
 
 from EmoPy.src.data_loader import _DataLoader
+from EmoPy.src.face_detection import FaceDetector
 
 class DirectoryDataLoader(_DataLoader):
     """

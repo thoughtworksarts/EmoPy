@@ -2,8 +2,10 @@ from keras.models import load_model
 import cv2
 from scipy import misc
 import numpy as np
-import json
 from pkg_resources import resource_filename
+
+from EmoPy.src.face_detection import FaceDetector
+
 
 class FERModel:
     """
@@ -23,7 +25,7 @@ class FERModel:
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sadness', 'happiness', 'surprise', 'disgust']
 
-    def __init__(self, target_emotions, verbose=False, faceDetector=FaceDetector()):
+    def __init__(self, target_emotions, model_file, verbose=False, face_detector=FaceDetector()):
         self.target_emotions = target_emotions
         self.emotion_index_map = {
             'anger': 0,
@@ -38,12 +40,9 @@ class FERModel:
         self.verbose = verbose
         self.target_dimensions = (48, 48)
         self.channels = 1
-        self.faceDetector = faceDetector
-        self._initialize_model()
-
-    def _initialize_model(self):
-        print('Initializing FER model parameters for target emotions: %s' % self.target_emotions)
-        self.model, self.emotion_map = self._choose_model_from_target_emotions()
+        self.face_detector = face_detector
+        self.model = load_model(resource_filename('EmoPy', model_file))
+        # self.model, self.emotion_map = self._choose_model_from_target_emotions()
 
     def predict(self, image_file):
         """
@@ -63,7 +62,7 @@ class FERModel:
         gray_image = image_array
         if len(image_array.shape) > 2:
             gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
-        cropped_image = self.faceDetector.crop_face(gray_image)
+        cropped_image = self.face_detector.crop_face(gray_image)
         resized_image = cv2.resize(cropped_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
@@ -76,15 +75,15 @@ class FERModel:
         Validates set of user-supplied target emotions.
         """
         supported_emotion_subsets = [
-            set(['anger', 'fear', 'surprise', 'calm']),
-            set(['happiness', 'disgust', 'surprise']),
-            set(['anger', 'fear', 'surprise']),
-            set(['anger', 'fear', 'calm']),
-            set(['anger', 'happiness', 'calm']),
-            set(['anger', 'fear', 'disgust']),
-            set(['calm', 'disgust', 'surprise']),
-            set(['sadness', 'disgust', 'surprise']),
-            set(['anger', 'happiness'])
+            {'anger', 'fear', 'surprise', 'calm'},
+            {'happiness', 'disgust', 'surprise'},
+            {'anger', 'fear', 'surprise'},
+            {'anger', 'fear', 'calm'},
+            {'anger', 'happiness', 'calm'},
+            {'anger', 'fear', 'disgust'},
+            {'calm', 'disgust', 'surprise'},
+            {'sadness', 'disgust', 'surprise'},
+            {'anger', 'happiness'}
         ]
         if not set(self.target_emotions) in supported_emotion_subsets:
             error_string = 'Target emotions must be a supported subset. '
@@ -96,28 +95,29 @@ class FERModel:
             error_string += possible_subset_string
             raise ValueError(error_string)
 
-    def _choose_model_from_target_emotions(self):
-        """
-        Initializes pre-trained deep learning model for the set of target emotions supplied by user.
-        """
-        model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
-        sorted_indices = [str(idx) for idx in sorted(model_indices)]
-        model_suffix = ''.join(sorted_indices)
-        #Modify the path to choose the model file and the emotion map that you want to use
-        model_file = 'models/conv_model_%s.hdf5' % model_suffix
-        emotion_map_file = 'models/conv_emotion_map_%s.json' % model_suffix
-        emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
-        return load_model(resource_filename('EmoPy', model_file)), emotion_map
+    # def _choose_model_from_target_emotions(self):
+    #     """
+    #     Initializes pre-trained deep learning model for the set of target emotions supplied by user.
+    #     """
+    #     model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
+    #     sorted_indices = [str(idx) for idx in sorted(model_indices)]
+    #     model_suffix = ''.join(sorted_indices)
+    #     #Modify the path to choose the model file and the emotion map that you want to use
+    #     model_file = 'models/conv_model_%s.hdf5' % model_suffix
+    #     emotion_map_file = 'models/conv_emotion_map_%s.json' % model_suffix
+    #     emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
+    #     return load_model(resource_filename('EmoPy', model_file)), emotion_map
 
     def _print_prediction(self, prediction):
         normalized_prediction = [x/sum(prediction) for x in prediction]
-        for emotion in self.emotion_map.keys():
-            print('%s: %.1f%%' % (emotion, normalized_prediction[self.emotion_map[emotion]]*100))
+        emotion_map = {emotion: index for emotion, index
+                       in zip(sorted(self.target_emotions), range(0, len(self.target_emotions)))}
+        for emotion in emotion_map.keys():
+            print('%s: %.1f%%' % (emotion, normalized_prediction[emotion_map[emotion]]*100))
         dominant_emotion_index = np.argmax(prediction)
-        for emotion in self.emotion_map.keys():
-            if dominant_emotion_index == self.emotion_map[emotion]:
+        dominant_emotion = ''
+        for emotion in emotion_map.keys():
+            if dominant_emotion_index == emotion_map[emotion]:
                 dominant_emotion = emotion
                 break
-        # print('Dominant emotion: %s' % dominant_emotion)
-        # print()
         return dominant_emotion
