@@ -2,7 +2,7 @@ import cv2
 
 
 class FaceDetector:
-    def __init__(self, scale_factor=1.1, min_neighbors=5, min_size=(30, 30)):
+    def __init__(self, scale_factor=1.2, min_neighbors=5, min_size=(30, 30)):
         self.scale_factor = scale_factor
         self.min_neighbors = min_neighbors
         self.min_size = min_size
@@ -19,7 +19,10 @@ class FaceDetector:
     def crop_face(self, image, default_first=True):
         faces = self._detect_faces(image)
         if (len(faces) > 1 and default_first) or len(faces) is 1:
-            (x, y, w, h) = faces[0]
+            x, y, w, h = faces[0]
+            if abs(300 - w) > 45 or abs(300 - h) > 45:
+                print("cropping image badly.\nimage shape: {shape}\nface width and height: {dims}"
+                      .format(shape=image.shape, dims=(h, w)))
             return image[y:y+300, x:x+300]
         print("{numFaces} faces were found in image. Not cropping".format(numFaces=len(faces)))
-        return image
+        return None

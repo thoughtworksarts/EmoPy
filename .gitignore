@@ -11,5 +11,6 @@ data/
 trained_models/
 venv/
 output/
+*.idea
 emopy_venv/
 EmoPy/examples/image_data/image.jpg

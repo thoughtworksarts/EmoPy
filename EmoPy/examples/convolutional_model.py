@@ -1,4 +1,3 @@
-from EmoPy.src.fermodel import FERModel
 from EmoPy.src.directory_data_loader import DirectoryDataLoader
 from EmoPy.src.data_generator import DataGenerator
 from EmoPy.src.neuralnets import ConvolutionalNN

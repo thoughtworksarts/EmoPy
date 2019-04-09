@@ -67,9 +67,11 @@ class DirectoryDataLoader(_DataLoader):
 
     def _load_images_from_directory_to_array(self, image_files, images, label, directory_path, labels):
         for image_file in image_files:
-            images.append(self._load_image(image_file, directory_path))
-            if not self.time_delay:
-                labels.append(label)
+            image = self._load_image(image_file, directory_path)
+            if image is not None:
+                images.append(image)
+                if not self.time_delay:
+                    labels.append(label)
 
     def _add_new_label_to_map(self, label_directory, label_index_map):
         new_label_index = len(label_index_map.keys())
@@ -78,8 +80,10 @@ class DirectoryDataLoader(_DataLoader):
     def _load_image(self, image_file, directory_path):
         image_file_path = directory_path + '/' + image_file
         image = cv2.imread(image_file_path)
-        image = self._reshape(image)
-        image = self.faceDetector.crop_face(image, False)
+        cropped_image = self.faceDetector.crop_face(image, False)
+        if cropped_image is None:
+            return None
+        image = self._reshape(cropped_image)
         return image
 
     def _validate_arguments(self):
