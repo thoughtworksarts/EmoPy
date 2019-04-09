@@ -9,8 +9,8 @@ thickness = 2
 
 # Can choose other target emotions from the emotion subset defined in fermodel.py in src directory. The function
 # defined as `def _check_emotion_set_is_supported(self):`
-target_emotions = ['anger', 'happiness']
-target_emotion_indices = '03'
+target_emotions = ['happiness', 'disgust', 'surprise']
+target_emotion_indices = '135'
 model = FERModel(target_emotions, 'models/conv_model_%s.hdf5' % target_emotion_indices, verbose=True)
 
 # Specify the camera which you want to use. The default argument is '0'

@@ -63,10 +63,11 @@ class FERModel:
         if len(image_array.shape) > 2:
             gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
         cropped_image = self.face_detector.crop_face(gray_image)
+        if cropped_image is None:
+            return 'no face detected'
         resized_image = cv2.resize(cropped_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
-        # Return the dominant expression
         dominant_expression = self._print_prediction(prediction[0])
         return dominant_expression
 
