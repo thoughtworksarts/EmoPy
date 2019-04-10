@@ -44,7 +44,7 @@ class DirectoryDataLoader(_DataLoader):
 
     def _load_image(self, image_file):
         image = cv2.imread(image_file)
-        cropped_image = self.faceDetector.crop_face(image, False)
+        cropped_image = self.faceDetector.crop_face(image, (48, 48), False)
         if cropped_image is None:
             return None
         return self._reshape(cropped_image)

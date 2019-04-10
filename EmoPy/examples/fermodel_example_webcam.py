@@ -11,7 +11,7 @@ thickness = 2
 # defined as `def _check_emotion_set_is_supported(self):`
 target_emotions = ['happiness', 'disgust', 'surprise']
 target_emotion_indices = '135'
-model = FERModel(target_emotions, 'models/conv', verbose=True)
+model = FERModel(target_emotions, verbose=True)
 
 # Specify the camera which you want to use. The default argument is '0'
 video_capture = cv2.VideoCapture(0)

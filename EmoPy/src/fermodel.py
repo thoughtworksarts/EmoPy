@@ -27,7 +27,7 @@ class FERModel:
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sadness', 'happiness', 'surprise', 'disgust']
 
-    def __init__(self, target_emotions, model_file, verbose=False, face_detector=FaceDetector()):
+    def __init__(self, target_emotions, verbose=False, face_detector=FaceDetector()):
         self.target_emotions = target_emotions
         self.emotion_index_map = {
             'anger': 0,
@@ -43,7 +43,7 @@ class FERModel:
         self.target_dimensions = (48, 48)
         self.channels = 1
         self.face_detector = face_detector
-        self.model, self.emotion_map = self._choose_model_from_target_emotions(model_file)
+        self.model, self.emotion_map = self._choose_model_from_target_emotions()
 
     def predict(self, image_file):
         """
@@ -63,11 +63,10 @@ class FERModel:
         gray_image = image_array
         if len(image_array.shape) > 2:
             gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
-        cropped_image = self.face_detector.crop_face(gray_image)
+        cropped_image = self.face_detector.crop_face(gray_image, self.target_dimensions)
         if cropped_image is None:
             return 'no face detected'
-        resized_image = cv2.resize(cropped_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
-        final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
+        final_image = np.array([np.array([cropped_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
         dominant_expression = self._print_prediction(prediction[0])
         return dominant_expression
@@ -97,10 +96,10 @@ class FERModel:
             error_string += possible_subset_string
             raise ValueError(error_string)
 
-    def _choose_model_from_target_emotions(self, model_file_path):
+    def _choose_model_from_target_emotions(self):
         model_indices = ''.join(sorted([str(self.emotion_index_map[emotion]) for emotion in self.target_emotions]))
-        model_file = '%s_model_%s.hdf5' % (model_file_path, model_indices)
-        emotion_map_file = '%s_emotion_map_%s.json' % (model_file_path, model_indices)
+        model_file = 'models/conv_model_%s.hdf5' % model_indices
+        emotion_map_file = 'models/conv_emotion_map_%s.json' % model_indices
 
         emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
         return load_model(resource_filename('EmoPy', model_file)), emotion_map
