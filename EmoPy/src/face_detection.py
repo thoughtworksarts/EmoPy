@@ -20,9 +20,6 @@ class FaceDetector:
         faces = self._detect_faces(image)
         if (len(faces) > 1 and default_first) or len(faces) is 1:
             x, y, w, h = faces[0]
-            if abs(300 - w) > 45 or abs(300 - h) > 45:
-                print("cropping image badly.\nimage shape: {shape}\nface width and height: {dims}"
-                      .format(shape=image.shape, dims=(h, w)))
-            return image[y:y+300, x:x+300]
+            return cv2.resize(image[y:y+w, x:x+h], (300, 300), interpolation=cv2.INTER_LINEAR)
         print("{numFaces} faces were found in image. Not cropping".format(numFaces=len(faces)))
         return None

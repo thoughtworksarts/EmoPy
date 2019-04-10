@@ -1,3 +1,5 @@
+import json
+
 from keras.models import load_model
 import cv2
 from scipy import misc
@@ -41,8 +43,7 @@ class FERModel:
         self.target_dimensions = (48, 48)
         self.channels = 1
         self.face_detector = face_detector
-        self.model = load_model(resource_filename('EmoPy', model_file))
-        # self.model, self.emotion_map = self._choose_model_from_target_emotions()
+        self.model, self.emotion_map = self._choose_model_from_target_emotions(model_file)
 
     def predict(self, image_file):
         """
@@ -96,18 +97,13 @@ class FERModel:
             error_string += possible_subset_string
             raise ValueError(error_string)
 
-    # def _choose_model_from_target_emotions(self):
-    #     """
-    #     Initializes pre-trained deep learning model for the set of target emotions supplied by user.
-    #     """
-    #     model_indices = [self.emotion_index_map[emotion] for emotion in self.target_emotions]
-    #     sorted_indices = [str(idx) for idx in sorted(model_indices)]
-    #     model_suffix = ''.join(sorted_indices)
-    #     #Modify the path to choose the model file and the emotion map that you want to use
-    #     model_file = 'models/conv_model_%s.hdf5' % model_suffix
-    #     emotion_map_file = 'models/conv_emotion_map_%s.json' % model_suffix
-    #     emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
-    #     return load_model(resource_filename('EmoPy', model_file)), emotion_map
+    def _choose_model_from_target_emotions(self, model_file_path):
+        model_indices = ''.join(sorted([str(self.emotion_index_map[emotion]) for emotion in self.target_emotions]))
+        model_file = '%s_model_%s.hdf5' % (model_file_path, model_indices)
+        emotion_map_file = '%s_emotion_map_%s.json' % (model_file_path, model_indices)
+
+        emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
+        return load_model(resource_filename('EmoPy', model_file)), emotion_map
 
     def _print_prediction(self, prediction):
         normalized_prediction = [x/sum(prediction) for x in prediction]
