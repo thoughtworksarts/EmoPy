@@ -27,7 +27,7 @@ class FERModel:
 
     POSSIBLE_EMOTIONS = ['anger', 'fear', 'calm', 'sadness', 'happiness', 'surprise', 'disgust']
 
-    def __init__(self, target_emotions, verbose=False, face_detector=FaceDetector()):
+    def __init__(self, target_emotions, verbose=False, face_detector=FaceDetector('EmoPy/src/haarcascade_frontalface_default.xml')):
         self.target_emotions = target_emotions
         self.emotion_index_map = {
             'anger': 0,

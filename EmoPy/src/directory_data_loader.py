@@ -17,7 +17,7 @@ class DirectoryDataLoader(_DataLoader):
     """
 
     def __init__(self, target_emotion_map=None, datapath=None, validation_split=0.2, out_channels=1, time_delay=None,
-                 faceDetector=FaceDetector()):
+                 faceDetector=FaceDetector('EmoPy/src/haarcascade_frontalface_default.xml')):
         self.datapath = datapath
         self.target_emotion_map = target_emotion_map
         self.out_channels = out_channels

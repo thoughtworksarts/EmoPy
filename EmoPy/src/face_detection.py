@@ -2,13 +2,14 @@ import cv2
 
 
 class FaceDetector:
-    def __init__(self, scale_factor=1.2, min_neighbors=5, min_size=(30, 30)):
+    def __init__(self, cascade_file, scale_factor=1.2, min_neighbors=5, min_size=(30, 30)):
         self.scale_factor = scale_factor
         self.min_neighbors = min_neighbors
         self.min_size = min_size
+        self.cascade_file= cascade_file
 
     def detect_faces(self, image):
-        face_cascade = cv2.CascadeClassifier('EmoPy/docs/haarcascade_frontalface_default.xml')
+        face_cascade = cv2.CascadeClassifier(self.cascade_file)
         return face_cascade.detectMultiScale(
             image,
             scaleFactor=self.scale_factor,
