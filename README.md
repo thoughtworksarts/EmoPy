@@ -4,13 +4,13 @@ EmoPy is a python toolkit with deep neural net classes which accurately predict 
 ![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
-The aim of this project is, using existing public datasets, to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects.
+The aim of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research, and easy to integrate into different projects.
 
 The developers of EmoPy have written two guides you may find useful:
 * [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
 * [EmoPy: a machine learning toolkit for emotional expression](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression)
 
-We aim to expand our development community, and we are open to suggestions and contributions. Usually these type of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
+We aim to expand our development community, and we are open to suggestions and contributions. Usually these types of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
 
 ## Overview
 
@@ -30,11 +30,26 @@ Each of the modules contains one class, except for `neuralnets.py`, which has on
 
 The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed information on the classes and their interactions. Also, an overview of the different neural nets included in this project is included below.
 
-## Datasets
+## Operating Constraints
+
+Commercial FER projects are regularly trained on millions of labeled images, in massive private datasets. By contrast, in order to remain free and open source, EmoPy was created to work with only public datasets, which presents a major constraint on training for accurate results.
+
+EmoPy was originally created and designed to fulfill the needs of the [RIOT project](https://thoughtworksarts.io/projects/riot/), in which audience members facial expressions are recorded in a controlled lighting environment.
+
+For these two reasons, EmoPy functions best when the input image:
+
+* is evenly lit, with relatively few shadows, and/or
+* matches to some extent the style, framing and cropping of images from the training dataset
+
+As of this writing, the best available public dataset we have found is [Microsoft FER+](https://github.com/Microsoft/FERPlus), with around 30,000 images. Training on this dataset should yield best results when the input image relates to some extent to the style of the images in the set.
+
+For a deeper analysis of the origin and operation of EmoPy, which will be useful to help evaluate its potential for your needs, please read our [full write-up on EmoPy](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression).
+
+## Choosing a Dataset
 
 Try out the system using your own dataset or a small dataset we have provided in the [Emopy/examples/image_data](Emopy/examples/image_data) subdirectory. The sample datasets we provide will not yield good results due to their small size, but they serve as a great way to get started.
 
-Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
+Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [Microsoft FER+](https://github.com/Microsoft/FERPlus).
 
 ## Environment Setup
 
