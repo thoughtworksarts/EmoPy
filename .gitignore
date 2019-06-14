@@ -13,3 +13,4 @@ venv/
 output/
 emopy_venv/
 EmoPy/examples/image_data/image.jpg
+EmoPy/examples/image_data/fer2013.csv

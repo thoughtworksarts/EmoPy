@@ -12,7 +12,7 @@ class DataGenerator:
         self.labels = None
         self.config_augmentation(time_delay=time_delay)
 
-    def config_augmentation(self, zca_whitening=False, rotation_angle=90, shift_range=0.2, horizontal_flip=True,
+    def config_augmentation(self, zca_whitening=False, rotation_angle=10, shift_range=0.1, zoom_range=0.1, horizontal_flip=True,
                             time_delay=None):
         self.data_gen = ImageDataGenerator(featurewise_center=True,
                                            featurewise_std_normalization=True,
@@ -21,6 +21,7 @@ class DataGenerator:
                                            width_shift_range=shift_range,
                                            height_shift_range=shift_range,
                                            horizontal_flip=horizontal_flip,
+                                           zoom_range=zoom_range,
                                            time_delay=time_delay)
         return self
 

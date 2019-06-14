@@ -1,24 +1,24 @@
 Metadata-Version: 2.1
 Name: EmoPy
-Version: 0.0.4
+Version: 0.0.5
 Summary: A deep neural net toolkit for emotion analysis via Facial Expression Recognition (FER)
 Home-page: https://github.com/thoughtworksarts/EmoPy
 Author: ThoughtWorks Arts
 Author-email: info@thoughtworksarts.io
 License: UNKNOWN
 Description: # EmoPy
-        EmoPy is a python toolkit with deep neural net classes which accurately predict emotions given images of people's faces.
+        EmoPy is a python toolkit with deep neural net classes which aims to make accurate predictions of emotions given images of people's faces.
         
         ![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
         *Figure from [@Chen2014FacialER]*
         
-        The aim of this project is to make accurate [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) models free, open, easy to use, and easy to integrate into different projects.
+        The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research, and easy to integrate into different projects. The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
         
-        The developers of EmoPy have written two guides you may find useful:
+        To get a better grounding in the project you may find these write-ups useful:
         * [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
         * [EmoPy: a machine learning toolkit for emotional expression](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression)
         
-        We aim to expand our development community, and we are open to suggestions and contributions. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
+        We aim to expand our development community, and we are open to suggestions and contributions. Usually these types of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
         
         ## Overview
         
@@ -32,27 +32,38 @@ Description: # EmoPy
         - `directory_data_loader.py`
         - `data_generator.py`
         
-        The `fermodel.py` module uses pretrained models for FER prediction, making it the easiest entry point to get a trained model up and running quickly.
+        The `fermodel.py` module uses pre-trained models for FER prediction, making it the easiest entry point to get a trained model up and running quickly.
         
         Each of the modules contains one class, except for `neuralnets.py`, which has one interface and four subclasses. Each of these subclasses implements a different neural net architecture using the Keras framework with Tensorflow backend, allowing you to experiment and see which one performs best for your needs.
         
         The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed information on the classes and their interactions. Also, an overview of the different neural nets included in this project is included below.
         
-        ## Datasets
+        ## Operating Constraints
         
-        Try out the system using your own dataset or a small dataset we have provided in the [examples/image_data](examples/image_data) subdirectory. The sample datasets we provide will not yield good results due to their small size, but they serve as a great way to get started.
+        Commercial FER projects are regularly trained on millions of labeled images, in massive private datasets. By contrast, in order to remain free and open source, EmoPy was created to work with only public datasets, which presents a major constraint on training for accurate results.
         
-        Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [FER+](https://github.com/Microsoft/FERPlus).
+        EmoPy was originally created and designed to fulfill the needs of the [RIOT project](https://thoughtworksarts.io/projects/riot/), in which audience members facial expressions are recorded in a controlled lighting environment.
+        
+        For these two reasons, EmoPy functions best when the input image:
+        
+        * is evenly lit, with relatively few shadows, and/or
+        * matches to some extent the style, framing and cropping of images from the training dataset
+        
+        As of this writing, the best available public dataset we have found is [Microsoft FER+](https://github.com/Microsoft/FERPlus), with around 30,000 images. Training on this dataset should yield best results when the input image relates to some extent to the style of the images in the set.
+        
+        For a deeper analysis of the origin and operation of EmoPy, which will be useful to help evaluate its potential for your needs, please read our [full write-up on EmoPy](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression).
+        
+        ## Choosing a Dataset
+        
+        Try out the system using your own dataset or a small dataset we have provided in the [Emopy/examples/image_data](Emopy/examples/image_data) subdirectory. The sample datasets we provide will not yield good results due to their small size, but they serve as a great way to get started.
+        
+        Predictions ideally perform well on a diversity of datasets, illumination conditions, and subsets of the standard 7 emotion labels (happiness, anger, fear, surprise, disgust, sadness, calm/neutral) seen in FER research. Some good example public datasets are the [Extended Cohn-Kanade](http://www.consortium.ri.cmu.edu/ckagree/) and [Microsoft FER+](https://github.com/Microsoft/FERPlus).
         
         ## Environment Setup
         
-        EmoPy runs using Python 3.6, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
-        
-        Please note that this is not the most current version of Python, but the TensorFlow package doesn't work with Python 3.7 yet, so EmoPy cannot run with Python 3.7.
+        EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
         
         Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
-        
-        
         
         If you do not have Homebrew installed run this command to install:
         
@@ -75,7 +86,7 @@ Description: # EmoPy
         ```
         python3.6 -m venv venv
         ```
-        where the second `venv` is the name of your virtual environment. To activate, run from the same directory: 
+        where the second `venv` is the name of your virtual environment. To activate, run from the same directory:
         ```
         source venv/bin/activate
         ```
@@ -112,7 +123,7 @@ Description: # EmoPy
         
         ## Running the examples
         
-        You can find example code to run each of the current neural net classes in [examples](examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
+        You can find example code to run each of the current neural net classes in [examples](EmoPy/examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
         
         If you choose to use the installed package, you can find the examples directory by starting in the virtual environment directory you created and typing:
         ```
@@ -120,7 +131,7 @@ Description: # EmoPy
         ```
         
         
-        The best place to start is the [FERModel example](examples/fermodel_example.py). Here is a listing of that code:
+        The best place to start is the [FERModel example](EmoPy/examples/fermodel_example.py). Here is a listing of that code:
         
         ```python
         from EmoPy.src.fermodel import FERModel
@@ -232,6 +243,25 @@ Description: # EmoPy
         [@Jia2014]: https://www.researchgate.net/figure/Fig-2-Facial-expression-image-sequence-in-Cohn-Kanade-database_257627744_fig1 "Head and facial gestures synthesis using PAD model for an expressive talking avatar"
         
         [@vanGent2016]: http://www.paulvangent.com/2016/04/01/emotion-recognition-with-python-opencv-and-a-face-dataset/ "Emotion Recognition With Python, OpenCV and a Face Dataset. A tech blog about fun things with Python and embedded electronics."
+        
+        ## Contributors
+        
+        Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+        
+        <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+        <!-- prettier-ignore -->
+        | [<img src="https://avatars1.githubusercontent.com/u/11094785?v=4" width="100px;" alt="angelicaperez37"/><br /><sub><b>angelicaperez37</b></sub>](https://github.com/angelicaperez37)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=angelicaperez37 "Code") [📝](#blog-angelicaperez37 "Blogposts") [📖](https://github.com/thoughtworksarts/EmoPy/commits?author=angelicaperez37 "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/19356750?v=4" width="100px;" alt="sbriley"/><br /><sub><b>sbriley</b></sub>](https://github.com/sbriley)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=sbriley "Code") | [<img src="https://avatars0.githubusercontent.com/u/1446811?v=4" width="100px;" alt="Sofia Tania"/><br /><sub><b>Sofia Tania</b></sub>](http://tania.pw)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=stania1 "Code") | [<img src="https://avatars2.githubusercontent.com/u/756527?v=4" width="100px;" alt="Andrew McWilliams"/><br /><sub><b>Andrew McWilliams</b></sub>](https://jahya.net)<br />[📖](https://github.com/thoughtworksarts/EmoPy/commits?author=microcosm "Documentation") [🤔](#ideas-microcosm "Ideas, Planning, & Feedback") | [<img src="https://avatars2.githubusercontent.com/u/10860893?v=4" width="100px;" alt="Webs"/><br /><sub><b>Webs</b></sub>](http://www.websonthewebs.com)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=weberswords "Code") | [<img src="https://avatars0.githubusercontent.com/u/14201413?v=4" width="100px;" alt="Sara GW"/><br /><sub><b>Sara GW</b></sub>](https://github.com/saragw6)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=saragw6 "Code") | [<img src="https://avatars1.githubusercontent.com/u/3609989?v=4" width="100px;" alt="Megan Sullivan"/><br /><sub><b>Megan Sullivan</b></sub>](http://www.linkedin.com/in/meganesu)<br />[📖](https://github.com/thoughtworksarts/EmoPy/commits?author=meganesu "Documentation") |
+        | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+        | [<img src="https://avatars0.githubusercontent.com/u/33844894?v=4" width="100px;" alt="sadnantw"/><br /><sub><b>sadnantw</b></sub>](https://github.com/sadnantw)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=sadnantw "Code") [⚠️](https://github.com/thoughtworksarts/EmoPy/commits?author=sadnantw "Tests") | [<img src="https://avatars3.githubusercontent.com/u/192539?v=4" width="100px;" alt="Julien Deswaef"/><br /><sub><b>Julien Deswaef</b></sub>](http://xuv.be)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=xuv "Code") [📖](https://github.com/thoughtworksarts/EmoPy/commits?author=xuv "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/10910251?v=4" width="100px;" alt="Tanushri Chakravorty"/><br /><sub><b>Tanushri Chakravorty</b></sub>](https://github.com/sinbycos)<br />[💻](https://github.com/thoughtworksarts/EmoPy/commits?author=sinbycos "Code") [💡](#example-sinbycos "Examples") | [<img src="https://avatars2.githubusercontent.com/u/94368?v=4" width="100px;" alt="Linas Vepštas"/><br /><sub><b>Linas Vepštas</b></sub>](http://linas.org)<br />[🔌](#plugin-linas "Plugin/utility libraries") |
+        <!-- ALL-CONTRIBUTORS-LIST:END -->
+        
+        This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+        
+        ## Projects built on EmoPy
+        - [RIOT AI](http://karenpalmer.uk/portfolio/riot/)
+        - [ROS wrapper for EmoPy](https://github.com/hansonrobotics/ros_emopy)
+        
+        Want to list you project here? Please file an [issue](issues/new) (or pull request) and tell us how EmoPy is helping you.
         
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3.6

@@ -1,4 +1,3 @@
-.DS_Store
 .gitignore
 LICENSE
 MANIFEST.in
@@ -12,6 +11,7 @@ EmoPy.egg-info/dependency_links.txt
 EmoPy.egg-info/requires.txt
 EmoPy.egg-info/top_level.txt
 EmoPy/examples/__init__.py
+EmoPy/examples/convolutional_dropout_model.py
 EmoPy/examples/convolutional_lstm_model.py
 EmoPy/examples/convolutional_model.py
 EmoPy/examples/fermodel_example.py
