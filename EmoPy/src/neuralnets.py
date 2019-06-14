@@ -332,13 +332,6 @@ class ConvolutionalNNDropout(_FERNeuralNet):
 
         model.add(Flatten())
 
-        #model.add(Dense(self.filters, activation='relu'))
-        #model.add(Dropout(0.4))
-        #model.add(Dense(self.filters, activation='relu'))
-        #model.add(Dropout(0.4))
-        #model.add(Dense(self.filters, activation='relu'))
-        #model.add(Dropout(0.5))
-
 
         model.add(Dense(units=len(self.emotion_map.keys()), activation="softmax"))
         if self.verbose:
