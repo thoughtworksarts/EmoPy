@@ -113,6 +113,15 @@
       "contributions": [
         "plugin"
       ]
+    },
+    {
+      "login": "emilysachs",
+      "name": "Emily Sachs",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12832369?v=4",
+      "profile": "https://emilysachs.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
