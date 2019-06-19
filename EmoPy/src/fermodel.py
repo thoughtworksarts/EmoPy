@@ -44,16 +44,24 @@ class FERModel:
         print('Initializing FER model parameters for target emotions: %s' % self.target_emotions)
         self.model, self.emotion_map = self._choose_model_from_target_emotions()
 
-    def predict(self, image_file):
+    def predict(self, image_file): 
         """
         Predicts discrete emotion for given image.
 
         :param images: image file (jpg or png format)
         """
         image = misc.imread(image_file)
-        gray_image = image
-        if len(image.shape) > 2:
-            gray_image = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+        self.predict_from_ndarray(image)
+
+    def predict_from_ndarray(self, image_array):
+        """
+        Predicts discrete emotion for given image.
+
+        :param image_array: a n dimensional array representing an image
+        """
+        gray_image = image_array
+        if len(image_array.shape) > 2:
+            gray_image = cv2.cvtColor(image_array, code=cv2.COLOR_BGR2GRAY)
         resized_image = cv2.resize(gray_image, self.target_dimensions, interpolation=cv2.INTER_LINEAR)
         final_image = np.array([np.array([resized_image]).reshape(list(self.target_dimensions)+[self.channels])])
         prediction = self.model.predict(final_image)
@@ -66,6 +74,7 @@ class FERModel:
         Validates set of user-supplied target emotions.
         """
         supported_emotion_subsets = [
+            set(['calm', 'anger', 'happiness', 'surprise', 'disgust', 'fear', 'sadness']),
             set(['anger', 'fear', 'surprise', 'calm']),
             set(['happiness', 'disgust', 'surprise']),
             set(['anger', 'fear', 'surprise']),
@@ -94,7 +103,10 @@ class FERModel:
         sorted_indices = [str(idx) for idx in sorted(model_indices)]
         model_suffix = ''.join(sorted_indices)
         #Modify the path to choose the model file and the emotion map that you want to use
-        model_file = 'models/conv_model_%s.hdf5' % model_suffix
+        if(model_suffix == '0123456'):
+            model_file = 'models/conv_model_%s.h5' % model_suffix
+        else:
+            model_file = 'models/conv_model_%s.hdf5' % model_suffix
         emotion_map_file = 'models/conv_emotion_map_%s.json' % model_suffix
         emotion_map = json.loads(open(resource_filename('EmoPy', emotion_map_file)).read())
         return load_model(resource_filename('EmoPy', model_file)), emotion_map
