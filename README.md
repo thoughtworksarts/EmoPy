@@ -1,7 +1,7 @@
 # EmoPy
 EmoPy is a python toolkit with deep neural net classes which aims to make accurate predictions of emotions given images of people's faces.
 
-![Labeled FER Images](readme_docs/labeled_images.png "Labeled Facial Expression Images")  
+![Labeled FER Images](readme_docs/labeled_images_7.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
 The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research, and easy to integrate into different projects. The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
@@ -26,7 +26,7 @@ EmoPy includes several modules that are plugged together to build a trained FER 
 
 The `fermodel.py` module uses pre-trained models for FER prediction, making it the easiest entry point to get a trained model up and running quickly.
 
-Each of the modules contains one class, except for `neuralnets.py`, which has one interface and four subclasses. Each of these subclasses implements a different neural net architecture using the Keras framework with Tensorflow backend, allowing you to experiment and see which one performs best for your needs.
+Each of the modules contains one class, except for `neuralnets.py`, which has one interface and five subclasses. Each of these subclasses implements a different neural net architecture using the Keras framework with Tensorflow backend, allowing you to experiment and see which one performs best for your needs.
 
 The [EmoPy documentation](https://emopy.readthedocs.io/) contains detailed information on the classes and their interactions. Also, an overview of the different neural nets included in this project is included below.
 
@@ -194,9 +194,13 @@ Figure from [@vanGent2016]
 
 This model uses a technique known as [Transfer Learning](https://www.analyticsvidhya.com/blog/2017/06/transfer-learning-the-art-of-fine-tuning-a-pre-trained-model/), where pre-trained deep neural net models are used as starting points. The pre-trained models it uses are trained on images to classify objects. The model then retrains the pre-trained models using facial expression images with emotion classifications rather than object classifications. It adds a couple top layers to the original model to match the number of target emotions we want to classify and reruns the training algorithm with a set of facial expression images. It only uses still images, no temporal context.
 
+#### ConvolutionalNNDropout
+
+This model is the most recent addition to EmoPy. It is a 2D Convolutional Neural Network that implements dropout, batch normalization, and L2 regularization. It is currently performing with a training accuracy of 0.7045 and a validation accuracy of 0.6536 when classifying 7 emotions. Further training will be done to determine how it performs on smaller subsets of emotions.
+
 ## Performance
 
-Currently the ConvolutionalLstmNN model is performing best when classifying 7 emotions with a validation accuracy of 47.5%. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset.
+Before implementing the ConvolutionalNNDropout model, the ConvolutionalLstmNN model was performing best when classifying 7 emotions with a validation accuracy of 47.5%. The table below shows accuracy values of this model and the TransferLearningNN model when trained on all seven standard emotions and on a subset of three emotions (fear, happiness, neutral). They were trained on 5,000 images from the [FER+](https://github.com/Microsoft/FERPlus) dataset.
 
 | Neural Net Model    | 7 emotions        |                     | 3 emotions        |                     |
 |---------------------|-------------------|---------------------|-------------------|---------------------|
