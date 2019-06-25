@@ -53,15 +53,25 @@ Predictions ideally perform well on a diversity of datasets, illumination condit
 
 ## Environment Setup
 
-EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. You can install [Python 3.6.6](https://www.python.org/downloads/release/python-366/) from the Python website.
-
 Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
 
-If you do not have Homebrew installed run this command to install:
+Before beginning, if you do not have Homebrew installed run this command to install:
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
+
+EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. 
+
+There are 2 ways you can install Python 3.6.6:
+
+1. Directly from the [Python website] (https://www.python.org/downloads/release/python-366/), or
+2. Using [pyenv] (https://github.com/pyenv/pyenv):
+
+```
+$ brew install pyenv
+$ pyenv install 3.6.6
+``` 
 
 GraphViz is required for visualisation functions.
 
@@ -78,7 +88,14 @@ Create and activate the virtual environment. Run:
 ```
 python3.6 -m venv venv
 ```
-where the second `venv` is the name of your virtual environment. To activate, run from the same directory:
+
+Or if using pyenv:
+
+```
+$ pyenv exec python3.6 -m venv venv
+```
+
+Where the second `venv` is the name of your virtual environment. To activate, run from the same directory:
 ```
 source venv/bin/activate
 ```
