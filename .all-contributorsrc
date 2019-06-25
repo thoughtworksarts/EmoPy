@@ -131,6 +131,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dtoakley",
+      "name": "dtoakley",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/2144730?v=4",
+      "profile": "https://github.com/dtoakley",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
