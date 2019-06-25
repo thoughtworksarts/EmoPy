@@ -55,7 +55,7 @@ Predictions ideally perform well on a diversity of datasets, illumination condit
 
 Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
 
-Before beginning, ff you do not have Homebrew installed run this command to install:
+Before beginning, if you do not have Homebrew installed run this command to install:
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
