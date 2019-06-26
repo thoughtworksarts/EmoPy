@@ -59,7 +59,7 @@ class _DataLoader(object):
 
     def _check_data_not_empty(self, images):
         if len(images) == 0:
-            raise AssertionError('csv file does not contain samples of specified labels: %s' % str(self.label_map.keys()))
+            raise AssertionError('There are no images in the data set.')
 
     def _vectorize_labels(self, label_index_map, labels):
         label_values = list()
