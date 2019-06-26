@@ -20,6 +20,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6.3',
     install_requires=[
+       'coverage==4.5.3',
        'keras>=2.2.0',
        'lasagne',
        'pytest',
