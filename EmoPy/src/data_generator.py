@@ -40,7 +40,7 @@ class DataGenerator:
 
     def generate(self, target_dimensions=None, batch_size=10):
         self._check_model_has_been_fit()
-        return self.data_gen.flow(self.images, self.labels, batch_size=batch_size, target_dimension=target_dimensions)
+        return self.data_gen.flow(self.images, self.labels, batch_size=batch_size, target_dimensions=target_dimensions)
 
     def _validate(self, images, labels):
         if len(images) != len(labels):

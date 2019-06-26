@@ -33,7 +33,7 @@ class DataGeneratorTest(unittest.TestCase):
         labels = np.random.rand(20)
         with self.assertRaises(ValueError) as e:
             DataGenerator().fit(images, labels)
-        self.assertEqual("Channel Axis should have vale", str(e.exception))
+        self.assertEqual("Channel Axis should have value", str(e.exception))
 
     def test_should_raise_error_when_time_delay_parameter_is_set_and_input_is_simple_images(self):
         images = np.random.rand(10, 64, 64, 3)
@@ -64,3 +64,7 @@ class DataGeneratorTest(unittest.TestCase):
 
         self.assertEqual("Model is not fit to any data set yet", str(a.exception))
         self.assertEqual("Model is not fit to any data set yet", str(b.exception))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -231,9 +231,9 @@ class ImageDataGenerator(object):
                              'Received arg: ', zoom_range)
 
     def flow(self, x, y=None, batch_size=32, shuffle=True, seed=None,
-             save_to_dir=None, save_prefix='', save_format='png', target_dimension=None):
-        if target_dimension:
-            self.target_dimensions = target_dimension
+             save_to_dir=None, save_prefix='', save_format='png', target_dimensions=None):
+        if target_dimensions:
+            self.target_dimensions = target_dimensions
         return NumpyArrayIterator(
             x, y, self,
             batch_size=batch_size,

@@ -1,6 +1,6 @@
 import unittest
 
-from library.image import *
+from EmoPy.library.image import *
 
 
 class SingleFrameTransformationTest(unittest.TestCase):
@@ -109,3 +109,7 @@ class ImageDataGeneratorTest(unittest.TestCase):
         generator = ImageDataGenerator(time_delay=3, rotation_angle=50, horizontal_flip=True, target_dimensions=target_dimensions)
         augmented_data = get_next_batch(generator, data)
         self.assertEqual(augmented_data.shape, (10, 3, 10, 10, 3))
+
+
+if __name__ == '__main__':
+    unittest.main()

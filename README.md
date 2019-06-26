@@ -130,6 +130,17 @@ pip install -r requirements.txt
 Now you're ready to go!
 
 
+## Running tests
+
+You can run the tests with:
+
+```
+python -m unittest EmoPy/tests/run_all.py
+```
+
+We encourage improvements and additions to these tests! 
+
+
 ## Running the examples
 
 You can find example code to run each of the current neural net classes in [examples](EmoPy/examples). You may either download the example directory to a location of your choice on your machine, or find the example directory included in the installation.
