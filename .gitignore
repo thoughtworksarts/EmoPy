@@ -1,4 +1,5 @@
 .idea/
+.coverage
 bin/
 include/
 lib/
