@@ -1,20 +1,26 @@
+import keras
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.xception import Xception
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.resnet50 import ResNet50
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
+from keras.engine import Layer
+from keras.engine.saving import load_model
 from keras.layers import Dense, Flatten, GlobalAveragePooling2D, Conv2D, ConvLSTM2D, Conv3D, MaxPooling2D, Dropout, \
-    MaxPooling3D
+    MaxPooling3D, K
 from keras.layers.normalization import BatchNormalization
 from keras.losses import categorical_crossentropy
 from keras.models import Model, Sequential
 from keras.regularizers import l2
-from keras.optimizers import Adam
+from keras.optimizers import Adam, Adamax
 from keras.utils import plot_model
 import json
 
 from EmoPy.src.callback import PlotLosses
+from keras_preprocessing.image import ImageDataGenerator
+
+from EmoPy.EmoPy.src.customLayer import SliceLayer, ChannelShuffle, PadZeros
 
 
 class _FERNeuralNet(object):
@@ -419,3 +425,55 @@ class TimeDelayConvNN(_FERNeuralNet):
         self.model.compile(optimizer="RMSProp", loss="cosine_proximity", metrics=["accuracy"])
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
                        callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+
+class CGP_CNN(_FERNeuralNet):
+    """
+        A Convolutional Neural Network model which was automatically found using a Cartesian Genetic Programming library.
+        https://github.com/scheckmedia/cgp-cnn-design
+
+        :param emotion_map: dict of target emotion label keys with int values corresponding to the index of the emotion probability in the prediction output array
+        :param verbose: if true, will print out extra process information
+    """
+
+    def __init__(self,emotion_map,verbose=False):
+        self.verbose = verbose
+        super().__init__(emotion_map)
+
+    def _init_model(self):
+        """
+                Loads the network from the h5 file.
+        """
+        model = load_model("EmoPy/models/gcp-cnn.h5", custom_objects={'SliceLayer': SliceLayer, 'ChannelShuffle': ChannelShuffle,
+                                                      'PadZeros': PadZeros})
+        if self.verbose:
+            model.summary()
+        self.model = model
+
+    def fit(self, x_train, y_train):
+        """
+                Trains the neural net on the data provided.
+
+                :param x_train: Train Data in the format: [:,48,48,1]
+                :param y_train: Label Data in the format: [:,7]
+        """
+        datagen = ImageDataGenerator(
+            width_shift_range=0.1,
+            height_shift_range=0.1,
+            rotation_range=1,
+            horizontal_flip=True)
+        callback_LR = keras.callbacks.ReduceLROnPlateau(
+            monitor="val_acc",
+            factor=0.75,
+            patience=10,
+            verbose=1,
+            mode='auto',
+            min_delta=0.00001,
+            min_lr=0.0000001)
+        callback_LR.set_model(self.model)
+        callbacks = [callback_LR]
+        self.model.compile(loss='categorical_crossentropy',
+                      optimizer=Adamax(lr=0.001),
+                      metrics=['accuracy'])
+        self.model.fit_generator(datagen.flow(x_train, y_train, batch_size=32),
+                                 steps_per_epoch=(x_train.shape[0] // 32) + 1, verbose=1 if self.verbose else 0, epochs=200, callbacks=callbacks)
+
