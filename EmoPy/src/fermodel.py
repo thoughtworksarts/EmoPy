@@ -51,7 +51,7 @@ class FERModel:
         :param images: image file (jpg or png format)
         """
         image = misc.imread(image_file)
-        self.predict_from_ndarray(image)
+        return self.predict_from_ndarray(image)
 
     def predict_from_ndarray(self, image_array):
         """
