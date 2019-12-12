@@ -141,7 +141,17 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "anjutiwari",
+      "name": "Anju",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4986913?v=4",
+      "profile": "https://github.com/anjutiwari",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
