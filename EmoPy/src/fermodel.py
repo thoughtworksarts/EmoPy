@@ -44,14 +44,14 @@ class FERModel:
         print('Initializing FER model parameters for target emotions: %s' % self.target_emotions)
         self.model, self.emotion_map = self._choose_model_from_target_emotions()
 
-    def predict(self, image_file): 
+    def predict(self, image_file):
         """
         Predicts discrete emotion for given image.
 
         :param images: image file (jpg or png format)
         """
         image = misc.imread(image_file)
-        self.predict_from_ndarray(image)
+        return self.predict_from_ndarray(image)
 
     def predict_from_ndarray(self, image_array):
         """
