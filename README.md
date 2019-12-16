@@ -135,7 +135,7 @@ Now you're ready to go!
 You can run the tests with:
 
 ```
-python -m unittest EmoPy/tests/run_all.py
+python EmoPy/tests/run_all.py
 ```
 
 We encourage improvements and additions to these tests! 
