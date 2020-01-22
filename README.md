@@ -185,8 +185,8 @@ The first thing the example does is load and initialize the model. Next it print
 To train your own neural net, use one of our FER neural net classes to get started. You can try the convolutional_model.py example:
 
 ```
-python convolutional_example.py
-```
+python convolutional_model.py
+``` 
 
 The example first initializes the model. A summary of the model architecture will be printed out. This includes a list of all the neural net layers and the shape of their output. Our models are built using the Keras framework, which offers this visualization function.
 
