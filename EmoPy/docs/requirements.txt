@@ -6,7 +6,7 @@ scikit-image>=0.13.1
 scikit-learn>=0.19.1
 scikit-neuralnetwork>=0.7
 scipy>=0.19.1
-tensorflow==1.4.0
+tensorflow==1.15.4
 opencv-python
 h5py
 pydot
