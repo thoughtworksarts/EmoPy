@@ -1,10 +1,10 @@
 # EmoPy
-EmoPy is a python toolkit with deep neural net classes which predicts human emotional expression classifications given images of people's faces.
+EmoPy is a python toolkit with deep neural net classes which predicts human emotional expression classifications given images of people's faces. The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research and easy integrate into other projects.
 
 ![Labeled FER Images](readme_docs/labeled_images_7.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
-The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research and easy integrate into other projects. The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
+The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
 
 To get a better grounding in the project you may find these write-ups useful:
 * [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
