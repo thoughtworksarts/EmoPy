@@ -1,16 +1,16 @@
 # EmoPy
-EmoPy is a python toolkit with deep neural net classes which aims to make accurate predictions of emotions given images of people's faces.
+EmoPy is a python toolkit with deep neural net classes which predicts human emotional expression classifications given images of people's faces.
 
 ![Labeled FER Images](readme_docs/labeled_images_7.png "Labeled Facial Expression Images")  
 *Figure from [@Chen2014FacialER]*
 
-The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research, and easy to integrate into different projects. The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
+The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research and easy integrate into other projects. The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
 
 To get a better grounding in the project you may find these write-ups useful:
 * [Recognizing human facial expressions with machine learning](https://www.thoughtworks.com/insights/blog/recognizing-human-facial-expressions-machine-learning)
 * [EmoPy: a machine learning toolkit for emotional expression](https://www.thoughtworks.com/insights/blog/emopy-machine-learning-toolkit-emotional-expression)
 
-We aim to expand our development community, and we are open to suggestions and contributions. Usually these types of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please [contact us](mailto:aperez@thoughtworks.com) to discuss.
+We aim to expand our development community, and we are open to suggestions and contributions. Usually these types of algorithms are used commercially, so we want to help open source the best possible version of them in order to improve public access and engagement in this area. Please contact an EmoPy maintainer (see below) to discuss.
 
 ## Overview
 
