@@ -1,5 +1,5 @@
-import matplotlib as mpl
-mpl.use('TkAgg')
+# import matplotlib as mpl
+# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 from keras.callbacks import Callback
 import os
