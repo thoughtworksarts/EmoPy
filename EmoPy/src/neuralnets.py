@@ -29,7 +29,7 @@ class _FERNeuralNet(object):
     def _init_model(self):
         raise NotImplementedError("Class %s doesn't implement _init_model()" % self.__class__.__name__)
 
-    def fit(self, x_train, y_train):
+    def fit(self, *args, **kwargs):
         raise NotImplementedError("Class %s doesn't implement fit()" % self.__class__.__name__)
 
     def fit_generator(self, generator, validation_data=None, epochs=50):
