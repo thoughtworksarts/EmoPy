@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.md","r") as fh:
+with open("README.md","r",encoding="UTF-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -24,15 +24,15 @@ setuptools.setup(
        'keras==2.2.4',
        'lasagne',
        'pytest',
-       'matplotlib>2.1.0',
        'numpy==1.17.4',
+       'matplotlib==2.2.0',
        'scikit-image==0.13.1',
        'scikit-learn>=0.19.1',
        'scikit-neuralnetwork>=0.7',
        'scipy==1.0.0',
        'tensorflow==1.13.1',
        'opencv-python',
-       'h5py',
+       'h5py==2.9.0',
        'pydot',
        'graphviz',
     ]
