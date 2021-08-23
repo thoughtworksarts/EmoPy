@@ -1,7 +1,7 @@
 # EmoPy
 EmoPy is a python toolkit with deep neural net classes which predicts human emotional expression classifications given images of people's faces. The goal of this project is to explore the field of [Facial Expression Recognition (FER)](https://en.wikipedia.org/wiki/Emotion_recognition) using existing public datasets, and make neural network models which are free, open, easy to research and easy integrate into other projects.
 
-![Labeled FER Images](readme_docs/labeled_images_7.png "Labeled Facial Expression Images")  
+![Labeled FER Images](readme_docs/labeled_images_7.png "Labeled Facial Expression Images")
 *Figure from [@Chen2014FacialER]*
 
 The behavior of the system is highly dependent on the available data, and the developers of EmoPy created and tested the system using only publicly-available datasets.
@@ -53,7 +53,11 @@ Predictions ideally perform well on a diversity of datasets, illumination condit
 
 ## Environment Setup
 
+
 Python is compatible with multiple operating systems. If you would like to use EmoPy on another OS, please convert these instructions to match your target environment. Let us know how you get on, and we will try to support you and share you results.
+
+### macOS
+
 
 Before beginning, if you do not have Homebrew installed run this command to install:
 
@@ -61,7 +65,7 @@ Before beginning, if you do not have Homebrew installed run this command to inst
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX. 
+EmoPy runs using Python 3.6 and up, theoretically on any Python-compatible OS. We tested EmoPy using Python 3.6.6 on OSX.
 
 There are 2 ways you can install Python 3.6.6:
 
@@ -71,7 +75,7 @@ There are 2 ways you can install Python 3.6.6:
 ```
 $ brew install pyenv
 $ pyenv install 3.6.6
-``` 
+```
 
 GraphViz is required for visualisation functions.
 
@@ -102,6 +106,35 @@ source venv/bin/activate
 Your terminal command line should now be prefixed with ```(venv)```.
 
 (To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(venv)``` disappears.)
+
+
+### Windows
+
+This works on Windows 10 using Python 3.6.6 and 3.6.8.
+
+Download python directly from the [Python website] (https://www.python.org/downloads/release/python-366/), or if you are already using pyenv, then you can use pyenv to install 3.6.6 and then activate version 3.6.6 before doing the next steps.
+
+The next step is to set up a virtual environment using virtualenv.
+```
+pip install virtualenv
+```
+
+Create and activate the virtual environment. Run:
+```
+python -m venv emoPyVenv
+```
+
+Where `emoPyVenv` is the name of your virtual environment. To activate, run from the same directory:
+```
+source emoPyVenv\Scripts\activate
+```
+Your terminal command line should now be prefixed with ```(emoPyVenv)```.
+
+(To deactivate the virtual environment run ```deactivate``` in the command line. You'll know it has been deactivated when the prefix ```(emoPyVenv)``` disappears.)
+
+One you have created the virtual environment, each time you activate it, version 3.6.6 will be the version of python.
+
+You should do the instalation from the source described below. Then each time you activate the virtual environment, you'll have access to the installation of EmoPy.
 
 ## Installation
 
@@ -138,7 +171,7 @@ You can run the tests with:
 python EmoPy/tests/run_all.py
 ```
 
-We encourage improvements and additions to these tests! 
+We encourage improvements and additions to these tests!
 
 
 ## Running the examples
@@ -186,7 +219,7 @@ To train your own neural net, use one of our FER neural net classes to get start
 
 ```
 python convolutional_model.py
-``` 
+```
 
 The example first initializes the model. A summary of the model architecture will be printed out. This includes a list of all the neural net layers and the shape of their output. Our models are built using the Keras framework, which offers this visualization function.
 

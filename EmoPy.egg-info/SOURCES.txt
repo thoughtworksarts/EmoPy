@@ -142,6 +142,7 @@ EmoPy/models/conv_emotion_map_25.json
 EmoPy/models/conv_model_01.json
 EmoPy/models/conv_model_012.hdf5
 EmoPy/models/conv_model_012.json
+EmoPy/models/conv_model_0123456.h5
 EmoPy/models/conv_model_02.json
 EmoPy/models/conv_model_024.json
 EmoPy/models/conv_model_025.hdf5
@@ -185,6 +186,13 @@ EmoPy/src/dataset.py
 EmoPy/src/directory_data_loader.py
 EmoPy/src/fermodel.py
 EmoPy/src/neuralnets.py
+EmoPy/tests/__init__.py
+EmoPy/tests/run_all.py
+EmoPy/tests/unittests/__init__.py
+EmoPy/tests/unittests/test_data_generator.py
+EmoPy/tests/unittests/test_dataloader.py
+EmoPy/tests/unittests/library/__init__.py
+EmoPy/tests/unittests/library/image_test.py
 EmoPy/tests/unittests/resources/dummy_data_directory/happiness/sample_image.jpg
 EmoPy/tests/unittests/resources/dummy_empty_data_directory/.gitignore
 EmoPy/tests/unittests/resources/dummy_time_series_data_directory/happiness/sample1/sample_image.jpg
